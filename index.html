@@ -4,21 +4,14 @@
   <meta charset="utf-8" />
   <title>Livee - 홈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- CSS: 레포 경로 포함 절대경로 -->
   <link href="/alpa/frontend/css/main.css?v=1.0" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-  <!-- 띠배너 / 상단탭은 모듈로 렌더 -->
+<body data-page="home">
+  <!-- 띠배너 / 헤더 / 상단탭: 모듈 렌더 -->
   <div id="banner-container"></div>
-
-  <header class="lv-header">
-    <!-- 로고 경로도 /alpa/ 기준 -->
-    <img src="/alpa/logo.svg" alt="Livee" class="lv-logo" onclick="location.href='/alpa/index.html'">
-    <div id="user-info" class="lv-user"></div>
-  </header>
-
+  <div id="header-container"></div>
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="lv-main">
@@ -69,8 +62,9 @@
 
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- JS 모듈: 레포 경로 포함 절대경로 -->
+  <!-- 모듈 JS -->
   <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/header.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
   <script src="/alpa/frontend/js/main.js?v=1.0"></script>
