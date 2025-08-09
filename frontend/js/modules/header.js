@@ -1,43 +1,31 @@
 (function(){
-  const mount = document.getElementById('header-container');
-  if (!mount) return;
+  const mount = document.querySelector('.lv-header');
+  if(!mount) return;
 
-  const token = localStorage.getItem('liveeToken');
-  const name = localStorage.getItem('liveeName') || '';
-  const exp = Number(localStorage.getItem('liveeTokenExp') || 0);
-  const isLoggedIn = !!token && exp > Date.now();
+  const loggedIn = !!localStorage.getItem('liveeToken');
+  const userName = localStorage.getItem('liveeName') || '';
 
-  let html = `
-    <header class="lv-header">
-      <div class="left">
-        <a href="/alpa/index.html" class="logo">
-          <img src="/alpa/img/logo.svg" alt="Livee">
-        </a>
-      </div>
-      <div class="right">
+  // 로고 + 사용자 정보
+  mount.innerHTML = `
+    <img src="/alpa/liveelogo.png" 
+         alt="Livee" 
+         class="lv-logo" 
+         style="height:48px; cursor:pointer;" 
+         onclick="location.href='/alpa/index.html'">
+    <div id="user-info" class="lv-user">
+      ${loggedIn 
+        ? `<span>${userName ? userName + '님' : '마이페이지'}</span> <button id="logout-btn" class="logout-btn">로그아웃</button>`
+        : `<a href="/alpa/login.html">로그인</a>`}
+    </div>
   `;
 
-  if (isLoggedIn) {
-    html += `
-      <span class="user-name">${name}님</span>
-      <button class="logout-btn">로그아웃</button>
-    `;
-  } else {
-    html += `<a href="/alpa/frontend/login.html" class="login-link">로그인</a>`;
-  }
-
-  html += `
-      </div>
-    </header>
-  `;
-
-  mount.innerHTML = html;
-
-  // 로그아웃 동작
-  if (isLoggedIn) {
-    mount.querySelector('.logout-btn').addEventListener('click', () => {
-      ['liveeToken','liveeName','liveeRole','liveeTokenExp'].forEach(k => localStorage.removeItem(k));
-      location.reload();
+  // 로그아웃 버튼 이벤트
+  const logoutBtn = document.getElementById('logout-btn');
+  if(logoutBtn){
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('liveeToken');
+      localStorage.removeItem('liveeName');
+      location.href = '/alpa/index.html';
     });
   }
 })();
