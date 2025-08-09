@@ -154,3 +154,36 @@ body{
 }
 
 .lv-bottom a:active .ico svg { transform: scale(.96); }
+
+.lv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.lv-header .logo img {
+  height: 28px;
+}
+.lv-header .right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lv-header .user-name {
+  font-size: 14px;
+  color: #333;
+}
+.lv-header .logout-btn {
+  font-size: 13px;
+  background: none;
+  border: 1px solid #ccc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lv-header .login-link {
+  font-size: 14px;
+  color: #6c63ff;
+}
