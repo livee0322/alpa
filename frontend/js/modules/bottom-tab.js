@@ -65,3 +65,6 @@
     });
   }
 })();
+
+const loggedIn = !!localStorage.getItem('liveeToken');
+const myHref = loggedIn ? '/alpa/blank/blank.html?p=mypage' : '/alpa/login.html';
