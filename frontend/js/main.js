@@ -1,15 +1,26 @@
-// 전역 디버그 스위치: localStorage.LIVE_DEBUG='1'
+// 디버그: localStorage.LIVE_DEBUG='1'
 const DEBUG = !!localStorage.getItem('LIVE_DEBUG');
 const log = (...a)=>{ if(DEBUG) console.log('[LIVE_DEBUG]', ...a); };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 사용자 이름 표시 (로그인 후 name 저장한다고 가정)
+  // 헤더 우측 사용자명 (있을 때만)
   const userName = localStorage.getItem('liveeName');
-  if(userName) {
-    const el = document.getElementById('user-info');
-    if(el) el.textContent = userName;
-  }
+  const userEl = document.getElementById('user-info');
+  if(userName && userEl) userEl.textContent = userName;
 
-  // 지금은 API 연동 전이므로 데모 카드 없이 빈상태만 유지
-  log('Home loaded. Modules mounted (banner/top/bottom).');
+  // 터치/클릭 피드백 (리플 비슷한 효과)
+  addTapEffect(document.body);
+
+  // 이후 단계: API 연동 시 스켈레톤 → 데이터로 교체
+  log('Home ready: CSS upgraded, tap effect enabled.');
 });
+
+/** 간단 탭/카드 터치 피드백 */
+function addTapEffect(root){
+  root.addEventListener('click', e=>{
+    const el = e.target.closest('.lv-card, .lv-s-item, .lv-tab, .lv-more');
+    if(!el) return;
+    el.animate([{transform:'scale(1)'},{transform:'scale(.98)'},{transform:'scale(1)'}],
+      {duration:180, easing:'ease-out'});
+  }, {passive:true});
+}
