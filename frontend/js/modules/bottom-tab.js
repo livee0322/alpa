@@ -21,7 +21,7 @@
     recruits:    `${BASE}/blank/blank.html?p=recruits`,
     showhost:    `${BASE}/blank/blank.html?p=showhost`,
     influencer:  `${BASE}/blank/blank.html?p=influencer`,
-    login:       `${BASE}/login.html`,
+    login:       `${BASE}/frontend/login.html`,
     mypage:      `${BASE}/blank/blank.html?p=mypage`
   };
 
