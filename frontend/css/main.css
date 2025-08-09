@@ -125,3 +125,32 @@ body{
   .lv-main{padding:16px 10px 92px}
   .lv-card{min-width:164px}
 }
+
+/* ===== Bottom Tabs — Hourplace-like icons ===== */
+.lv-bottom {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  display:flex; background:#fff; border-top:1px solid var(--line);
+  box-shadow:0 -8px 22px rgba(0,0,0,.06);
+}
+
+.lv-bottom a {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; padding:8px 0 10px; text-decoration:none; color:#9aa3af; font-weight:800; font-size:.78rem;
+}
+
+.lv-bottom .ico {
+  width:26px; height:26px; display:block;
+}
+.lv-bottom .ico svg {
+  width:100%; height:100%;
+  stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  transition:stroke .15s ease, transform .15s ease;
+}
+
+.lv-bottom a.active { color:var(--text); }
+.lv-bottom a.active .ico svg {
+  stroke: var(--pri);             /* 활성 색상 */
+  transform: translateY(-1px);    /* 살짝 들어올라오는 느낌 */
+}
+
+.lv-bottom a:active .ico svg { transform: scale(.96); }
