@@ -7,12 +7,34 @@
   const myHref = loggedIn ? '/alpa/blank/blank.html?p=mypage' : '/alpa/blank/blank.html?p=login';
   const myLabel = loggedIn ? '마이' : '로그인';
 
-  // 라인 아이콘(SVG) (hourplace 느낌)
+  // 라운드 라인(2px) – hourplace 톤
   const icons = {
-    home: `<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 10v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"></path><path d="M9 21v-6h6v6"></path></svg>`,
-    calendar: `<svg viewBox="0 0 24 24"><path d="M16 2v3M8 2v3"></path><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path></svg>`,
-    bookmark: `<svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"></path></svg>`,
-    user: `<svg viewBox="0 0 24 24"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path><path d="M4 21a8 8 0 0 1 16 0"></path></svg>`
+    home: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 10.5 12 3l8.5 7.5" />
+        <path d="M6 10v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8" />
+        <path d="M10 20v-5h4v5" />
+      </svg>`,
+    calendar: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M16 3v3M8 3v3" />
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M3 10h18" />
+      </svg>`,
+    bookmark: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6.5 4h11a1 1 0 0 1 1 1v15l-6.5-3.8L5.5 20V5a1 1 0 0 1 1-1Z" />
+      </svg>`,
+    user: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 13.5a5 5 0 1 0-5-5 5 5 0 0 0 5 5Z" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+      </svg>`,
+    search: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="M21 21l-3.5-3.5" />
+      </svg>`
   };
 
   const items = [
