@@ -23,7 +23,7 @@
       <button class="logout-btn">로그아웃</button>
     `;
   } else {
-    html += `<a href="/alpa/login.html" class="login-link">로그인</a>`;
+    html += `<a href="/alpa/frontend/login.html" class="login-link">로그인</a>`;
   }
 
   html += `
