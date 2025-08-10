@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Livee - 로그인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="/alpa/frontend/css/main.css?v=1.0" rel="stylesheet" />
+</head>
+<body data-page="my">
+  <header class="lv-header"></header>
+
+  <main class="lg-wrap">
+    <h1 class="lg-title">로그인</h1>
+    <form id="loginForm" class="lg-form" novalidate>
+      <label class="lg-label">이메일</label>
+      <input type="email" name="email" placeholder="example@livee.co" required>
+      <label class="lg-label">비밀번호</label>
+      <input type="password" name="password" placeholder="비밀번호" minlength="6" required>
+      <button type="submit" class="lg-submit">로그인</button>
+      <p class="lg-error" id="loginError" hidden></p>
+    </form>
+    <div class="lg-links">
+      <a href="/alpa/signup.html">회원가입</a>
+    </div>
+  </main>
+
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+
+  <script src="/alpa/frontend/js/modules/header.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/login.js?v=1.0"></script>
+</body>
+</html>
