@@ -1,26 +1,55 @@
-// 디버그: localStorage.LIVE_DEBUG='1'
-const DEBUG = !!localStorage.getItem('LIVE_DEBUG');
-const log = (...a)=>{ if(DEBUG) console.log('[LIVE_DEBUG]', ...a); };
+// 공통 fetch 래퍼
+async function api(path, opts={}) {
+  const { API_BASE } = window.LIVEE_CONFIG;
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers||{}) };
+  const t = localStorage.getItem('liveeToken');
+  if (t) headers.Authorization = `Bearer ${t}`;
+  const res = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+  const data = await res.json().catch(()=>({ ok:false, message:'INVALID_JSON' }));
+  if (res.status === 401) { ['liveeToken','liveeName','liveeTokenExp'].forEach(k=>localStorage.removeItem(k)); location.href='/alpa/login.html'; }
+  if (!res.ok || data.ok===false) throw new Error(data.message||`HTTP_${res.status}`);
+  return data;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 헤더 우측 사용자명 (있을 때만)
-  const userName = localStorage.getItem('liveeName');
-  const userEl = document.getElementById('user-info');
-  if(userName && userEl) userEl.textContent = userName;
-
-  // 터치/클릭 피드백 (리플 비슷한 효과)
-  addTapEffect(document.body);
-
-  // 이후 단계: API 연동 시 스켈레톤 → 데이터로 교체
-  log('Home ready: CSS upgraded, tap effect enabled.');
+  // 홈 섹션 로딩 (필요 시 주석 해제)
+  loadRecruits();
+  loadPortfolios();
+  // loadSchedule(); // 서버 준비되면 사용
 });
 
-/** 간단 탭/카드 터치 피드백 */
-function addTapEffect(root){
-  root.addEventListener('click', e=>{
-    const el = e.target.closest('.lv-card, .lv-s-item, .lv-tab, .lv-more');
-    if(!el) return;
-    el.animate([{transform:'scale(1)'},{transform:'scale(.98)'},{transform:'scale(1)'}],
-      {duration:180, easing:'ease-out'});
-  }, {passive:true});
+async function loadRecruits(){
+  const mount = document.getElementById('recruits');
+  if(!mount) return;
+  try{
+    const r = await api('/recruits?limit=4');
+    if(!r.items || r.items.length===0){ mount.innerHTML = `<div class="lv-empty">등록된 공고가 없습니다</div>`; return; }
+    mount.innerHTML = r.items.map(it => card(it.title, it.imageUrl, `${it.date||''} ${it.location||''}`)).join('');
+  }catch(e){
+    mount.innerHTML = `<div class="lv-empty">공고를 불러오지 못했습니다</div>`;
+  }
 }
+
+async function loadPortfolios(){
+  const mount = document.getElementById('portfolios');
+  if(!mount) return;
+  try{
+    const r = await api('/portfolios?limit=4');
+    if(!r.items || r.items.length===0){ mount.innerHTML = `<div class="lv-empty">등록된 포트폴리오가 없습니다</div>`; return; }
+    mount.innerHTML = r.items.map(it => card(it.title||it.name, it.imageUrl, (it.skills||[]).join(' · '))).join('');
+  }catch(e){
+    mount.innerHTML = `<div class="lv-empty">포트폴리오를 불러오지 못했습니다</div>`;
+  }
+}
+
+function card(title, img, meta){
+  const src = img || 'https://dummyimage.com/600x400/eeeeee/aaaaaa.png&text=Livee';
+  return `
+    <article class="lv-card" onclick="location.href='/alpa/blank/blank.html?p=detail'">
+      <img class="lv-thumb" src="${src}" alt="">
+      <div class="lv-title">${escapeHtml(title||'무제')}</div>
+      <div class="lv-meta">${escapeHtml(meta||'')}</div>
+    </article>
+  `;
+}
+function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
