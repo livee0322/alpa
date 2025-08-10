@@ -4,25 +4,15 @@
   <meta charset="utf-8" />
   <title>Livee - 홈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- CSS: 레포 경로 포함 절대경로 -->
   <link href="/alpa/frontend/css/main.css?v=1.0" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body data-page="home">
-  <!-- 띠배너 -->
   <div id="banner-container"></div>
-
-  <!-- 헤더 -->
-  <header class="lv-header">
-    <img src="/alpa/liveelogo.png" alt="Livee" class="lv-logo" onclick="location.href='/alpa/index.html'">
-    <div id="user-info" class="lv-user"></div>
-  </header>
-
-  <!-- 상단탭 -->
+  <header class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <!-- 메인 -->
   <main class="lv-main">
     <!-- 일정 -->
     <section class="lv-section">
@@ -30,52 +20,42 @@
         <h2>오늘의 라이브 라인업</h2>
         <a class="lv-more" href="/alpa/blank/blank.html?p=schedule">더보기</a>
       </div>
-      <div class="lv-schedule">
+      <div id="schedule" class="lv-schedule">
         <div class="lv-empty">예정된 일정이 없습니다.</div>
       </div>
     </section>
 
-    <!-- 인기 공고 -->
+    <!-- 추천 공고 -->
     <section class="lv-section">
       <div class="lv-section-head">
-        <h2>인기 공고</h2>
-        <a class="lv-more" href="/alpa/blank/blank.html?p=recruits">더보기</a>
+        <h2>추천 공고</h2>
+        <a class="lv-more" href="/alpa/recruits.html">더보기</a>
       </div>
-      <div class="lv-hscroll" id="recruits">
+      <div id="recruits" class="lv-hscroll">
         <div class="lv-empty">등록된 공고가 없습니다</div>
       </div>
     </section>
 
-    <!-- 쇼호스트 포트폴리오 -->
+    <!-- 쇼호스트 미리보기 -->
     <section class="lv-section">
       <div class="lv-section-head">
         <h2>인기 쇼호스트</h2>
-        <a class="lv-more" href="/alpa/blank/blank.html?p=portfolios">더보기</a>
+        <a class="lv-more" href="/alpa/portfolio.html">더보기</a>
       </div>
-      <div class="lv-hscroll" id="portfolios">
+      <div id="portfolios" class="lv-hscroll">
         <div class="lv-empty">등록된 포트폴리오가 없습니다</div>
-      </div>
-    </section>
-
-    <!-- 인플루언서 -->
-    <section class="lv-section">
-      <div class="lv-section-head">
-        <h2>인플루언서</h2>
-        <a class="lv-more" href="/alpa/blank/blank.html?p=influencers">더보기</a>
-      </div>
-      <div class="lv-hscroll" id="influencers">
-        <div class="lv-empty">등록된 인플루언서가 없습니다</div>
       </div>
     </section>
   </main>
 
-  <!-- 하단탭 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- JS 모듈 -->
+  <!-- 공통 모듈 + 설정 + 페이지 JS -->
   <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/header.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
   <script src="/alpa/frontend/js/main.js?v=1.0"></script>
 </body>
 </html>
