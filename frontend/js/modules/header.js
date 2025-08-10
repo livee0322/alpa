@@ -1,31 +1,33 @@
-(function(){
+(() => {
   const mount = document.querySelector('.lv-header');
-  if(!mount) return;
+  if (!mount) return;
 
-  const loggedIn = !!localStorage.getItem('liveeToken');
-  const userName = localStorage.getItem('liveeName') || '';
+  const BASE = '/alpa';
+  const name = localStorage.getItem('liveeName') || '사용자';
+  const token = localStorage.getItem('liveeToken');
+  const exp   = Number(localStorage.getItem('liveeTokenExp') || 0);
+  const loggedIn = !!token && (!exp || exp > Date.now());
 
-  // 로고 + 사용자 정보
   mount.innerHTML = `
-    <img src="/alpa/liveelogo.png" 
-         alt="Livee" 
-         class="lv-logo" 
-         style="height:48px; cursor:pointer;" 
-         onclick="location.href='/alpa/index.html'">
-    <div id="user-info" class="lv-user">
-      ${loggedIn 
-        ? `<span>${userName ? userName + '님' : '마이페이지'}</span> <button id="logout-btn" class="logout-btn">로그아웃</button>`
-        : `<a href="/alpa/login.html">로그인</a>`}
+    <img src="${BASE}/liveelogo.png" alt="Livee" class="lv-logo" onclick="location.href='${BASE}/index.html'">
+    <div class="lv-head-right">
+      ${
+        loggedIn
+        ? `<button class="lv-head-name" type="button" title="마이페이지">${name}님</button>
+           <span class="lv-divider" aria-hidden="true">·</span>
+           <button class="lv-logout" type="button">로그아웃</button>`
+        : `<a class="lv-login-link" href="${BASE}/login.html">로그인</a>`
+      }
     </div>
   `;
 
-  // 로그아웃 버튼 이벤트
-  const logoutBtn = document.getElementById('logout-btn');
-  if(logoutBtn){
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('liveeToken');
-      localStorage.removeItem('liveeName');
-      location.href = '/alpa/index.html';
+  if (loggedIn) {
+    mount.querySelector('.lv-head-name')?.addEventListener('click', () => {
+      location.href = `${BASE}/mypage.html`;
+    });
+    mount.querySelector('.lv-logout')?.addEventListener('click', () => {
+      ['liveeToken','liveeName','liveeRole','liveeTokenExp'].forEach(k => localStorage.removeItem(k));
+      location.reload();
     });
   }
 })();
