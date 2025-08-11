@@ -2,42 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Livee - 로그인</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>로그인 - ALPA</title>
   <link rel="stylesheet" href="/alpa/frontend/css/login.css" />
 </head>
 <body data-page="login">
-  <!-- 공통 모듈 (순서 중요) -->
+  <main class="login-wrap">
+    <h1>로그인</h1>
+    <form id="loginForm">
+      <label>Email
+        <input type="email" id="email" required autocomplete="username" />
+      </label>
+      <label>Password
+        <input type="password" id="password" required autocomplete="current-password" />
+      </label>
+      <button id="loginBtn" type="submit">로그인</button>
+      <p id="loginError" class="error" style="display:none"></p>
+    </form>
+    <p class="hint"><a href="/alpa/signup.html">회원가입</a></p>
+  </main>
+
+  <!-- 공통 모듈 & 설정 (순서 중요) -->
   <script src="/alpa/frontend/js/modules/banner.js"></script>
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script src="/alpa/frontend/js/config.js"></script>
-
-  <main class="lg-wrap">
-    <h1 class="lg-title">로그인</h1>
-
-    <!-- 롤 선택 -->
-    <div class="lg-role" id="rolePills">
-      <button type="button" class="lg-pill" data-role="brand">브랜드(업체)</button>
-      <button type="button" class="lg-pill" data-role="showhost">쇼호스트</button>
-    </div>
-
-    <!-- 폼 -->
-    <form id="loginForm" class="lg-form" autocomplete="on">
-      <label class="lg-label" for="email">이메일</label>
-      <input id="email" name="email" type="email" placeholder="you@example.com" required />
-
-      <label class="lg-label" for="password">비밀번호</label>
-      <input id="password" name="password" type="password" placeholder="********" minlength="4" required />
-
-      <button class="lg-submit" type="submit">로그인</button>
-      <p id="loginError" class="lg-error" hidden>오류</p>
-    </form>
-
-    <p class="lg-links">계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
-  </main>
-
+  <!-- 로그인 로직 -->
   <script src="/alpa/frontend/js/login.js"></script>
 </body>
 </html>
