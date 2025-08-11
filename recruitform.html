@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>공고 등록 - ALPA</title>
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0812" />
+  <link rel="stylesheet" href="/alpa/frontend/css/recruitform.css?v=0812" />
+</head>
+<body data-page="recruits">
+  <!-- 공통 모듈 영역 (사용자 지정 구조) -->
+  <div id="banner-container"></div>
+  <header class="lv-header"></header>
+  <nav id="top-tab-container" class="lv-top"></nav>
+
+  <div class="page">
+    <main class="rf-wrap" aria-labelledby="rfTitle">
+      <h1 id="rfTitle" class="rf-title">공고 등록</h1>
+
+      <!-- 권한/오류 안내 -->
+      <p id="rfNotice" class="rf-notice" hidden></p>
+
+      <!-- 폼 -->
+      <form id="recruitForm" class="rf-form" autocomplete="off">
+        <!-- 썸네일 -->
+        <div class="rf-field">
+          <label for="rfThumb">썸네일</label>
+          <div class="rf-thumb">
+            <img id="rfThumbPreview" alt="썸네일 미리보기" />
+            <input id="rfThumb" type="file" accept="image/*" />
+          </div>
+          <progress id="rfUploadProg" max="100" value="0" hidden></progress>
+          <input type="hidden" id="rfImageUrl" />
+          <small class="rf-help">이미지 선택 시 자동 업로드됩니다.</small>
+        </div>
+
+        <!-- 제목 -->
+        <div class="rf-field">
+          <label for="rfTitleInput">제목 <span class="req">*</span></label>
+          <input id="rfTitleInput" type="text" placeholder="예) 신제품 라이브 방송 쇼호스트 모집" required />
+        </div>
+
+        <!-- 브랜드명 -->
+        <div class="rf-field">
+          <label for="rfBrand">브랜드명</label>
+          <input id="rfBrand" type="text" placeholder="예) ALPA" />
+        </div>
+
+        <!-- 촬영일/시간/장소 -->
+        <div class="rf-grid">
+          <div class="rf-field">
+            <label for="rfDate">촬영일 <span class="req">*</span></label>
+            <input id="rfDate" type="date" required />
+          </div>
+          <div class="rf-field">
+            <label for="rfTime">촬영시간</label>
+            <input id="rfTime" type="time" />
+          </div>
+        </div>
+        <div class="rf-field">
+          <label for="rfLocation">장소</label>
+          <input id="rfLocation" type="text" placeholder="예) 서울 강남구 ○○스튜디오" />
+        </div>
+
+        <!-- 출연료 -->
+        <div class="rf-grid">
+          <div class="rf-field">
+            <label for="rfPay">출연료</label>
+            <input id="rfPay" type="text" inputmode="numeric" placeholder="예) 30만원" />
+          </div>
+          <div class="rf-field rf-checkbox">
+            <input id="rfPayNeg" type="checkbox" />
+            <label for="rfPayNeg">협의 가능</label>
+          </div>
+        </div>
+
+        <!-- 상품군 -->
+        <div class="rf-field">
+          <label for="rfCategory">상품군</label>
+          <input id="rfCategory" type="text" placeholder="예) 뷰티/패션/가전" />
+        </div>
+
+        <!-- 제품설명(= API description 본문) -->
+        <div class="rf-field">
+          <label for="rfDesc">제품설명 <span class="req">*</span></label>
+          <textarea id="rfDesc" rows="7" placeholder="제품/방송 내용, 요구 스킬, 우대사항 등 상세 설명을 적어주세요." required></textarea>
+        </div>
+
+        <div class="rf-actions">
+          <button type="button" class="rf-secondary" id="rfCancelBtn">취소</button>
+          <button type="submit" class="rf-primary" id="rfSubmitBtn">등록하기</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+
+  <!-- 공통 모듈 & 설정 (순서 중요) -->
+  <script src="/alpa/frontend/js/modules/banner.js"></script>
+  <script src="/alpa/frontend/js/modules/header.js"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js?v=0812"></script>
+
+  <!-- 페이지 스크립트 -->
+  <script src="/alpa/frontend/js/recruitform.js?v=0812"></script>
+</body>
+</html>
