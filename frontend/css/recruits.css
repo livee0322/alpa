@@ -1,0 +1,26 @@
+/* 내 공고 (브랜드) */
+.rc-wrap{max-width:720px;margin:0 auto;padding:20px 16px calc(96px + var(--safe-bottom))}
+.rc-title{margin:6px 0 14px;font-size:1.4rem;font-weight:900}
+.rc-notice{margin:10px 2px 14px;padding:12px;border-radius:12px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;font-weight:800}
+
+.rc-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;border:1px dashed #e5e7eb;border-radius:14px;color:#6b7280;font-weight:800}
+.rc-primary{display:inline-block;padding:12px 14px;border-radius:12px;background:var(--pri);color:#fff;font-weight:900}
+
+.rc-list{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:640px){ .rc-list{grid-template-columns:1fr 1fr} }
+
+.rc-card{display:flex;gap:12px;padding:10px;border:1px solid #eef0f3;border-radius:14px;background:#fff;box-shadow:var(--shadow-1)}
+.rc-thumb{width:112px;height:84px;border-radius:12px;object-fit:cover;background:#f3f4f6;flex:0 0 auto}
+.rc-body{flex:1 1 auto;min-width:0}
+.rc-h{display:flex;gap:8px;align-items:center}
+.rc-title-sm{margin:0;font-size:1rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-badges{margin-left:auto;display:flex;gap:6px}
+.rc-badge{padding:4px 8px;border-radius:999px;border:1px solid #e6ebff;background:var(--pri-weak);color:var(--pri);font-weight:800;font-size:.78rem}
+
+.rc-desc{margin:6px 0 8px;color:#6b7280;font-size:.9rem;line-height:1.35;height:2.7em;overflow:hidden}
+.rc-meta{font-size:.85rem;color:#94a3b8}
+
+.rc-actions{display:flex;gap:8px;margin-top:8px}
+.rc-btn{padding:8px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:800;cursor:pointer}
+.rc-btn.primary{background:var(--pri);border-color:var(--pri);color:#fff}
+.rc-btn.danger{border-color:#fecaca;color:#b91c1c;background:#fff}
