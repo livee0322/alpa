@@ -1,33 +1,30 @@
-(() => {
-  const mount = document.querySelector('.lv-header');
-  if (!mount) return;
+<script>
+(function(){
+  const headerHost = document.querySelector('header.lv-header') || (()=>{
+    const h = document.createElement('header');
+    h.className = 'lv-header';
+    document.body.insertBefore(h, document.body.firstChild.nextSibling); // 배너 다음
+    return h;
+  })();
 
-  const BASE = '/alpa';
-  const name = localStorage.getItem('liveeName') || '사용자';
+  // 로그인 상태 텍스트 (임시)
   const token = localStorage.getItem('liveeToken');
-  const exp   = Number(localStorage.getItem('liveeTokenExp') || 0);
-  const loggedIn = !!token && (!exp || exp > Date.now());
+  const userHtml = token 
+    ? `<button id="lv-logout" class="btn-text">로그아웃</button>`
+    : `<a href="/alpa/login.html" class="btn-text">로그인</a>`;
 
-  mount.innerHTML = `
-    <img src="${BASE}/liveelogo.png" alt="Livee" class="lv-logo" onclick="location.href='${BASE}/index.html'">
-    <div class="lv-head-right">
-      ${
-        loggedIn
-        ? `<button class="lv-head-name" type="button" title="마이페이지">${name}님</button>
-           <span class="lv-divider" aria-hidden="true">·</span>
-           <button class="lv-logout" type="button">로그아웃</button>`
-        : `<a class="lv-login-link" href="${BASE}/login.html">로그인</a>`
-      }
-    </div>
+  headerHost.innerHTML = `
+    <img src="/alpa/liveelogo.png" alt="Livee" class="lv-logo" onclick="location.href='/alpa/index.html'">
+    <div class="lv-user">${userHtml}</div>
   `;
 
-  if (loggedIn) {
-    mount.querySelector('.lv-head-name')?.addEventListener('click', () => {
-      location.href = `${BASE}/mypage.html`;
-    });
-    mount.querySelector('.lv-logout')?.addEventListener('click', () => {
-      ['liveeToken','liveeName','liveeRole','liveeTokenExp'].forEach(k => localStorage.removeItem(k));
-      location.reload();
+  // 로그아웃
+  const btn = headerHost.querySelector('#lv-logout');
+  if(btn){
+    btn.addEventListener('click', ()=>{
+      ['liveeToken','liveeName','liveeTokenExp'].forEach(k=>localStorage.removeItem(k));
+      location.href = '/alpa/index.html';
     });
   }
 })();
+</script>
