@@ -2,6 +2,11 @@
   --bg:#fafafa; --card:#fff; --text:#1f1f1f; --muted:#6b7280;
   --primary:#6c5ce7; --primary-weak:#edeaff; --danger:#e11d48;
   --border:#e5e7eb; --radius:16px;
+
+  /* 공통 모듈(고정 헤더/탭) 높이 추정치 - 필요 시 조정 */
+  --header-h:56px;   /* header.js */
+  --top-tabs-h:44px; /* top-tab.js */
+  --bottom-tab-h:64px; /* bottom-tab.js */
 }
 
 *{box-sizing:border-box}
@@ -11,8 +16,13 @@ body{
   font-family: ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
 }
 
+/* 고정 모듈과 겹치지 않도록 상/하 패딩 확보 */
+.page{
+  padding: calc(var(--header-h) + var(--top-tabs-h) + 16px) 16px calc(var(--bottom-tab-h) + 16px);
+}
+
 .login-wrap{
-  max-width:460px; margin:48px auto; padding:24px;
+  max-width:480px; margin:0 auto; padding:24px;
   background:var(--card); border:1px solid var(--border);
   border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,.04);
 }
@@ -45,6 +55,13 @@ input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba
   background:var(--primary); color:#fff; font-weight:700; cursor:pointer;
 }
 .submit:disabled{opacity:.6; cursor:not-allowed}
+
 .error{margin:8px 0 0; color:var(--danger); font-weight:600}
 .hint{margin:16px 0 0; color:var(--muted); font-size:14px}
 .hint a{color:var(--primary); font-weight:600; text-decoration:none}
+
+/* 작은 화면 최적화 */
+@media (max-width:420px){
+  .page{ padding: calc(var(--header-h) + var(--top-tabs-h) + 12px) 12px calc(var(--bottom-tab-h) + 12px); }
+  .login-wrap{ padding:20px; }
+}
