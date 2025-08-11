@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>마이페이지 - ALPA</title>
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811e" />
+  <link rel="stylesheet" href="/alpa/frontend/css/mypage.css?v=0811e" />
+</head>
+<body data-page="mypage">
+  <!-- 공통 모듈 삽입 영역 -->
+  <div id="banner-container" class="lv-banner"></div>
+  <header id="header-container" class="lv-header"></header>
+  <div id="top-tab-container" class="lv-top"></div>
+
+  <!-- 본문 -->
+  <main class="lv-main">
+    <!-- 계정관리 -->
+    <section class="mypage-section" id="sec-account">
+      <h2 class="mypage-title">내 계정 관리</h2>
+      <ul class="mypage-list">
+        <li>
+          <a href="/alpa/blank/blank.html?from=account-edit" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">내 정보 변경</div>
+              <div class="mi-sub" id="mi-account-sub">이름, 프로필</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 브랜드 -->
+    <section class="mypage-section" id="sec-brand" hidden>
+      <h2 class="mypage-title">브랜드</h2>
+      <ul class="mypage-list">
+        <li>
+          <a href="/alpa/recruits.html?mine=1" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">내가 등록한 공고</div>
+              <div class="mi-sub">등록/수정/상태 확인</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 쇼호스트 -->
+    <section class="mypage-section" id="sec-showhost" hidden>
+      <h2 class="mypage-title">쇼호스트</h2>
+      <ul class="mypage-list">
+        <li>
+          <a href="/alpa/portfolio-edit.html" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">내 포트폴리오</div>
+              <div class="mi-sub">작성/수정</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="/alpa/recruits.html?fav=1" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">내가 찜한 공고</div>
+              <div class="mi-sub">저장한 공고 보기</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="/alpa/blank/blank.html?from=offers" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">받은 제안</div>
+              <div class="mi-sub">브랜드로부터 온 컨택</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- 하단 탭 -->
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+
+  <!-- 공통 모듈 & 설정 (순서 중요) -->
+  <script src="/alpa/frontend/js/modules/banner.js"></script>
+  <script src="/alpa/frontend/js/modules/header.js"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js?v=0811e"></script>
+
+  <!-- 페이지 스크립트 -->
+  <script src="/alpa/frontend/js/mypage.js?v=0811e"></script>
+</body>
+</html>
