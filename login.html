@@ -4,32 +4,45 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>로그인 - ALPA</title>
-  <link rel="stylesheet" href="/alpa/frontend/css/login.css" />
+
+  <!-- 경로 주의: 프로젝트를 /alpa 하위에 두셨으면 그대로 사용 -->
+  <!-- 루트에서 열면 /frontend/... 로 바꾸세요 -->
+  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0811" />
 </head>
 <body data-page="login">
   <main class="login-wrap">
-    <h1>로그인</h1>
-    <form id="loginForm">
-      <label>Email
-        <input type="email" id="email" required autocomplete="username" />
+    <h1 class="title">로그인</h1>
+
+    <!-- 역할 선택 -->
+    <div class="pill-group" role="tablist" aria-label="역할 선택">
+      <button type="button" class="pill" data-role="brand"   aria-selected="true">브랜드</button>
+      <button type="button" class="pill" data-role="showhost" aria-selected="false">쇼호스트</button>
+    </div>
+
+    <form id="loginForm" class="form">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" id="email" placeholder="you@example.com" required autocomplete="username" />
       </label>
-      <label>Password
-        <input type="password" id="password" required autocomplete="current-password" />
+      <label class="field">
+        <span>Password</span>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" />
       </label>
-      <button id="loginBtn" type="submit">로그인</button>
-      <p id="loginError" class="error" style="display:none"></p>
+
+      <button id="loginBtn" type="submit" class="submit">로그인</button>
+      <p id="loginError" class="error" hidden></p>
     </form>
-    <p class="hint"><a href="/alpa/signup.html">회원가입</a></p>
+
+    <p class="hint">아직 계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
   </main>
 
   <!-- 공통 모듈 & 설정 (순서 중요) -->
-<script src="/alpa/frontend/js/modules/banner.js"></script>
-<script src="/alpa/frontend/js/modules/header.js"></script>
-<script src="/alpa/frontend/js/modules/top-tab.js"></script>
-<script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-<script src="/alpa/frontend/js/config.js?v=0811"></script> <!-- ✅ 캐시 무효화 -->
-<script src="/alpa/frontend/js/login.js?v=0811"></script> <!-- ✅ 캐시 무효화 -->
+  <script src="/alpa/frontend/js/modules/banner.js"></script>
+  <script src="/alpa/frontend/js/modules/header.js"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js?v=0811"></script>
   <!-- 로그인 로직 -->
-  <script src="/alpa/frontend/js/login.js"></script>
+  <script src="/alpa/frontend/js/login.js?v=0811"></script>
 </body>
 </html>
