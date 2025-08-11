@@ -4,55 +4,72 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>로그인 - ALPA</title>
- <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811c" />
-  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0811b" />
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811c" />
+  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0811c" />
 </head>
 <body data-page="login">
   <!-- 공통 모듈 삽입 영역 -->
-  <div id="banner-container"></div>
-  <div id="header-container"></div>
-  <div id="top-tab-container"></div>
+  <div id="banner-container" class="lv-banner"></div>
+  <header id="header-container" class="lv-header"></header>
+  <div id="top-tab-container" class="lv-top"></div>
 
   <!-- 페이지 콘텐츠 -->
-  <div class="page">
-    <main class="login-wrap">
-      <h1 class="title">로그인</h1>
+  <main class="lg-wrap">
+    <h1 class="lg-title">로그인</h1>
 
-      <!-- 역할 선택 -->
-      <div class="pill-group" role="tablist" aria-label="역할 선택">
-        <button type="button" class="pill" data-role="brand" aria-selected="true">브랜드</button>
-        <button type="button" class="pill" data-role="showhost" aria-selected="false">쇼호스트</button>
-      </div>
+    <!-- 역할 선택 (main.css의 .su-pill 스타일 재사용 원하시면 클래스만 바꿔도 됩니다) -->
+    <div class="su-role" role="tablist" aria-label="역할 선택">
+      <button type="button" class="su-pill" data-role="brand" aria-pressed="true">브랜드</button>
+      <button type="button" class="su-pill" data-role="showhost" aria-pressed="false">쇼호스트</button>
+    </div>
 
-      <form id="loginForm" class="form">
-        <label class="field">
-          <span>Email</span>
-          <input type="email" id="email" placeholder="you@example.com" required autocomplete="username" />
-        </label>
-        <label class="field">
-          <span>Password</span>
-          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" />
-        </label>
+    <form id="loginForm" class="lg-form">
+      <label class="lg-label" for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" required autocomplete="username" />
 
-        <button id="loginBtn" type="submit" class="submit">로그인</button>
-        <p id="loginError" class="error" hidden></p>
-      </form>
+      <label class="lg-label" for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" />
 
-      <p class="hint">아직 계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
-    </main>
-  </div>
+      <button id="loginBtn" type="submit" class="lg-submit">로그인</button>
+      <p id="loginError" class="lg-error" hidden></p>
+    </form>
 
-  <!-- 하단 탭 -->
-  <div id="bottom-tab-container"></div>
+    <p class="lg-links">아직 계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
+  </main>
+
+  <!-- 하단 탭: nav + lv-bottom 클래스 -->
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
   <!-- 공통 모듈 & 설정 (순서 중요) -->
   <script src="/alpa/frontend/js/modules/banner.js"></script>
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-  <script src="/alpa/frontend/js/config.js?v=0811b"></script>
+  <script src="/alpa/frontend/js/config.js?v=0811c"></script>
 
-  <!-- 로그인 로직 (이전 메시지에서 드린 login.js 그대로 사용) -->
-  <script src="/alpa/frontend/js/login.js?v=0811b"></script>
+  <!-- 로그인 로직 -->
+  <script src="/alpa/frontend/js/login.js?v=0811c"></script>
+
+  <!-- 역할 토글 스크립트(선택 저장/복원) -->
+  <script>
+    (() => {
+      const pills = document.querySelectorAll('.su-pill');
+      let role = localStorage.getItem('lastRole') || 'brand';
+      pills.forEach(p => {
+        const active = p.dataset.role === role;
+        p.classList.toggle('active', active);
+        p.setAttribute('aria-pressed', String(active));
+        p.addEventListener('click', () => {
+          role = p.dataset.role;
+          localStorage.setItem('lastRole', role);
+          pills.forEach(x => {
+            const on = x === p;
+            x.classList.toggle('active', on);
+            x.setAttribute('aria-pressed', String(on));
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
