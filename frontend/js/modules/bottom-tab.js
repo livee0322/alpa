@@ -3,7 +3,7 @@
   if(!mount) return;
 
   const loggedIn = !!localStorage.getItem('liveeToken');
-  const myHref = loggedIn ? '/alpa/blank/blank.html?p=mypage' : '/alpa/login.html';
+  const myHref = loggedIn ? '/alpa/mypage.html' : '/alpa/login.html';
   const myLabel = loggedIn ? '마이' : '로그인';
 
   const icons = {
@@ -14,11 +14,11 @@
   };
 
   const items = [
-    { key:'home',       label:'홈',        href:'/alpa/index.html',                         icon:icons.home },
-    { key:'recruits',   label:'공고',      href:'/alpa/blank/blank.html?p=recruits',        icon:icons.calendar },
-    { key:'library',    label:'라이브러리', href:'/alpa/blank/blank.html?p=showhost',       icon:icons.bookmark },
-    { key:'influencer', label:'인플루언서', href:'/alpa/blank/blank.html?p=influencer',     icon:icons.bookmark },
-    { key:'my',         label:myLabel,     href: myHref,                                    icon:icons.user }
+    { key:'home',       label:'홈',    href:'/alpa/index.html',         icon:icons.home },
+    { key:'recruits',   label:'공고',  href:'/alpa/recruitslist.html',  icon:icons.calendar },
+    { key:'library',    label:'라이브러리', href:'/alpa/blank/blank.html?p=showhost', icon:icons.bookmark },
+    { key:'influencer', label:'인플루언서', href:'/alpa/blank/blank.html?p=influencer', icon:icons.bookmark },
+    { key:'my',         label:myLabel, href: myHref,                   icon:icons.user }
   ];
 
   const pageKey = (document.body.dataset.page || '').toLowerCase();
