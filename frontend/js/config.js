@@ -1,4 +1,3 @@
-// 중앙 설정: 경로/백엔드/Cloudinary
 window.LIVEE_CONFIG = {
   BASE_PATH: '/alpa',
   API_BASE: 'https://main-server-ekgr.onrender.com/api/v1',
