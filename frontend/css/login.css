@@ -1,57 +1,106 @@
-/* /frontend/css/login.css — minimal, pretty, and scoped */
-
-/* ===== Layout ===== */
-.lg-wrap{
-  max-width:520px;
-  margin:0 auto;
-  padding:20px 16px calc(96px + var(--safe-bottom));
-  background:#fff;
+/* 로그인 페이지 공통 래퍼 */
+.lg-wrap {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
 }
 
-/* ===== Title ===== */
-.lg-title{
-  margin:8px 0 16px;
-  font-size:1.6rem;
-  font-weight:900;
+/* 제목 */
+.lg-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-strong, #fff);
 }
 
-/* ===== Role pills (reuse global vars) ===== */
-.su-role{display:flex;gap:10px;margin:8px 0 16px}
-.su-pill{
-  flex:1; padding:10px 12px; border-radius:999px;
-  border:1px solid #e5e7eb; background:#f8fafc;
-  font-weight:800; color:#374151; text-align:center; cursor:pointer;
-  transition:transform .05s ease, background .15s ease, border-color .15s ease;
+/* 역할 선택 pill 버튼 */
+.su-role {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
 }
-.su-pill:active{transform:translateY(1px)}
-.su-pill.active{background:#111827;color:#fff;border-color:#111827}
-
-/* ===== Form ===== */
-.lg-form{display:flex;flex-direction:column;gap:12px}
-.lg-label{font-weight:800;font-size:.92rem}
-
-.lg-form input{
-  width:100%; padding:14px 12px; border:1px solid #e5e7eb; border-radius:12px;
-  background:#fff; font-size:1rem; outline:0;
-  transition:border-color .15s ease, box-shadow .15s ease;
-  -webkit-appearance:none; appearance:none;
+.su-pill {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 6px;
+  background: var(--pill-bg, #555);
+  color: var(--pill-text, #fff);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
-.lg-form input:focus{
-  border-color:var(--pri);
-  box-shadow:0 0 0 3px #eef2ff;
+.su-pill.active {
+  background: var(--primary, #6c5ce7);
+  color: #fff;
 }
 
-/* ===== Submit ===== */
-.lg-submit{
-  margin-top:6px; width:100%; padding:14px 12px;
-  border:0; border-radius:14px; background:var(--pri); color:#fff;
-  font-weight:900; font-size:1.05rem; cursor:pointer;
-  transition:transform .05s ease, filter .15s ease, opacity .15s ease;
+/* 폼 스타일 */
+.lg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
-.lg-submit:active{transform:translateY(1px)}
-.lg-submit:disabled{filter:grayscale(.2); opacity:.7; cursor:not-allowed}
+.lg-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted, #ccc);
+}
+.lg-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #444);
+  background: var(--input-bg, #222);
+  color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.lg-form input::placeholder {
+  color: var(--placeholder, #888);
+}
 
-/* ===== Feedback / links ===== */
-.lg-error{margin:6px 2px 0;color:#ef4444;font-weight:700}
-.lg-links{margin:16px 2px 0;color:#6b7280}
-.lg-links a{text-decoration:underline}
+/* 로그인 버튼 */
+.lg-submit {
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary, #6c5ce7);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.lg-submit:hover {
+  background: #5a4bcc;
+}
+
+/* 로그인 중 상태 */
+.lg-submit.loading {
+  background: var(--primary-dark, #4b3fb3);
+  color: #fff;
+}
+
+/* 에러 메시지 */
+.lg-error {
+  color: #ff7675;
+  font-size: 0.85rem;
+  margin-top: -8px;
+}
+
+/* 하단 링크 */
+.lg-links {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+.lg-links a {
+  color: var(--primary, #6c5ce7);
+  font-weight: 600;
+}
