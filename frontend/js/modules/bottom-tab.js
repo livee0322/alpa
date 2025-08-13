@@ -15,7 +15,7 @@
 
   const items = [
     { key:'home',       label:'홈',    href:'/alpa/index.html',         icon:icons.home },
-    { key:'recruits',   label:'공고',  href:'/alpa/recruitslist.html',  icon:icons.calendar },
+    { key:'recruits',   label:'공고',  href:'/alpa/recruitlist.html',  icon:icons.calendar },
     { key:'library',    label:'라이브러리', href:'/alpa/blank/blank.html?p=showhost', icon:icons.bookmark },
     { key:'influencer', label:'인플루언서', href:'/alpa/blank/blank.html?p=influencer', icon:icons.bookmark },
     { key:'my',         label:myLabel, href: myHref,                   icon:icons.user }
