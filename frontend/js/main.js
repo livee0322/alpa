@@ -1,5 +1,4 @@
-<!-- /alpa/frontend/js/main.js -->
-<script>
+// /alpa/frontend/js/main.js
 (function () {
   // ===== CONFIG =====
   const { API_BASE } = window.LIVEE_CONFIG || {};
@@ -11,22 +10,24 @@
 
   const $ = (sel) => document.querySelector(sel);
 
-  // 통합 fetch + 응답 언래핑
+  // 통합 fetch + 응답 언래핑 (items | docs | result 전부 대응)
   async function getJson(path, opts = {}) {
-    const res = await fetch(`${API_BASE}${path}`, opts);
+    const url = `${API_BASE}${path}`;
+    const res = await fetch(url, opts);
     const json = await res.json().catch(() => ({}));
 
-    // 다양한 래핑 대응
     const ok = res.ok && json.ok !== false;
-    const root =
-      (Array.isArray(json) && { items: json }) ||
-      json.items ||
-      json.data?.items ||
-      json.data ||
-      json;
 
-    const items = Array.isArray(root) ? root : (root?.items || []);
-    return { ok, res, json, items };
+    // 후보들 중 '배열'을 첫 번째로 발견하는 값을 items로 사용
+    const candidates = [
+      json,
+      json.items, json.data?.items,
+      json.docs, json.data?.docs,
+      json.result, json.data?.result,
+    ];
+    const arr = candidates.find(v => Array.isArray(v)) || [];
+
+    return { ok, res, json, items: arr };
   }
 
   // 안전한 이미지 선택
@@ -41,7 +42,7 @@
     catch { return ''; }
   }
 
-  // ===== 위젯 1) 오늘의 라이브 라인업 (today ~ +3) =====
+  // ===== 위젯 1) 오늘의 라이브 라인업 =====
   async function loadSchedule() {
     const box = $('#schedule');
     if (!box) return;
@@ -126,9 +127,8 @@
   loadRecruits();
   loadPortfolios();
 
-  // 디버깅 도움용
+  // 디버깅 도움
   if (!API_BASE || !/\/api\//.test(API_BASE)) {
     console.warn('[main.js] LIVEE_CONFIG.API_BASE 확인 필요:', API_BASE);
   }
 })();
-</script>
