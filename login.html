@@ -4,25 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>로그인 - ALPA</title>
-  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811s" />
-  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0816-clean" />
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811s2" />
+  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0816" />
 </head>
 <body data-page="login">
-  <!-- 고정 띠배너만 사용 -->
+  <!-- 항상 배너 사용 -->
   <div id="banner-container" class="lv-banner"></div>
 
-  <!-- 페이지 콘텐츠 -->
+  <!-- 헤더/탭 컨테이너는 그대로 두되, main.css에서 login 페이지에만 숨김 -->
+  <header id="header-container" class="lv-header"></header>
+  <nav id="top-tab-container" class="lv-top"></nav>
+
   <main class="lg-wrap" role="main">
-    <!-- 가운데 로고 -->
     <div class="lg-brand">
       <img src="/alpa/frontend/img/logo.svg" alt="Livee" />
     </div>
 
-    <!-- 카드 -->
     <div class="lg-card">
       <h1 class="lg-title">로그인</h1>
 
-      <!-- 역할 선택 -->
       <div class="role-switch" role="tablist" aria-label="역할 선택">
         <button type="button" class="su-pill" data-role="brand" aria-pressed="true">브랜드</button>
         <button type="button" class="su-pill" data-role="showhost" aria-pressed="false">쇼호스트</button>
@@ -43,11 +43,12 @@
     </div>
   </main>
 
-  <!-- 하단 탭 (원하면 유지) -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- 공통 모듈 & 설정 -->
+  <!-- 공통 모듈 -->
   <script defer src="/alpa/frontend/js/modules/banner.js"></script>
+  <script defer src="/alpa/frontend/js/modules/header.js"></script>
+  <script defer src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script defer src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script defer src="/alpa/frontend/js/config.js?v=0811c"></script>
   <script defer src="/alpa/frontend/js/login.js?v=0811c"></script>
@@ -62,19 +63,6 @@
       });
       apply(role);
       pills.forEach(p=>p.addEventListener('click',()=>{ role=p.dataset.role; localStorage.setItem('lastRole',role); apply(role); }));
-    })();
-
-    // 배너 높이만 반영(헤더/상단탭 없음)
-    (function(){
-      const r = document.documentElement;
-      const measure = () => {
-        const bh = document.getElementById('banner-container')?.offsetHeight || 0;
-        r.style.setProperty('--banner-h', (bh|0)+'px');
-      };
-      requestAnimationFrame(measure);
-      window.addEventListener('load', measure, {once:true});
-      window.addEventListener('resize', ()=>{ clearTimeout(measure._t); measure._t=setTimeout(measure,100); });
-      new MutationObserver(measure).observe(document.getElementById('banner-container'), {childList:true,subtree:true});
     })();
   </script>
 </body>
