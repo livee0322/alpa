@@ -1,106 +1,134 @@
-/* 로그인 페이지 공통 래퍼 */
-.lg-wrap {
-  max-width: 720px;
+/* ==== Page background & container ==== */
+body[data-page="login"] { background:#f7f8fa; }
+
+.lg-wrap{
+  max-width: 560px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 20px 16px calc(120px + var(--safe-bottom));
   box-sizing: border-box;
+}
+
+/* 카드 */
+.lg-card{
+  background:#fff;
+  border:1px solid #eef0f3;
+  border-radius:16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  padding: 22px 18px 20px;
 }
 
 /* 제목 */
-.lg-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--text-strong, #fff);
+.lg-title{
+  margin: 0 0 16px;
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing:-.3px;
+  color:#111827;
 }
 
-/* 역할 선택 pill 버튼 */
-.su-role {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.su-pill {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 6px;
-  background: var(--pill-bg, #555);
-  color: var(--pill-text, #fff);
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.su-pill.active {
-  background: var(--primary, #6c5ce7);
-  color: #fff;
+/* ==== Role segmented control ==== */
+.role-switch{
+  display:flex;
+  gap:0;
+  background:#f1f3f5;
+  border:1px solid #e6e8ec;
+  border-radius:12px;
+  overflow:hidden;
+  margin: 6px 0 18px;
 }
 
-/* 폼 스타일 */
-.lg-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-}
-.lg-label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-muted, #ccc);
-}
-.lg-form input {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border, #444);
-  background: var(--input-bg, #222);
-  color: #fff;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-.lg-form input::placeholder {
-  color: var(--placeholder, #888);
+.su-pill{
+  flex:1 1 0;
+  height:44px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800;
+  color:#374151;
+  background:transparent;
+  border:0;
+  cursor:pointer;
 }
 
-/* 로그인 버튼 */
-.lg-submit {
-  width: 100%;
-  padding: 14px 0;
-  border: none;
-  border-radius: 8px;
-  background: var(--primary, #6c5ce7);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.lg-submit:hover {
-  background: #5a4bcc;
+.su-pill + .su-pill{ border-left:1px solid #e6e8ec; }
+
+.su-pill.active{
+  background:#fff;
+  color:#111827;
 }
 
-/* 로그인 중 상태 */
-.lg-submit.loading {
-  background: var(--primary-dark, #4b3fb3);
-  color: #fff;
+/* ==== Form ==== */
+.lg-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
 
-/* 에러 메시지 */
-.lg-error {
-  color: #ff7675;
-  font-size: 0.85rem;
-  margin-top: -8px;
+.lg-label{
+  font-size:.92rem;
+  font-weight:800;
+  color:#6b7280;
+  margin: 2px 2px 4px;
 }
 
-/* 하단 링크 */
-.lg-links {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #ccc;
+.lg-form input{
+  width:100%;
+  height:48px;
+  padding: 0 14px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  background:#fff;
+  color:#111827;
+  font-size:1rem;
+  box-sizing:border-box;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  -webkit-appearance:none; appearance:none;
 }
-.lg-links a {
-  color: var(--primary, #6c5ce7);
-  font-weight: 600;
+.lg-form input::placeholder{ color:#9aa3af; }
+.lg-form input:focus{
+  border-color: var(--pri);
+  box-shadow: 0 0 0 3px #eef2ff;
 }
+
+/* 비밀번호 필드와 버튼 간격 살짝 */
+.lg-form input[type="password"]{ margin-bottom: 6px; }
+
+/* ==== Submit button ==== */
+.lg-submit{
+  width:100%;
+  height:52px;
+  border:0;
+  border-radius:12px;
+  background: var(--pri);
+  color:#fff;
+  font-size:1.05rem;
+  font-weight:900;
+  cursor:pointer;
+  transition: filter .15s ease, transform .05s ease, background .15s ease;
+}
+.lg-submit:hover{ filter:brightness(.98); }
+.lg-submit:active{ transform: translateY(1px); }
+.lg-submit:disabled{
+  background:#d8dbe2; color:#fff; cursor:not-allowed; filter:none;
+}
+
+/* "로그인 중…" 상태 */
+.lg-submit.loading{
+  background:#4f51d6; /* var(--pri)보다 살짝 진하게 */
+}
+
+/* 오류/링크 */
+.lg-error{
+  margin:8px 2px 0;
+  color:#e11d48;
+  font-weight:700;
+  font-size:.9rem;
+}
+.lg-links{
+  margin: 18px 2px 0;
+  color:#6b7280;
+  text-align:center;
+}
+.lg-links a{ color: var(--pri); font-weight:800; text-decoration: underline; }
+
+/* 모바일 잔스크롤 방지 (상단/하단 고정요소 여백 보정은 main.css가 처리) */
