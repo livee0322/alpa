@@ -1,104 +1,99 @@
-/* ===== 핵심: 상단 3종을 모두 sticky로, top:0 (겹치지 않고 순서대로 쌓임) ===== */
-.lv-banner,
-.lv-header,
-.lv-top{
-  position: sticky;
-  top: 0;                 /* 전부 0이어도, 문서 흐름 순서대로 자연히 아래에 붙습니다 */
-  z-index: 1000;
-  background: #fff;
+/* === 전역 변수 === */
+:root{
+  --bg:#fff; --text:#222; --muted:#6b7280; --line:#eceff1;
+  --pri:#5b5ee6; --pri-weak:#eef2ff; --ok:#10b981;
+  --shadow-1:0 2px 8px rgba(0,0,0,.06); --shadow-2:0 8px 24px rgba(0,0,0,.08);
+
+  /* 안전 영역 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* 기본 높이(모듈이 덮어씀) */
+  --banner-h: 40px;      /* 배너 높이, 없으면 0px로 세팅 가능 */
+  --header-h: 56px;      /* 헤더 */
+  --top-h:    48px;      /* 상단탭 */
+  --stack-gap: 0px;
+
+  /* 상단 스택 총 높이 */
+  --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h) + var(--stack-gap));
 }
 
-/* 배너 스타일 */
-.lv-banner{ background:#5b6cff; color:#fff; }
-.lv-banner .lv-banner-in{
-  padding:10px 16px; line-height:1.3; font-size:14px; font-weight:700;
+/* === 리셋 / 넘침 방지 === */
+html,body{height:100%; max-width:100%; overflow-x:hidden;}
+*{box-sizing:border-box; min-width:0;}
+img,video,canvas{max-width:100%; height:auto; display:block;}
+a{text-decoration:none; color:inherit;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
 
-/* 헤더 */
+/* === 상단 스택(기본: sticky, 모든 페이지 노출) === */
+.lv-banner{position:sticky; top:var(--safe-top); z-index:1100; background:#4f5aed; color:#fff;}
+.lv-banner-in{padding:12px 16px; font-weight:700; font-size:14px; line-height:1.3;}
+
 .lv-header{
-  height:56px; padding:0 16px;
-  border-bottom:1px solid #eef0f3;
+  position:sticky; top:calc(var(--safe-top) + var(--banner-h));
+  z-index:1000; height:var(--header-h);
   display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:0 16px; background:#fff; border-bottom:1px solid #eef0f3;
 }
-.lv-logo{height:28px; display:block}
-.lv-user .btn-text{background:transparent; border:0; font-weight:800; color:#4b5563; cursor:pointer}
-
-/* 상단 탭 (스크롤바 숨김) */
 .lv-top{
-  border-bottom:1px solid #f1f3f5;
+  position:sticky; top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
+  z-index:990; background:#fff; border-bottom:1px solid #f1f3f5; height:var(--top-h);
 }
-.lv-top ul{
-  display:flex; gap:10px; align-items:center;
-  padding:10px 12px; margin:0; list-style:none;
-  overflow-x:auto; overflow-y:hidden;
-  -ms-overflow-style:none; scrollbar-width:none;
-}
-.lv-top ul::-webkit-scrollbar{ display:none; }
-.lv-chip{
-  display:inline-flex; align-items:center; height:34px; padding:0 14px; border-radius:999px;
-  border:1px solid #e6ebff; background:#eef2ff; color:#5b5ee6;
-  font-weight:800; font-size:.9rem; white-space:nowrap;
-}
+.lv-top ul{display:flex; gap:10px; padding:10px 12px; margin:0; list-style:none; overflow-x:auto; overflow-y:hidden;}
+.lv-top ul::-webkit-scrollbar{display:none;}
+.lv-chip{display:inline-flex; align-items:center; height:34px; padding:0 14px; border-radius:999px;
+  border:1px solid #e6ebff; background:var(--pri-weak); color:var(--pri); font-weight:800; white-space:nowrap;}
 .lv-chip.active{background:#111827; color:#fff; border-color:#111827}
 
-/* 본문: 하단 탭에 가리지 않도록 패딩만 확보하면 됩니다 */
-.lv-main{
-  max-width:720px; margin:0 auto;
-  padding:16px 14px calc(16px + 72px + env(safe-area-inset-bottom,0px)); /* 72px = 하단탭 높이 */
+/* === 본문 컨테이너(상단 스택만큼 여백) === */
+.lv-main,.page{
+  width:100%; max-width:720px; margin:0 auto;
+  padding:16px 14px calc(92px + var(--safe-bottom));
+  margin-top:calc(var(--stack-h) + 8px);
 }
 
-/* 섹션/카드 기존 스타일 (필요한 부분만) */
+/* === 섹션/카드 공통 === */
 .lv-section{margin-top:18px}
 .lv-section-head{display:flex; align-items:center; gap:.6em; margin:4px 0 10px}
 .lv-section-head h2{margin:0; font-size:1.18rem; font-weight:900}
-.lv-more{margin-left:auto; background:#eef2ff; color:#5b5ee6;
+.lv-more{margin-left:auto; background:var(--pri-weak); color:var(--pri);
   padding:6px 12px; border-radius:999px; border:1px solid #e6ebff; font-weight:800}
 
 .lv-hscroll{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory}
-.lv-hscroll::-webkit-scrollbar{height:6px}
-.lv-hscroll::-webkit-scrollbar-thumb{background:#e5e7eb; border-radius:999px}
-.lv-card{min-width:176px; background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.06);
-  padding:10px; scroll-snap-align:start; border:1px solid #f3f4f6; cursor:pointer;
-  transition:transform .18s ease, box-shadow .18s ease}
-.lv-card:hover{transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.lv-hscroll > *{flex:0 0 auto; min-width:0;}
+.lv-card{min-width:176px; background:#fff; border-radius:16px; box-shadow:var(--shadow-1);
+  padding:10px; scroll-snap-align:start; border:1px solid #f3f4f6; transition:transform .18s ease, box-shadow .18s ease}
+.lv-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-2)}
 .lv-thumb{width:100%; height:112px; border-radius:12px; background:#eee; object-fit:cover}
 .lv-title{margin:8px 2px 0; font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.lv-meta{margin:4px 2px 0; color:#6b7280; font-size:.86rem}
+.lv-meta{margin:4px 2px 0; color:var(--muted); font-size:.86rem}
 
-/* 일정 리스트 */
 .lv-schedule{display:flex; flex-direction:column; gap:10px}
-.lv-s-item{display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1f3f5;
-  border-radius:14px; padding:10px 12px; box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.lv-s-item{display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1f3f5; border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-1)}
 .lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
-.lv-s-body{flex:1 1 auto; min-width:0}
 .lv-s-title{font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.lv-s-meta{font-size:.86rem; color:#6b7280; margin-top:2px}
+.lv-s-meta{font-size:.86rem; color:var(--muted); margin-top:2px}
+
 .lv-empty{padding:14px 12px; border:1px dashed #e5e7eb; border-radius:12px; color:#9aa3af; font-weight:700}
 
-/* 하단 탭(고정) */
-.lv-bottom{
-  position:fixed; left:0; right:0; bottom:0; z-index:900; display:flex; background:#fff;
-  border-top:1px solid #eceff1; box-shadow:0 -8px 22px rgba(0,0,0,.06);
-  height:72px;
-}
+/* === 하단 탭 === */
+.lv-bottom{position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; background:#fff;
+  border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(0,0,0,.06)}
 .lv-bottom a{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
   padding:8px 0 10px; color:#9aa3af; font-weight:800; font-size:.78rem}
 .lv-bottom .ico{width:26px; height:26px}
 .lv-bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
-.lv-bottom a.active{color:#1f2937}
-.lv-bottom a.active .ico svg{stroke:#5b5ee6; transform:translateY(-1px)}
+.lv-bottom a.active{color:var(--text)}
+.lv-bottom a.active .ico svg{stroke:var(--pri); transform:translateY(-1px)}
 
-/* ---- horizontal overflow guard ---- */
-html, body { width:100%; max-width:100%; overflow-x:hidden; }
-
-/* 고정 헤더 스택은 좌우 완전 고정 */
-#banner-container, #header-container, #top-tab-container, .lv-bottom {
-  position:fixed; left:0; right:0;
-}
-
-/* 각 고정바 내부 컨텐츠는 중앙 720px 컨테이너로 제한 */
-.lv-banner > .lv-banner-in,
-.lv-header > .lv-header-in,
-.lv-top > .lv-top-in {
-  max-width:720px; margin:0 auto; padding:0 16px;
+/* === 로그인 페이지 전용 예외: 헤더/탭 숨기고 스택 다시 계산 === */
+body[data-page="login"] .lv-header,
+body[data-page="login"] .lv-top{ display:none !important; }
+body[data-page="login"] .lv-main,
+body[data-page="login"] .page{
+  margin-top: calc(var(--banner-h) + 8px) !important;
 }
