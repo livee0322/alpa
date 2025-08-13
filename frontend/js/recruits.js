@@ -8,7 +8,6 @@
   const emptyEl = $('#rcEmpty');
   const notice  = $('#rcNotice');
 
-  // 공통 fetch 래퍼
   async function api(path, opts = {}) {
     const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -31,7 +30,6 @@
   }
 
   function cloudThumb(url) {
-    // 썸네일 변환 파라미터 삽입(c_fill…)
     if (!url) return '';
     try {
       const [base, rest] = url.split('/upload/');
@@ -39,19 +37,27 @@
     } catch { return url; }
   }
 
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
   function cardTemplate(item) {
-    const img = cloudThumb(item.imageUrl || '');
-    const date = item.date ? `일정: ${item.date}${item.time ? ' ' + item.time : ''}` : '';
+    const img = cloudThumb(item.imageUrl || item.thumbnailUrl || '');
+    const dateStr = item.date ? new Date(item.date).toLocaleDateString('ko-KR') : '';
+    const timeStr = item.time ? ` ${item.time}` : '';
+    const date = item.date ? `일정: ${dateStr}${timeStr}` : '';
     const applicants = typeof item.applicantsCount === 'number'
-      ? `지원자 ${item.applicantsCount}명`
-      : '지원자 현황';
+      ? `지원자 ${item.applicantsCount}명` : '지원자 현황';
 
     return `
       <article class="rc-card" data-id="${item.id || item._id}">
-        <img class="rc-thumb" src="${img}" alt="" onerror="this.src='${BASE_PATH}/frontend/img/placeholder-16x9.png'">
+        <img class="rc-thumb" src="${img}" alt=""
+             onerror="this.src='${BASE_PATH}/frontend/img/placeholder-16x9.png'">
         <div class="rc-body">
           <div class="rc-h">
-            <h3 class="rc-title-sm" title="${escapeHtml(item.title || '')}">${escapeHtml(item.title || '')}</h3>
+            <h3 class="rc-title-sm" title="${escapeHtml(item.title || '')}">
+              ${escapeHtml(item.title || '')}
+            </h3>
             <div class="rc-badges">
               <span class="rc-badge">${applicants}</span>
             </div>
@@ -67,17 +73,9 @@
     `;
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
   async function loadMyRecruits() {
-    // 권한 체크
-    if (!token) {
-      location.href = `${BASE_PATH}/login.html`;
-      return;
-    }
-    if (role !== 'brand') {
+    if (!token) { location.href = `${BASE_PATH}/login.html`; return; }
+    if (role !== 'brand' && role !== 'admin') {
       notice.textContent = '브랜드 계정만 공고를 관리할 수 있습니다.';
       notice.hidden = false;
       emptyEl.hidden = true;
@@ -86,16 +84,17 @@
     }
 
     try {
-      const data = await api('/recruits/mine'); // { ok:true, items:[...] } 형태를 기대
+      const data = await api('/recruits/mine'); // { ok:true, items:[...] }
       const items = data.items || data.data || [];
       if (!items.length) {
-        emptyEl.hidden = false;
+        emptyEl.hidden = false;      // 빈 문구 보이기
         listEl.hidden = true;
+        listEl.innerHTML = '';
       } else {
+        emptyEl.hidden = true;       // ✅ 아이템 있으면 빈 문구 숨김
         listEl.innerHTML = items.map(cardTemplate).join('');
-        hookActions();
         listEl.hidden = false;
-        emptyEl.hidden = true;
+        hookActions();               // 액션 바인딩
       }
     } catch (e) {
       notice.textContent = `내 공고를 불러올 수 없습니다. ${e.message || ''}`;
@@ -108,7 +107,8 @@
   }
 
   function hookActions() {
-    listEl.addEventListener('click', async (e) => {
+    // 이벤트 중복 방지 위해 한 번만 바인딩
+    listEl.onclick = async (e) => {
       const btn = e.target.closest('[data-act]');
       if (!btn) return;
       const card = btn.closest('.rc-card');
@@ -117,7 +117,9 @@
 
       if (btn.dataset.act === 'edit') {
         location.href = `${BASE_PATH}/recruitform.html?edit=${encodeURIComponent(id)}`;
+        return;
       }
+
       if (btn.dataset.act === 'delete') {
         if (!confirm('이 공고를 삭제할까요?')) return;
         try {
@@ -131,9 +133,8 @@
           alert(err.message || '삭제에 실패했습니다.');
         }
       }
-    }, { once: true }); // 최초 바인딩 1회 (리렌더 시 다시 호출됨)
+    };
   }
 
-  // 초기 로드
   document.addEventListener('DOMContentLoaded', loadMyRecruits);
 })();
