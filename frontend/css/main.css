@@ -1,143 +1,89 @@
-/* ========= Design Tokens ========= */
-:root{
-  /* colors */
-  --bg:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-  --pri:#5b5ee6; --pri-weak:#eef2ff; --ok:#10b981; --danger:#ef4444;
-
-  /* radius / shadow / spacing scale */
-  --r-sm:10px; --r-md:14px; --r-lg:16px; --r-pill:999px;
-  --shadow-1:0 2px 10px rgba(0,0,0,.06);
-  --shadow-2:0 10px 24px rgba(0,0,0,.10);
-  --space: 8px;            /* 1x = 8px rhythm */
-
-  /* safe areas */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-
-  /* heights (필요하면 숫자만 바꾸면 됨) */
-  --banner-h: 40px;    /* 배너가 없다면 0으로 */
-  --header-h: 56px;
-  --tabs-h:   48px;
-  --bottom-h: 72px;    /* 하단 탭 높이 */
-
-  /* typography */
-  --font: Pretendard, Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', sans-serif;
-  --fs-xxl: 1.60rem;   /* 제목 */
-  --fs-xl:  1.28rem;
-  --fs-lg:  1.05rem;
-  --fs-md:  0.95rem;
-  --fs-sm:  0.86rem;
+/* ===== 핵심: 상단 3종을 모두 sticky로, top:0 (겹치지 않고 순서대로 쌓임) ===== */
+.lv-banner,
+.lv-header,
+.lv-top{
+  position: sticky;
+  top: 0;                 /* 전부 0이어도, 문서 흐름 순서대로 자연히 아래에 붙습니다 */
+  z-index: 1000;
+  background: #fff;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; background:var(--bg); color:var(--text); font-family:var(--font);
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+/* 배너 스타일 */
+.lv-banner{ background:#5b6cff; color:#fff; }
+.lv-banner .lv-banner-in{
+  padding:10px 16px; line-height:1.3; font-size:14px; font-weight:700;
 }
-a{color:inherit; text-decoration:none}
 
-/* ========= Top Stack (Sticky, no JS) ========= */
-.app-banner{
-  position:sticky; top:var(--safe-top); z-index:50;
-  height:var(--banner-h); display:flex; align-items:center;
-  background:#5b6cff; color:#fff;
+/* 헤더 */
+.lv-header{
+  height:56px; padding:0 16px;
+  border-bottom:1px solid #eef0f3;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
 }
-.app-banner .inner{width:100%; max-width:720px; margin:0 auto; padding:0 calc(var(--space)*2); font-weight:700; font-size:var(--fs-sm)}
+.lv-logo{height:28px; display:block}
+.lv-user .btn-text{background:transparent; border:0; font-weight:800; color:#4b5563; cursor:pointer}
 
-.app-header{
-  position:sticky; top:calc(var(--safe-top) + var(--banner-h)); z-index:48;
-  height:var(--header-h); display:flex; align-items:center; justify-content:space-between;
-  background:#fff; border-bottom:1px solid var(--line);
-  padding:0 calc(var(--space)*2);
+/* 상단 탭 (스크롤바 숨김) */
+.lv-top{
+  border-bottom:1px solid #f1f3f5;
 }
-.app-header .logo{height:28px; display:block}
-.app-header .btn{background:transparent; border:0; font-weight:800; color:#374151; cursor:pointer}
+.lv-top ul{
+  display:flex; gap:10px; align-items:center;
+  padding:10px 12px; margin:0; list-style:none;
+  overflow-x:auto; overflow-y:hidden;
+  -ms-overflow-style:none; scrollbar-width:none;
+}
+.lv-top ul::-webkit-scrollbar{ display:none; }
+.lv-chip{
+  display:inline-flex; align-items:center; height:34px; padding:0 14px; border-radius:999px;
+  border:1px solid #e6ebff; background:#eef2ff; color:#5b5ee6;
+  font-weight:800; font-size:.9rem; white-space:nowrap;
+}
+.lv-chip.active{background:#111827; color:#fff; border-color:#111827}
 
-.app-tabs{
-  position:sticky; top:calc(var(--safe-top) + var(--banner-h) + var(--header-h)); z-index:46;
-  height:var(--tabs-h); background:#fff; border-bottom:1px solid var(--line);
-}
-.app-tabs ul{
-  display:flex; gap:10px; align-items:center; height:100%;
-  overflow-x:auto; overflow-y:hidden; padding:0 calc(var(--space)*1.5);
-  margin:0; list-style:none; -ms-overflow-style:none; scrollbar-width:none;
-}
-.app-tabs ul::-webkit-scrollbar{display:none}
-.chip{
-  display:inline-flex; align-items:center; height:34px; padding:0 14px;
-  border:1px solid #e6ebff; background:var(--pri-weak); color:var(--pri);
-  border-radius:var(--r-pill); font-weight:800; font-size:var(--fs-md); white-space:nowrap;
-}
-.chip.active{background:#111827; color:#fff; border-color:#111827}
-
-/* ========= Main Container ========= */
-.container{
+/* 본문: 하단 탭에 가리지 않도록 패딩만 확보하면 됩니다 */
+.lv-main{
   max-width:720px; margin:0 auto;
-  padding: calc(var(--space)*2) calc(var(--space)*1.75) calc(var(--bottom-h) + var(--safe-bottom) + var(--space)*2);
-}
-.section{margin-top:calc(var(--space)*2)}
-.section-head{display:flex; align-items:center; gap:.6em; margin:4px 0 10px}
-.section-head h2{margin:0; font-size:var(--fs-xl); font-weight:900}
-.more{
-  margin-left:auto; padding:6px 12px; border-radius:var(--r-pill);
-  border:1px solid #e6ebff; background:var(--pri-weak); color:var(--pri); font-weight:800; font-size:var(--fs-sm)
+  padding:16px 14px calc(16px + 72px + env(safe-area-inset-bottom,0px)); /* 72px = 하단탭 높이 */
 }
 
-/* ========= Cards ========= */
-.hscroll{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory}
-.hscroll::-webkit-scrollbar{height:6px}
-.hscroll::-webkit-scrollbar-thumb{background:#e5e7eb; border-radius:999px}
+/* 섹션/카드 기존 스타일 (필요한 부분만) */
+.lv-section{margin-top:18px}
+.lv-section-head{display:flex; align-items:center; gap:.6em; margin:4px 0 10px}
+.lv-section-head h2{margin:0; font-size:1.18rem; font-weight:900}
+.lv-more{margin-left:auto; background:#eef2ff; color:#5b5ee6;
+  padding:6px 12px; border-radius:999px; border:1px solid #e6ebff; font-weight:800}
 
-.card{
-  min-width:176px; background:#fff; border-radius:var(--r-lg); border:1px solid #f3f4f6;
-  box-shadow:var(--shadow-1); padding:10px; scroll-snap-align:start;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.card:hover{transform:translateY(-3px); box-shadow:var(--shadow-2)}
-.card .thumb{width:100%; height:112px; border-radius:var(--r-md); background:#eee; object-fit:cover}
-.card .title{margin:8px 2px 0; font-weight:900; font-size:var(--fs-md); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.card .meta{margin:4px 2px 0; color:var(--muted); font-size:var(--fs-sm)}
+.lv-hscroll{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory}
+.lv-hscroll::-webkit-scrollbar{height:6px}
+.lv-hscroll::-webkit-scrollbar-thumb{background:#e5e7eb; border-radius:999px}
+.lv-card{min-width:176px; background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  padding:10px; scroll-snap-align:start; border:1px solid #f3f4f6; cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease}
+.lv-card:hover{transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.lv-thumb{width:100%; height:112px; border-radius:12px; background:#eee; object-fit:cover}
+.lv-title{margin:8px 2px 0; font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lv-meta{margin:4px 2px 0; color:#6b7280; font-size:.86rem}
 
-/* ========= Schedule list ========= */
-.sched{display:flex; flex-direction:column; gap:10px}
-.sched-item{
-  display:flex; align-items:center; gap:12px; padding:10px 12px;
-  background:#fff; border:1px solid #f1f3f5; border-radius:var(--r-lg); box-shadow:var(--shadow-1)
-}
-.sched-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
-.sched-title{font-weight:900; font-size:var(--fs-md); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.sched-meta{font-size:var(--fs-sm); color:var(--muted); margin-top:2px}
+/* 일정 리스트 */
+.lv-schedule{display:flex; flex-direction:column; gap:10px}
+.lv-s-item{display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1f3f5;
+  border-radius:14px; padding:10px 12px; box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
+.lv-s-body{flex:1 1 auto; min-width:0}
+.lv-s-title{font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lv-s-meta{font-size:.86rem; color:#6b7280; margin-top:2px}
+.lv-empty{padding:14px 12px; border:1px dashed #e5e7eb; border-radius:12px; color:#9aa3af; font-weight:700}
 
-.empty{
-  padding:14px 12px; border:1px dashed #e5e7eb; border-radius:var(--r-md);
-  color:#9aa3af; font-weight:700; text-align:left;
+/* 하단 탭(고정) */
+.lv-bottom{
+  position:fixed; left:0; right:0; bottom:0; z-index:900; display:flex; background:#fff;
+  border-top:1px solid #eceff1; box-shadow:0 -8px 22px rgba(0,0,0,.06);
+  height:72px;
 }
-
-/* ========= Forms (공통) ========= */
-.input{width:100%; padding:14px 12px; border:1px solid #e5e7eb; border-radius:var(--r-md); background:#fff; font-size:1rem}
-.input:focus{outline:none; border-color:var(--pri); box-shadow:0 0 0 3px #eef2ff}
-.label{font-weight:800; font-size:var(--fs-sm); display:block; margin:6px 0 6px}
-.btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  padding:12px; border-radius:var(--r-lg); border:1px solid transparent; font-weight:900; cursor:pointer;
-}
-.btn.pri{background:var(--pri); color:#fff}
-.btn.ghost{background:#fff; border-color:#e5e7eb}
-.btn.danger{background:#fff; border-color:#fecaca; color:#b91c1c}
-
-/* ========= Bottom Tabs ========= */
-.bottom{
-  position:fixed; left:0; right:0; bottom:0; z-index:40; background:#fff;
-  display:flex; border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(0,0,0,.06);
-  height:var(--bottom-h);
-}
-.bottom a{
-  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-  color:#9aa3af; font-weight:800; font-size:var(--fs-sm)
-}
-.bottom .ico{width:26px; height:26px}
-.bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
-  transition:stroke .15s ease, transform .15s ease}
-.bottom a.active{color:var(--text)}
-.bottom a.active .ico svg{stroke:var(--pri); transform:translateY(-1px)}
+.lv-bottom a{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  padding:8px 0 10px; color:#9aa3af; font-weight:800; font-size:.78rem}
+.lv-bottom .ico{width:26px; height:26px}
+.lv-bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
+.lv-bottom a.active{color:#1f2937}
+.lv-bottom a.active .ico svg{stroke:#5b5ee6; transform:translateY(-1px)}
