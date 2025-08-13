@@ -97,3 +97,85 @@ body[data-page="login"] .lv-main,
 body[data-page="login"] .page{
   margin-top: calc(var(--banner-h) + 8px) !important;
 }
+
+/* ===== HOTFIX: header/top tabs robust by container IDs ===== */
+
+/* Header (id 기반) */
+#header-container{
+  position:sticky;
+  top:calc(var(--safe-top) + var(--banner-h));
+  z-index:1000;
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px;
+  background:#fff;
+  border-bottom:1px solid #eef0f3;
+}
+#header-container > *{flex-shrink:0;}
+#header-container img{height:28px; width:auto; display:block; max-width:100%;}
+#header-container a,
+#header-container button{
+  white-space:nowrap;
+  font-weight:800;
+  color:#4b5563;
+  background:none;
+  border:0;
+  padding:6px 8px;
+}
+
+/* Top tabs (id 기반) */
+#top-tab-container{
+  position:sticky;
+  top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
+  z-index:990;
+  background:#fff;
+  border-bottom:1px solid #f1f3f5;
+  height:var(--top-h);
+}
+
+/* 모듈이 <ul>을 렌더한다고 가정 + fallback */
+#top-tab-container > ul{
+  display:flex;
+  gap:10px;
+  padding:10px 12px;
+  margin:0;
+  list-style:none;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -ms-overflow-style:none;
+  scrollbar-width:none;
+}
+#top-tab-container > ul::-webkit-scrollbar{display:none;}
+
+/* 칩 스타일: 클래스가 없을 때도 예쁘게 보이도록 anchor/button에 기본 적용 */
+#top-tab-container a,
+#top-tab-container button{
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  padding:0 14px;
+  border-radius:999px;
+  border:1px solid #e6ebff;
+  background:var(--pri-weak);
+  color:var(--pri);
+  font-weight:800;
+  font-size:.9rem;
+  white-space:nowrap;
+}
+#top-tab-container .active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+/* 본문 여백(안전) — 혹시 계산이 어긋나는 페이지를 위해 한 번 더 보강 */
+.lv-main,.page{
+  margin-top:calc(var(--banner-h) + var(--header-h) + var(--top-h) + 8px);
+}
+
+/* 절대 가로 넘침 방지(문제 소스가 있어도 최대 피해 최소화) */
+html,body{max-width:100%; overflow-x:hidden;}
+#header-container, #top-tab-container, .lv-main, .page{max-width:100%;}
