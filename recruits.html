@@ -8,12 +8,10 @@
   <link rel="stylesheet" href="/alpa/frontend/css/recruits.css?v=0811" />
 </head>
 <body data-page="recruits">
-  <!-- ✅ 공통 모듈 삽입 영역 (고정) -->
   <div id="banner-container"></div>
   <header class="lv-header" id="header-container"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <!-- 페이지 콘텐츠 -->
   <div class="page">
     <main class="rc-wrap">
       <h1 class="rc-title">내가 등록한 공고</h1>
@@ -21,28 +19,29 @@
       <!-- 권한/오류 -->
       <p id="rcNotice" class="rc-notice" hidden></p>
 
-      <!-- 빈 상태 -->
+      <!-- 빈 상태 (아이템 없을 때만 표시) -->
       <section id="rcEmpty" class="rc-empty" hidden>
         <p>현재 등록한 공고가 없습니다.</p>
-        <a class="rc-primary" href="/alpa/recruitform.html">등록하기</a>
       </section>
 
       <!-- 리스트 -->
       <section id="rcList" class="rc-list" hidden aria-live="polite"></section>
+
+      <!-- 등록 버튼: 리스트와 별도, 항상 가장 아래 -->
+      <section class="rc-cta">
+        <a class="rc-primary" href="/alpa/recruitform.html" id="rcCreateBtn">등록하기</a>
+      </section>
     </main>
   </div>
 
-  <!-- ✅ 하단 탭은 nav 고정 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- 공통 모듈 & 설정 (순서 중요) -->
   <script src="/alpa/frontend/js/modules/banner.js"></script>
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script src="/alpa/frontend/js/config.js?v=0811"></script>
 
-  <!-- 페이지 스크립트 -->
-  <script src="/alpa/frontend/js/recruits.js?v=0811"></script>
+  <script src="/alpa/frontend/js/recruits.js?v=0813a"></script>
 </body>
 </html>
