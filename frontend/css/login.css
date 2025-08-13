@@ -1,16 +1,14 @@
-/* 페이지 배경 */
+/* 로그인 페이지 톤 */
 body[data-page="login"]{ background:#f7f8fa; }
 
-/* 컨테이너: 배너 높이만큼 위 여백 */
+/* 컨텐츠: 배너 만큼만 위 여백 */
 .lg-wrap{
-  max-width:560px; width:100%;
-  margin: calc((var(--banner-h,40px)) + 12px) auto 0;
-  padding: 0 16px calc(120px + var(--safe-bottom));
-  box-sizing:border-box;
+  width:100%; max-width:560px; margin:calc(var(--banner-h) + 12px) auto 0;
+  padding:0 16px calc(120px + var(--safe-bottom));
 }
 
-/* 상단 로고 */
-.lg-brand{ display:flex; justify-content:center; margin: 4px 0 14px; }
+/* 로고(원하면 숨김) */
+.lg-brand{ display:flex; justify-content:center; margin:6px 0 16px; }
 .lg-brand img{ height:38px; width:auto; }
 
 /* 카드 */
@@ -21,17 +19,11 @@ body[data-page="login"]{ background:#f7f8fa; }
 }
 
 /* 제목 */
-.lg-title{ margin:0 0 16px; font-size:1.7rem; font-weight:900; letter-spacing:-.3px; color:#111827; }
+.lg-title{ margin:0 0 16px; font-size:1.7rem; font-weight:900; color:#111827; }
 
 /* 역할 스위치 */
-.role-switch{
-  display:flex; background:#f1f3f5; border:1px solid #e6e8ec; border-radius:12px; overflow:hidden;
-  margin:6px 0 18px;
-}
-.su-pill{
-  flex:1; height:44px; display:flex; align-items:center; justify-content:center;
-  font-weight:800; color:#374151; background:transparent; border:0; cursor:pointer;
-}
+.role-switch{ display:flex; background:#f1f3f5; border:1px solid #e6e8ec; border-radius:12px; overflow:hidden; margin:6px 0 18px; }
+.su-pill{ flex:1; height:44px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#374151; background:transparent; border:0; cursor:pointer; }
 .su-pill + .su-pill{ border-left:1px solid #e6e8ec; }
 .su-pill.active{ background:#fff; color:#111827; }
 
@@ -40,19 +32,19 @@ body[data-page="login"]{ background:#f7f8fa; }
 .lg-label{ font-size:.92rem; font-weight:800; color:#6b7280; margin:2px 2px 4px; }
 
 .lg-form input{
-  width:100%; height:48px; padding:0 14px; box-sizing:border-box;
+  width:100%; height:48px; padding:0 14px;
   border:1px solid #e5e7eb; border-radius:12px; background:#fff; color:#111827; font-size:1rem;
   outline:0; transition:border-color .15s, box-shadow .15s; -webkit-appearance:none; appearance:none;
 }
 .lg-form input::placeholder{ color:#9aa3af; }
 .lg-form input:focus{ border-color:var(--pri); box-shadow:0 0 0 3px #eef2ff; }
 
-/* 버튼 */
+/* 버튼(전폭, 대비 확실) */
 .lg-submit{
   width:100%; height:52px; margin-top:6px;
   border:0; border-radius:12px; background:var(--pri); color:#fff;
   font-size:1.05rem; font-weight:900; cursor:pointer;
-  transition:filter .15s, transform .05s, background .15s;
+  transition:filter .15s, transform .05s;
 }
 .lg-submit:hover{ filter:brightness(.98); }
 .lg-submit:active{ transform:translateY(1px); }
