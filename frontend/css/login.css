@@ -1,45 +1,38 @@
-/* //* /frontend/css/login.css — safe overrides for the login page only */
+/* /frontend/css/login.css — minimal, pretty, and scoped */
 
-/* 레이아웃 */
+/* ===== Layout ===== */
 .lg-wrap{
   max-width:520px;
   margin:0 auto;
   padding:20px 16px calc(96px + var(--safe-bottom));
   background:#fff;
 }
-.lg-title{ margin:8px 0 16px; font-size:1.6rem; font-weight:900 }
 
-/* 역할 선택: UA 기본 버튼 스타일을 확실히 덮기 위해 specificity ↑ */
-.su-role{ display:flex; gap:10px; margin:8px 0 16px }
-.su-role .su-pill{
-  flex:1;
-  border-radius:999px;
-  border:1px solid #e5e7eb;
-  background:#f8fafc;
-  font-weight:800;
-  color:#374151;
-  padding:10px 12px;
-  text-align:center;
-  cursor:pointer;
-  -webkit-appearance:none; appearance:none;
-}
-.su-role .su-pill.active{
-  background:#111827; color:#fff; border-color:#111827;
+/* ===== Title ===== */
+.lg-title{
+  margin:8px 0 16px;
+  font-size:1.6rem;
+  font-weight:900;
 }
 
-/* 폼 */
-.lg-form{ display:flex; flex-direction:column; gap:12px }
-.lg-label{ font-weight:800; font-size:.92rem }
+/* ===== Role pills (reuse global vars) ===== */
+.su-role{display:flex;gap:10px;margin:8px 0 16px}
+.su-pill{
+  flex:1; padding:10px 12px; border-radius:999px;
+  border:1px solid #e5e7eb; background:#f8fafc;
+  font-weight:800; color:#374151; text-align:center; cursor:pointer;
+  transition:transform .05s ease, background .15s ease, border-color .15s ease;
+}
+.su-pill:active{transform:translateY(1px)}
+.su-pill.active{background:#111827;color:#fff;border-color:#111827}
 
-/* 전역 input 대신 범위 제한 */
+/* ===== Form ===== */
+.lg-form{display:flex;flex-direction:column;gap:12px}
+.lg-label{font-weight:800;font-size:.92rem}
+
 .lg-form input{
-  width:100%;
-  padding:14px 12px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  background:#fff;
-  font-size:1rem;
-  outline:0;
+  width:100%; padding:14px 12px; border:1px solid #e5e7eb; border-radius:12px;
+  background:#fff; font-size:1rem; outline:0;
   transition:border-color .15s ease, box-shadow .15s ease;
   -webkit-appearance:none; appearance:none;
 }
@@ -48,25 +41,17 @@
   box-shadow:0 0 0 3px #eef2ff;
 }
 
-/* 로그인 버튼 – 확실히 보이도록 display 지정 */
+/* ===== Submit ===== */
 .lg-submit{
-  display:block;
-  margin-top:6px;
-  width:100%;
-  padding:14px 12px;
-  border:0;
-  border-radius:14px;
-  background:var(--pri);
-  color:#fff;
-  font-weight:900;
-  font-size:1.05rem;
-  cursor:pointer;
-  transition:transform .05s ease, filter .15s ease;
+  margin-top:6px; width:100%; padding:14px 12px;
+  border:0; border-radius:14px; background:var(--pri); color:#fff;
+  font-weight:900; font-size:1.05rem; cursor:pointer;
+  transition:transform .05s ease, filter .15s ease, opacity .15s ease;
 }
-.lg-submit:active{ transform:translateY(1px) }
-.lg-submit:disabled{ filter:grayscale(.2) opacity(.7); cursor:not-allowed }
+.lg-submit:active{transform:translateY(1px)}
+.lg-submit:disabled{filter:grayscale(.2); opacity:.7; cursor:not-allowed}
 
-/* 메시지/링크 */
-.lg-error{ margin:6px 2px 0; color:#ef4444; font-weight:700 }
-.lg-links{ margin:16px 2px 0; color:#6b7280 }
-.lg-links a{ text-decoration:underline }
+/* ===== Feedback / links ===== */
+.lg-error{margin:6px 2px 0;color:#ef4444;font-weight:700}
+.lg-links{margin:16px 2px 0;color:#6b7280}
+.lg-links a{text-decoration:underline}
