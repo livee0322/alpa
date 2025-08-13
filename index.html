@@ -9,8 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body data-page="home">
-  <div id="banner-container"></div>
-  <header class="lv-header"></header>
+  <!-- ✅ 항상 배너 사용: 비워두지 말고 내용 채우거나 banner.js가 채우게 -->
+  <div id="banner-container" class="lv-banner">
+    <div class="lv-banner-in">지금! 쇼핑라이브 베타 오픈 🎉</div>
+  </div>
+
+  <!-- ✅ 헤더/탭은 id 필수 -->
+  <header id="header-container" class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="lv-main">
