@@ -1,28 +1,39 @@
-/* /frontend/css/login.css  — lean overrides only */
+/* //* /frontend/css/login.css — safe overrides for the login page only */
 
-/* 레이아웃 보정: 메인 규칙을 존중하며 약간만 여백 튜닝 */
+/* 레이아웃 */
 .lg-wrap{
   max-width:520px;
   margin:0 auto;
   padding:20px 16px calc(96px + var(--safe-bottom));
   background:#fff;
 }
-
-/* 제목 톤만 살짝 키움 */
 .lg-title{ margin:8px 0 16px; font-size:1.6rem; font-weight:900 }
 
-/* 역할 선택 pill – 메인 .su-pill 스타일 재사용을 전제로 간단한 정렬만 */
+/* 역할 선택: UA 기본 버튼 스타일을 확실히 덮기 위해 specificity ↑ */
 .su-role{ display:flex; gap:10px; margin:8px 0 16px }
-.su-pill{ flex:1 }
+.su-role .su-pill{
+  flex:1;
+  border-radius:999px;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  font-weight:800;
+  color:#374151;
+  padding:10px 12px;
+  text-align:center;
+  cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+}
+.su-role .su-pill.active{
+  background:#111827; color:#fff; border-color:#111827;
+}
 
-/* 폼 필드: 메인 규칙에 살짝 디테일만 추가 */
+/* 폼 */
 .lg-form{ display:flex; flex-direction:column; gap:12px }
 .lg-label{ font-weight:800; font-size:.92rem }
 
-/* 핵심: 전역 input을 건드리지 말고 .lg-form 범위에서만 */
+/* 전역 input 대신 범위 제한 */
 .lg-form input{
   width:100%;
-  height:auto;
   padding:14px 12px;
   border:1px solid #e5e7eb;
   border-radius:12px;
@@ -37,8 +48,9 @@
   box-shadow:0 0 0 3px #eef2ff;
 }
 
-/* 버튼은 전폭 + 살짝 톤업 */
+/* 로그인 버튼 – 확실히 보이도록 display 지정 */
 .lg-submit{
+  display:block;
   margin-top:6px;
   width:100%;
   padding:14px 12px;
@@ -54,7 +66,7 @@
 .lg-submit:active{ transform:translateY(1px) }
 .lg-submit:disabled{ filter:grayscale(.2) opacity(.7); cursor:not-allowed }
 
-/* 에러/하단 링크 */
+/* 메시지/링크 */
 .lg-error{ margin:6px 2px 0; color:#ef4444; font-weight:700 }
 .lg-links{ margin:16px 2px 0; color:#6b7280 }
 .lg-links a{ text-decoration:underline }
