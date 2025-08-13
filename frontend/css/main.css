@@ -87,3 +87,18 @@
 .lv-bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
 .lv-bottom a.active{color:#1f2937}
 .lv-bottom a.active .ico svg{stroke:#5b5ee6; transform:translateY(-1px)}
+
+/* ---- horizontal overflow guard ---- */
+html, body { width:100%; max-width:100%; overflow-x:hidden; }
+
+/* 고정 헤더 스택은 좌우 완전 고정 */
+#banner-container, #header-container, #top-tab-container, .lv-bottom {
+  position:fixed; left:0; right:0;
+}
+
+/* 각 고정바 내부 컨텐츠는 중앙 720px 컨테이너로 제한 */
+.lv-banner > .lv-banner-in,
+.lv-header > .lv-header-in,
+.lv-top > .lv-top-in {
+  max-width:720px; margin:0 auto; padding:0 16px;
+}
