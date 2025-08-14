@@ -4,13 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>공고 등록 - ALPA</title>
+
   <!-- 공통 CSS -->
   <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0815" />
-  <!-- 페이지 전용 CSS (있다면 유지) -->
-  <link rel="stylesheet" href="/alpa/frontend/css/recruitform.css?v=0815f" />
+  <!-- 페이지 전용 CSS -->
+  <link rel="stylesheet" href="/alpa/frontend/css/recruitform.css?v=0816" />
 </head>
 <body data-page="recruits">
-  <!-- 고정 상단 스택 (항상 배너 사용) -->
+  <!-- 고정 상단 스택 -->
   <div id="banner-container" class="lv-banner"></div>
   <header id="header-container" class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
@@ -19,20 +20,20 @@
     <main class="rf-wrap" aria-labelledby="rfTitle">
       <h1 id="rfTitle" class="rf-title">공고 등록</h1>
 
-      <!-- 권한/오류 안내 -->
       <p id="rfNotice" class="rf-notice" hidden></p>
 
-      <!-- 폼 -->
       <form id="recruitForm" class="rf-form" autocomplete="off">
-
-        <!-- ============ 공통: 썸네일 업로드 ============ -->
+        <!-- 썸네일 업로드 -->
         <section class="rf-block">
           <h2 class="rf-h2">대표 썸네일</h2>
           <div class="rf-field">
-            <label for="rfThumb">대표 이미지</label>
             <div class="rf-thumb">
               <img id="rfThumbPreview" alt="썸네일 미리보기" />
-              <input id="rfThumb" type="file" accept="image/*" />
+              <div class="rf-file">
+                <input id="rfThumb" type="file" accept="image/*" />
+                <label for="rfThumb" class="rf-file-btn">파일 선택</label>
+                <span id="rfFileName" class="rf-file-name">선택된 파일 없음</span>
+              </div>
             </div>
             <progress id="rfUploadProg" max="100" value="0" hidden></progress>
             <input type="hidden" id="rfImageUrl" />
@@ -40,10 +41,10 @@
           </div>
         </section>
 
-        <!-- ============ 모드 선택 ============ -->
+        <!-- 등록 유형 -->
         <section class="rf-block">
           <h2 class="rf-h2">등록 유형</h2>
-          <div class="rf-seg">
+          <div class="rf-seg" role="tablist" aria-label="등록 유형">
             <label class="rf-seg-item">
               <input type="radio" name="rfType" value="product" id="rfTypeProduct" checked />
               <span>상품 등록</span>
@@ -55,32 +56,28 @@
           </div>
         </section>
 
-        <!-- ===================== (선택 1) 상품 등록 ===================== -->
+        <!-- (선택1) 상품 등록 -->
         <section id="rfSectionProduct" class="rf-block" data-mode="product">
           <h2 class="rf-h2">상품 등록</h2>
 
-          <!-- 상품 URL 추가 -->
           <div class="rf-grid">
             <div class="rf-field">
               <label for="rfProdUrl">상품 URL</label>
               <input id="rfProdUrl" type="url" placeholder="네이버 스마트스토어 상품 URL" />
-              <small class="rf-help">URL 입력 후 ‘불러오기’를 누르면 썸네일/상품명/가격을 자동으로 가져옵니다.</small>
+              <small class="rf-help">URL 입력 후 ‘불러오기’를 누르면 썸네일/상품명/가격을 가져옵니다.</small>
             </div>
             <div class="rf-field rf-field-button">
-              <button type="button" id="rfProdFetchBtn" class="rf-btn-outlined">불러오기</button>
+              <button type="button" id="rfProdFetchBtn" class="rf-btn rf-btn-primary">불러오기</button>
             </div>
           </div>
 
-          <!-- 상품 리스트 (여러개) -->
           <div class="rf-field">
             <label>등록된 상품</label>
             <div id="rfProdList" class="rf-prods" aria-live="polite">
-              <!-- JS가 카드들을 렌더링 -->
               <div class="rf-empty">아직 등록된 상품이 없습니다.</div>
             </div>
           </div>
 
-          <!-- 기본(공통) 필드: 제목/설명 -->
           <div class="rf-field">
             <label for="rfTitleInput">캠페인 제목 <span class="req">*</span></label>
             <input id="rfTitleInput" type="text" placeholder="예) 8/20 라이브 — 신제품 특가전" required />
@@ -88,18 +85,17 @@
 
           <div class="rf-field">
             <label for="rfDesc">상세 설명 (HTML 가능)</label>
-            <textarea id="rfDesc" rows="7" placeholder="상세페이지에 노출할 소개/가이드/주의사항 등을 자유롭게 작성하세요."></textarea>
+            <textarea id="rfDesc" rows="7" placeholder="상세페이지에 노출할 소개/가이드/주의사항 등을 작성하세요."></textarea>
           </div>
 
-          <!-- 할인/시간 (캠페인 공통 옵션) -->
           <div class="rf-grid">
             <div class="rf-field">
               <label for="rfSalePrice">할인가(선택)</label>
               <input id="rfSalePrice" type="number" inputmode="decimal" placeholder="예) 19900" />
-              <small class="rf-help">상품별 개별 할인가가 있다면 각 카드에서 수정 가능합니다.</small>
+              <small class="rf-help">상품별 개별 할인가가 있으면 각 카드에서 따로 지정해도 됩니다.</small>
             </div>
             <div class="rf-field">
-              <label for="rfSaleDuration">할인 유지 시간(최대 3시간)</label>
+              <label for="rfSaleDuration">할인 유지 시간 (최대 3시간)</label>
               <select id="rfSaleDuration">
                 <option value="">설정 안 함</option>
                 <option value="3600">1시간</option>
@@ -109,7 +105,6 @@
             </div>
           </div>
 
-          <!-- 라이브 일정 -->
           <div class="rf-grid">
             <div class="rf-field">
               <label for="rfLiveDate">라이브 날짜</label>
@@ -121,7 +116,6 @@
             </div>
           </div>
 
-          <!-- 브랜드/카테고리 -->
           <div class="rf-grid">
             <div class="rf-field">
               <label for="rfBrand">브랜드명</label>
@@ -134,7 +128,7 @@
           </div>
         </section>
 
-        <!-- ===================== (선택 2) 쇼호스트 모집 ===================== -->
+        <!-- (선택2) 쇼호스트 모집 -->
         <section id="rfSectionHost" class="rf-block" data-mode="host" hidden>
           <h2 class="rf-h2">쇼호스트 모집</h2>
 
@@ -183,11 +177,11 @@
 
         <!-- 액션 -->
         <div class="rf-actions">
-          <button type="button" class="rf-secondary" id="rfCancelBtn">취소</button>
-          <button type="submit" class="rf-primary" id="rfSubmitBtn">등록하기</button>
+          <button type="button" class="rf-btn rf-btn-ghost" id="rfCancelBtn">취소</button>
+          <button type="submit" class="rf-btn rf-btn-dark" id="rfSubmitBtn">등록하기</button>
         </div>
 
-        <!-- ===== 상품 카드 템플릿(스크립트 템플릿) ===== -->
+        <!-- 상품 카드 템플릿 -->
         <template id="rfProdItemTpl">
           <article class="rf-prod">
             <img class="rf-prod-thumb" alt="" />
@@ -198,31 +192,50 @@
                 <span class="sale"></span>
               </div>
               <div class="rf-prod-actions">
-                <button type="button" class="rf-btn-outlined" data-act="edit">수정</button>
-                <button type="button" class="rf-btn-danger" data-act="remove">삭제</button>
+                <button type="button" class="rf-btn rf-btn-outlined" data-act="edit">수정</button>
+                <button type="button" class="rf-btn rf-btn-danger" data-act="remove">삭제</button>
               </div>
             </div>
           </article>
         </template>
-        <!-- /템플릿 -->
       </form>
     </main>
   </div>
 
-  <!-- 하단 탭 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- 공통 모듈 & 설정 (순서 중요) -->
+  <!-- 공통 모듈 & 설정 -->
   <script src="/alpa/frontend/js/modules/banner.js"></script>
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-  <script src="/alpa/frontend/js/config.js?v=0815"></script>
+  <script src="/alpa/frontend/js/config.js?v=0816"></script>
 
-  <!-- 페이지 스크립트 (기존 파일 유지) -->
-  <script src="/alpa/frontend/js/recruitform.js?v=0815"></script>
+  <!-- 페이지 로직 (기존 파일) -->
+  <script src="/alpa/frontend/js/recruitform.js?v=0816"></script>
 
-  <!-- 초간단 모드 토글(필요 시 recruitform.js로 이동 가능) -->
+  <!-- 라디오 토글만 간단히(원하면 JS 파일로 이동) -->
   <script>
     (function(){
-      const $ = (s
+      const prod = document.getElementById('rfTypeProduct');
+      const host = document.getElementById('rfTypeHost');
+      const secP = document.getElementById('rfSectionProduct');
+      const secH = document.getElementById('rfSectionHost');
+      const sync = () => {
+        const isProd = prod.checked;
+        secP.hidden = !isProd;
+        secH.hidden =  isProd;
+      };
+      [prod, host].forEach(el => el.addEventListener('change', sync));
+      sync();
+
+      // 파일명 표시
+      const file = document.getElementById('rfThumb');
+      const name = document.getElementById('rfFileName');
+      if (file && name) file.addEventListener('change', () =>
+        name.textContent = file.files?.[0]?.name || '선택된 파일 없음'
+      );
+    })();
+  </script>
+</body>
+</html>
