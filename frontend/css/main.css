@@ -1,24 +1,26 @@
-/* === 전역 변수 === */
+/* =========================
+   GLOBAL TOKENS
+========================= */
 :root{
   --bg:#fff; --text:#222; --muted:#6b7280; --line:#eceff1;
   --pri:#5b5ee6; --pri-weak:#eef2ff; --ok:#10b981;
   --shadow-1:0 2px 8px rgba(0,0,0,.06); --shadow-2:0 8px 24px rgba(0,0,0,.08);
 
-  /* 안전 영역 */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
-  /* 기본 높이(모듈이 덮어씀) */
-  --banner-h: 40px;      /* 배너 높이, 없으면 0px로 세팅 가능 */
-  --header-h: 56px;      /* 헤더 */
-  --top-h:    48px;      /* 상단탭 */
-  --stack-gap: 0px;
+  /* 상단 스택 기본값(모듈이 실제 높이로 덮어씀 가능) */
+  --banner-h: 40px;
+  --header-h: 56px;
+  --top-h:    48px;
 
-  /* 상단 스택 총 높이 */
-  --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h) + var(--stack-gap));
+  /* 본문 여백 계산치 */
+  --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h));
 }
 
-/* === 리셋 / 넘침 방지 === */
+/* =========================
+   RESET / SAFETY
+========================= */
 html,body{height:100%; max-width:100%; overflow-x:hidden;}
 *{box-sizing:border-box; min-width:0;}
 img,video,canvas{max-width:100%; height:auto; display:block;}
@@ -29,34 +31,59 @@ body{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
 
-/* === 상단 스택(기본: sticky, 모든 페이지 노출) === */
-.lv-banner{position:sticky; top:var(--safe-top); z-index:1100; background:#4f5aed; color:#fff;}
-.lv-banner-in{padding:12px 16px; font-weight:700; font-size:14px; line-height:1.3;}
+/* =========================
+   TOP STACK (ID 기반, sticky)
+   - banner/header/top-tab 세 개만 유지
+========================= */
 
-.lv-header{
-  position:sticky; top:calc(var(--safe-top) + var(--banner-h));
-  z-index:1000; height:var(--header-h);
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
+/* 배너 */
+#banner-container{
+  position:sticky; top:var(--safe-top); z-index:1100;
+  background:#4f5aed; color:#fff; min-height:var(--banner-h);
+}
+#banner-container .lv-banner-in{padding:12px 16px; font-weight:700; font-size:14px; line-height:1.3}
+
+/* 헤더 */
+#header-container{
+  position:sticky; top:calc(var(--safe-top) + var(--banner-h)); z-index:1000;
+  height:var(--header-h); display:flex; align-items:center; justify-content:space-between; gap:12px;
   padding:0 16px; background:#fff; border-bottom:1px solid #eef0f3;
 }
-.lv-top{
-  position:sticky; top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
-  z-index:990; background:#fff; border-bottom:1px solid #f1f3f5; height:var(--top-h);
+#header-container > *{flex-shrink:0}
+#header-container img{height:28px; width:auto; display:block; max-width:100%}
+#header-container a,#header-container button{
+  white-space:nowrap; font-weight:800; color:#4b5563; background:none; border:0; padding:6px 8px
 }
-.lv-top ul{display:flex; gap:10px; padding:10px 12px; margin:0; list-style:none; overflow-x:auto; overflow-y:hidden;}
-.lv-top ul::-webkit-scrollbar{display:none;}
-.lv-chip{display:inline-flex; align-items:center; height:34px; padding:0 14px; border-radius:999px;
-  border:1px solid #e6ebff; background:var(--pri-weak); color:var(--pri); font-weight:800; white-space:nowrap;}
-.lv-chip.active{background:#111827; color:#fff; border-color:#111827}
 
-/* === 본문 컨테이너(상단 스택만큼 여백) === */
+/* 상단 탭 */
+#top-tab-container{
+  position:sticky; top:calc(var(--safe-top) + var(--banner-h) + var(--header-h)); z-index:990;
+  background:#fff; border-bottom:1px solid #f1f3f5; height:var(--top-h);
+}
+#top-tab-container > ul{
+  display:flex; gap:10px; padding:10px 12px; margin:0; list-style:none;
+  overflow-x:auto; overflow-y:hidden; -ms-overflow-style:none; scrollbar-width:none;
+}
+#top-tab-container > ul::-webkit-scrollbar{display:none;}
+#top-tab-container a,#top-tab-container button{
+  display:inline-flex; align-items:center; height:34px; padding:0 14px;
+  border-radius:999px; border:1px solid #e6ebff;
+  background:var(--pri-weak); color:var(--pri); font-weight:800; font-size:.9rem; white-space:nowrap;
+}
+#top-tab-container .active{background:#111827; color:#fff; border-color:#111827}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
 .lv-main,.page{
   width:100%; max-width:720px; margin:0 auto;
   padding:16px 14px calc(92px + var(--safe-bottom));
   margin-top:calc(var(--stack-h) + 8px);
 }
 
-/* === 섹션/카드 공통 === */
+/* =========================
+   SECTIONS / CARDS
+========================= */
 .lv-section{margin-top:18px}
 .lv-section-head{display:flex; align-items:center; gap:.6em; margin:4px 0 10px}
 .lv-section-head h2{margin:0; font-size:1.18rem; font-weight:900}
@@ -64,118 +91,48 @@ body{
   padding:6px 12px; border-radius:999px; border:1px solid #e6ebff; font-weight:800}
 
 .lv-hscroll{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory}
-.lv-hscroll > *{flex:0 0 auto; min-width:0;}
+.lv-hscroll > *{flex:0 0 auto; min-width:0}
+.lv-hscroll::-webkit-scrollbar{height:6px}
+.lv-hscroll::-webkit-scrollbar-thumb{background:#e5e7eb; border-radius:999px}
+
 .lv-card{min-width:176px; background:#fff; border-radius:16px; box-shadow:var(--shadow-1);
-  padding:10px; scroll-snap-align:start; border:1px solid #f3f4f6; transition:transform .18s ease, box-shadow .18s ease}
+  padding:10px; border:1px solid #f3f4f6; transition:transform .18s ease, box-shadow .18s ease; scroll-snap-align:start}
 .lv-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-2)}
 .lv-thumb{width:100%; height:112px; border-radius:12px; background:#eee; object-fit:cover}
 .lv-title{margin:8px 2px 0; font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .lv-meta{margin:4px 2px 0; color:var(--muted); font-size:.86rem}
 
 .lv-schedule{display:flex; flex-direction:column; gap:10px}
-.lv-s-item{display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1f3f5; border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-1)}
+.lv-s-item{display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1f3f5;
+  border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-1)}
 .lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
 .lv-s-title{font-weight:800; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .lv-s-meta{font-size:.86rem; color:var(--muted); margin-top:2px}
 
 .lv-empty{padding:14px 12px; border:1px dashed #e5e7eb; border-radius:12px; color:#9aa3af; font-weight:700}
 
-/* === 하단 탭 === */
-.lv-bottom{position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; background:#fff;
-  border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(0,0,0,.06)}
-.lv-bottom a{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-  padding:8px 0 10px; color:#9aa3af; font-weight:800; font-size:.78rem}
+/* =========================
+   BOTTOM TABS
+========================= */
+.lv-bottom{
+  position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; background:#fff;
+  border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(0,0,0,.06)
+}
+.lv-bottom a{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  padding:8px 0 10px; color:#9aa3af; font-weight:800; font-size:.78rem
+}
 .lv-bottom .ico{width:26px; height:26px}
 .lv-bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
 .lv-bottom a.active{color:var(--text)}
 .lv-bottom a.active .ico svg{stroke:var(--pri); transform:translateY(-1px)}
 
-/* === 로그인 페이지 전용 예외: 헤더/탭 숨기고 스택 다시 계산 === */
-body[data-page="login"] .lv-header,
-body[data-page="login"] .lv-top{ display:none !important; }
+/* =========================
+   LOGIN PAGE EXCEPTIONS
+========================= */
+body[data-page="login"] #header-container,
+body[data-page="login"] #top-tab-container{ display:none !important; }
 body[data-page="login"] .lv-main,
 body[data-page="login"] .page{
   margin-top: calc(var(--banner-h) + 8px) !important;
 }
-
-/* ===== HOTFIX: header/top tabs robust by container IDs ===== */
-
-/* Header (id 기반) */
-#header-container{
-  position:sticky;
-  top:calc(var(--safe-top) + var(--banner-h));
-  z-index:1000;
-  height:var(--header-h);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:0 16px;
-  background:#fff;
-  border-bottom:1px solid #eef0f3;
-}
-#header-container > *{flex-shrink:0;}
-#header-container img{height:28px; width:auto; display:block; max-width:100%;}
-#header-container a,
-#header-container button{
-  white-space:nowrap;
-  font-weight:800;
-  color:#4b5563;
-  background:none;
-  border:0;
-  padding:6px 8px;
-}
-
-/* Top tabs (id 기반) */
-#top-tab-container{
-  position:sticky;
-  top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
-  z-index:990;
-  background:#fff;
-  border-bottom:1px solid #f1f3f5;
-  height:var(--top-h);
-}
-
-/* 모듈이 <ul>을 렌더한다고 가정 + fallback */
-#top-tab-container > ul{
-  display:flex;
-  gap:10px;
-  padding:10px 12px;
-  margin:0;
-  list-style:none;
-  overflow-x:auto;
-  overflow-y:hidden;
-  -ms-overflow-style:none;
-  scrollbar-width:none;
-}
-#top-tab-container > ul::-webkit-scrollbar{display:none;}
-
-/* 칩 스타일: 클래스가 없을 때도 예쁘게 보이도록 anchor/button에 기본 적용 */
-#top-tab-container a,
-#top-tab-container button{
-  display:inline-flex;
-  align-items:center;
-  height:34px;
-  padding:0 14px;
-  border-radius:999px;
-  border:1px solid #e6ebff;
-  background:var(--pri-weak);
-  color:var(--pri);
-  font-weight:800;
-  font-size:.9rem;
-  white-space:nowrap;
-}
-#top-tab-container .active{
-  background:#111827;
-  color:#fff;
-  border-color:#111827;
-}
-
-/* 본문 여백(안전) — 혹시 계산이 어긋나는 페이지를 위해 한 번 더 보강 */
-.lv-main,.page{
-  margin-top:calc(var(--banner-h) + var(--header-h) + var(--top-h) + 8px);
-}
-
-/* 절대 가로 넘침 방지(문제 소스가 있어도 최대 피해 최소화) */
-html,body{max-width:100%; overflow-x:hidden;}
-#header-container, #top-tab-container, .lv-main, .page{max-width:100%;}
