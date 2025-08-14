@@ -1,54 +1,122 @@
-/* 간결한 카드형 폼 */
-.rf-wrap { max-width: 840px; margin: 24px auto 80px; padding: 0 16px; }
-.rf-title { font-size: 22px; font-weight: 700; margin: 8px 0 16px; }
+/* ========== Recruit Form (clean) ========== */
+:root{
+  --bg:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
+  --pri:#5b5ee6; --pri-weak:#eef2ff; --danger:#ef4444;
+  --radius-1:10px; --radius-2:12px; --radius-3:16px;
+  --shadow-1:0 2px 10px rgba(0,0,0,.04);
+  --gap-1:8px; --gap-2:12px; --gap-3:16px; --gap-4:20px;
+}
 
-.rf-notice { background:#fff4f4; color:#a32020; border:1px solid #ffd6d6; padding:12px; border-radius:12px; }
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b0e12; --text:#eef2f7; --muted:#a1a7b3; --line:#1e2530;
+    --pri-weak:#1a1f2e; --shadow-1:0 2px 14px rgba(0,0,0,.35);
+  }
+}
 
-.rf-form { background:#fff; border:1px solid #eee; border-radius:16px; padding:16px; box-shadow: 0 2px 10px rgba(0,0,0,.03); }
-.rf-field { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
-.rf-field > label { font-size:14px; font-weight:600; color:#222; }
+/* ---------- Layout ---------- */
+.rf-wrap{max-width:840px;margin:24px auto 92px;padding:0 16px}
+.rf-title{font-size:22px;font-weight:800;margin:8px 0 16px;color:var(--text)}
+.rf-notice{
+  background:#fff7f7;color:#a32020;border:1px solid #ffdede;
+  padding:12px;border-radius:var(--radius-2);margin-bottom:var(--gap-2)
+}
+@media (prefers-color-scheme: dark){
+  .rf-notice{background:#2a1111;border-color:#4a1d1d;color:#ffb4b4}
+}
+
+/* Carded form shell */
+.rf-form{
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-3);
+  padding:var(--gap-3);box-shadow:var(--shadow-1)
+}
+
+/* ---------- Fields ---------- */
+.rf-field{display:flex;flex-direction:column;gap:var(--gap-1);margin-bottom:var(--gap-2)}
+.rf-field>label{font-size:14px;font-weight:700;color:var(--text)}
+
 .rf-field input[type="text"],
 .rf-field input[type="date"],
 .rf-field input[type="time"],
-.rf-field textarea {
-  border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; font-size:14px; outline:none;
+.rf-field input[type="number"],
+.rf-field input[type="url"],
+.rf-field textarea{
+  width:100%;padding:12px 14px;border:1px solid var(--line);
+  border-radius:var(--radius-2);font-size:14px;background:#fff;color:#111827;
+  outline:0;transition:border-color .15s ease, box-shadow .15s ease, background .15s ease
 }
-.rf-field textarea { resize:vertical; }
-
-.rf-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-@media (max-width: 640px){ .rf-grid { grid-template-columns: 1fr; } }
-
-.rf-checkbox { flex-direction:row; align-items:center; gap:10px; margin-top: 24px; }
-.rf-checkbox input { width:18px; height:18px; }
-
-.rf-thumb { display:flex; align-items:center; gap:12px; }
-.rf-thumb img { width:144px; height:96px; object-fit:cover; background:#f6f7f9; border:1px solid #eee; border-radius:12px; }
-.rf-help { color:#6b7280; font-size:12px; }
-
-.rf-actions { display:flex; justify-content:flex-end; gap:10px; margin-top: 8px; }
-.rf-primary, .rf-secondary {
-  padding: 12px 16px; border-radius: 12px; border:1px solid transparent; font-weight: 600; cursor: pointer;
+@media (prefers-color-scheme: dark){
+  .rf-field input[type], .rf-field textarea{background:#0e131a;color:var(--text);border-color:#1f2937}
 }
-.rf-primary { background:#111827; color:#fff; }
-.rf-primary:disabled { opacity:.6; cursor:not-allowed; }
-.rf-secondary { background:#fff; border-color:#e5e7eb; color:#111827; }
+.rf-field textarea{resize:vertical;min-height:96px}
+.rf-field input:focus, .rf-field textarea:focus{
+  border-color:var(--pri); box-shadow:0 0 0 3px var(--pri-weak)
+}
 
-.req { color:#ef4444; }
+/* 숫자 인풋 스피너 제거 */
+.rf-field input[type="number"]::-webkit-outer-spin-button,
+.rf-field input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+.rf-field input[type="number"]{ -moz-appearance:textfield }
 
-/* recruitform.css (추가) */
-.rf-tabs{display:flex; gap:8px; margin-bottom:12px}
-.rf-tab{flex:1; padding:10px 12px; border-radius:999px; border:1px solid #e5e7eb; background:#f8fafc; font-weight:800}
-.rf-tab.active{background:#111827; color:#fff; border-color:#111827}
-.rf-row{display:flex; gap:8px}
+/* Grid */
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap-2)}
+@media (max-width:640px){ .rf-grid{grid-template-columns:1fr} }
+
+/* Checkbox row */
+.rf-checkbox{flex-direction:row;align-items:center;gap:10px;margin-top:6px}
+.rf-checkbox input{width:18px;height:18px}
+
+/* Thumbnail picker */
+.rf-thumb{display:flex;align-items:center;gap:var(--gap-2)}
+.rf-thumb img{
+  width:144px;height:96px;object-fit:cover;background:#f6f7f9;
+  border:1px solid var(--line);border-radius:var(--radius-2)
+}
+.rf-help{color:var(--muted);font-size:12px}
+
+/* ---------- Tabs (상품/모집 선택 등) ---------- */
+.rf-tabs{display:flex;gap:var(--gap-2);margin:0 0 var(--gap-2)}
+.rf-tab{
+  flex:1;padding:10px 12px;border-radius:999px;border:1px solid var(--line);
+  background:#f8fafc;color:#111827;font-weight:800;text-align:center;cursor:pointer
+}
+.rf-tab.active{background:#111827;color:#fff;border-color:#111827}
+@media (prefers-color-scheme: dark){
+  .rf-tab{background:#0f1420;color:var(--text)}
+}
+
+/* ---------- Product list ---------- */
+.rf-prod-list{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:var(--gap-2)}
+.rf-prod-card{
+  display:flex;gap:var(--gap-2);border:1px solid var(--line);
+  border-radius:var(--radius-2);padding:10px;background:var(--bg)
+}
+.rf-prod-thumb{
+  width:84px;height:84px;border-radius:10px;object-fit:cover;background:#eee;flex:0 0 auto
+}
+.rf-prod-body{flex:1 1 auto;min-width:0}
+.rf-prod-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rf-prod-meta{display:flex;gap:8px;color:var(--muted);font-size:.9rem;margin:4px 0}
+.rf-prod-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.rf-prod-row input[type="number"]{width:120px}
+.rf-prod-detail{width:100%;min-height:84px}
+.rf-x{
+  margin-left:auto;border:0;background:#f1f5f9;border-radius:8px;padding:6px 8px;cursor:pointer
+}
+@media (prefers-color-scheme: dark){ .rf-x{background:#1a2230;color:var(--text)} }
+
+/* ---------- Buttons ---------- */
+.rf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:var(--gap-2)}
+.rf-primary,.rf-secondary{
+  padding:12px 16px;border-radius:var(--radius-2);border:1px solid transparent;
+  font-weight:800;cursor:pointer;transition:transform .05s ease, filter .15s ease, opacity .15s ease
+}
+.rf-primary{background:var(--pri);color:#fff}
+.rf-primary:active{transform:translateY(1px)}
+.rf-primary:disabled{opacity:.6;cursor:not-allowed}
+.rf-secondary{background:transparent;border-color:var(--line);color:var(--text)}
 .rf-btn.thin{padding:10px 12px}
 
-.rf-prod-list{list-style:none; padding:0; margin:10px 0; display:grid; gap:10px}
-.rf-prod-card{display:flex; gap:10px; border:1px solid #eef0f3; border-radius:12px; padding:10px; background:#fff}
-.rf-prod-thumb{width:84px; height:84px; border-radius:10px; object-fit:cover; background:#eee; flex:0 0 auto}
-.rf-prod-body{flex:1 1 auto; min-width:0}
-.rf-prod-title{font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.rf-prod-meta{display:flex; gap:8px; color:#6b7280; font-size:.9rem; margin:4px 0}
-.rf-prod-row{display:flex; gap:8px; align-items:center; margin-top:6px}
-.rf-prod-row input[type="number"]{width:120px}
-.rf-prod-detail{width:100%; min-height:80px}
-.rf-x{margin-left:auto; border:0; background:#f1f5f9; border-radius:8px; padding:6px 8px; cursor:pointer}
+/* ---------- Utility ---------- */
+.req{color:var(--danger)}
+.rf-row{display:flex;gap:var(--gap-2)}
