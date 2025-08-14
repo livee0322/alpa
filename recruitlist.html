@@ -9,15 +9,15 @@
   <link rel="stylesheet" href="/alpa/frontend/css/recruitlist.css?v=0813" />
 </head>
 <body data-page="recruitlist">
-  <!-- 공통 모듈 -->
-  <div id="banner-container"></div>
-  <header class="lv-header"></header>
+  <!-- 공통 모듈: ★ ID 붙이기 ★ -->
+  <div id="banner-container" class="lv-banner"></div>
+  <header id="header-container" class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <main class="rl-wrap">
+  <!-- 본문: ★ .lv-main 추가 ★ -->
+  <main class="lv-main rl-wrap">
     <h1 class="rl-title">공고 모아보기</h1>
 
-    <!-- 유쾌한 카테고리 탭 -->
     <nav class="rl-tabs" aria-label="공고 카테고리">
       <button class="rl-tab is-active" data-filter="deadline">⏳ 마감일 임박</button>
       <button class="rl-tab" data-filter="mukbang">🍜 먹방 전용</button>
@@ -25,32 +25,25 @@
       <button class="rl-tab" data-filter="pay">💸 출연료 미쳤다</button>
     </nav>
 
-    <!-- 리스트 -->
     <section id="rlList" class="rl-list" aria-live="polite">
-      <!-- 스켈레톤 -->
       <div class="rl-skeleton"></div>
       <div class="rl-skeleton"></div>
       <div class="rl-skeleton"></div>
       <div class="rl-skeleton"></div>
     </section>
 
-    <!-- 빈 상태 -->
     <section id="rlEmpty" class="rl-empty" hidden>
       <p>조건에 맞는 공고가 아직 없어요. 잠시 후 다시 확인해 주세요!</p>
     </section>
   </main>
 
-  <!-- 하단 탭 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- 공통 스크립트 -->
   <script src="/alpa/frontend/js/modules/banner.js"></script>
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script src="/alpa/frontend/js/config.js?v=0813"></script>
-
-  <!-- 페이지 스크립트 -->
   <script src="/alpa/frontend/js/recruitlist.js?v=0813"></script>
 </body>
 </html>
