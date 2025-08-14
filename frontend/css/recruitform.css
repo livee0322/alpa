@@ -34,3 +34,21 @@
 .rf-secondary { background:#fff; border-color:#e5e7eb; color:#111827; }
 
 .req { color:#ef4444; }
+
+/* recruitform.css (추가) */
+.rf-tabs{display:flex; gap:8px; margin-bottom:12px}
+.rf-tab{flex:1; padding:10px 12px; border-radius:999px; border:1px solid #e5e7eb; background:#f8fafc; font-weight:800}
+.rf-tab.active{background:#111827; color:#fff; border-color:#111827}
+.rf-row{display:flex; gap:8px}
+.rf-btn.thin{padding:10px 12px}
+
+.rf-prod-list{list-style:none; padding:0; margin:10px 0; display:grid; gap:10px}
+.rf-prod-card{display:flex; gap:10px; border:1px solid #eef0f3; border-radius:12px; padding:10px; background:#fff}
+.rf-prod-thumb{width:84px; height:84px; border-radius:10px; object-fit:cover; background:#eee; flex:0 0 auto}
+.rf-prod-body{flex:1 1 auto; min-width:0}
+.rf-prod-title{font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.rf-prod-meta{display:flex; gap:8px; color:#6b7280; font-size:.9rem; margin:4px 0}
+.rf-prod-row{display:flex; gap:8px; align-items:center; margin-top:6px}
+.rf-prod-row input[type="number"]{width:120px}
+.rf-prod-detail{width:100%; min-height:80px}
+.rf-x{margin-left:auto; border:0; background:#f1f5f9; border-radius:8px; padding:6px 8px; cursor:pointer}
