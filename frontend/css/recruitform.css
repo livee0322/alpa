@@ -1,122 +1,73 @@
-/* ========== Recruit Form (clean) ========== */
-:root{
-  --bg:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
-  --pri:#5b5ee6; --pri-weak:#eef2ff; --danger:#ef4444;
-  --radius-1:10px; --radius-2:12px; --radius-3:16px;
-  --shadow-1:0 2px 10px rgba(0,0,0,.04);
-  --gap-1:8px; --gap-2:12px; --gap-3:16px; --gap-4:20px;
-}
+/* Wrapper */
+.rf-wrap{max-width:840px;margin:24px auto 96px;padding:0 16px}
+.rf-title{font-size:22px;font-weight:900;margin:8px 0 16px}
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0b0e12; --text:#eef2f7; --muted:#a1a7b3; --line:#1e2530;
-    --pri-weak:#1a1f2e; --shadow-1:0 2px 14px rgba(0,0,0,.35);
-  }
-}
+/* 카드 폼 */
+.rf-form{background:#fff;border:1px solid #eef0f3;border-radius:16px;padding:16px 16px 6px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
+.rf-block + .rf-block{margin-top:14px}
+.rf-h2{margin:0 0 10px;font-size:16px;font-weight:800}
 
-/* ---------- Layout ---------- */
-.rf-wrap{max-width:840px;margin:24px auto 92px;padding:0 16px}
-.rf-title{font-size:22px;font-weight:800;margin:8px 0 16px;color:var(--text)}
-.rf-notice{
-  background:#fff7f7;color:#a32020;border:1px solid #ffdede;
-  padding:12px;border-radius:var(--radius-2);margin-bottom:var(--gap-2)
-}
-@media (prefers-color-scheme: dark){
-  .rf-notice{background:#2a1111;border-color:#4a1d1d;color:#ffb4b4}
-}
+/* 필드 */
+.rf-field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.rf-field>label{font-size:14px;font-weight:700;color:#222}
+.rf-help{color:#6b7280;font-size:12px}
+.req{color:#ef4444}
 
-/* Carded form shell */
-.rf-form{
-  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-3);
-  padding:var(--gap-3);box-shadow:var(--shadow-1)
-}
-
-/* ---------- Fields ---------- */
-.rf-field{display:flex;flex-direction:column;gap:var(--gap-1);margin-bottom:var(--gap-2)}
-.rf-field>label{font-size:14px;font-weight:700;color:var(--text)}
-
+/* 인풋 */
 .rf-field input[type="text"],
+.rf-field input[type="url"],
 .rf-field input[type="date"],
 .rf-field input[type="time"],
 .rf-field input[type="number"],
-.rf-field input[type="url"],
+.rf-field select,
 .rf-field textarea{
-  width:100%;padding:12px 14px;border:1px solid var(--line);
-  border-radius:var(--radius-2);font-size:14px;background:#fff;color:#111827;
-  outline:0;transition:border-color .15s ease, box-shadow .15s ease, background .15s ease
+  width:100%;
+  border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;font-size:14px;outline:none;
 }
-@media (prefers-color-scheme: dark){
-  .rf-field input[type], .rf-field textarea{background:#0e131a;color:var(--text);border-color:#1f2937}
-}
-.rf-field textarea{resize:vertical;min-height:96px}
-.rf-field input:focus, .rf-field textarea:focus{
-  border-color:var(--pri); box-shadow:0 0 0 3px var(--pri-weak)
-}
+.rf-field textarea{resize:vertical}
 
-/* 숫자 인풋 스피너 제거 */
-.rf-field input[type="number"]::-webkit-outer-spin-button,
-.rf-field input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
-.rf-field input[type="number"]{ -moz-appearance:textfield }
-
-/* Grid */
-.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap-2)}
-@media (max-width:640px){ .rf-grid{grid-template-columns:1fr} }
-
-/* Checkbox row */
-.rf-checkbox{flex-direction:row;align-items:center;gap:10px;margin-top:6px}
-.rf-checkbox input{width:18px;height:18px}
-
-/* Thumbnail picker */
-.rf-thumb{display:flex;align-items:center;gap:var(--gap-2)}
-.rf-thumb img{
-  width:144px;height:96px;object-fit:cover;background:#f6f7f9;
-  border:1px solid var(--line);border-radius:var(--radius-2)
+/* 썸네일 + 파일 업로드 라벨형 */
+.rf-thumb{display:flex;align-items:center;gap:12px}
+.rf-thumb img{width:144px;height:96px;object-fit:cover;background:#f6f7f9;border:1px solid #eee;border-radius:12px}
+.rf-file input[type="file"]{display:none}
+.rf-file-btn{
+  display:inline-block;padding:10px 14px;border-radius:12px;background:#5b5ee6;color:#fff;font-weight:700;cursor:pointer
 }
-.rf-help{color:var(--muted);font-size:12px}
+.rf-file-btn:active{transform:translateY(1px)}
+.rf-file-name{margin-left:8px;color:#6b7280;font-size:13px}
 
-/* ---------- Tabs (상품/모집 선택 등) ---------- */
-.rf-tabs{display:flex;gap:var(--gap-2);margin:0 0 var(--gap-2)}
-.rf-tab{
-  flex:1;padding:10px 12px;border-radius:999px;border:1px solid var(--line);
-  background:#f8fafc;color:#111827;font-weight:800;text-align:center;cursor:pointer
-}
-.rf-tab.active{background:#111827;color:#fff;border-color:#111827}
-@media (prefers-color-scheme: dark){
-  .rf-tab{background:#0f1420;color:var(--text)}
-}
+/* 그리드 */
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:680px){.rf-grid{grid-template-columns:1fr}}
 
-/* ---------- Product list ---------- */
-.rf-prod-list{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:var(--gap-2)}
-.rf-prod-card{
-  display:flex;gap:var(--gap-2);border:1px solid var(--line);
-  border-radius:var(--radius-2);padding:10px;background:var(--bg)
+/* 세그먼트(라디오 스타일) */
+.rf-seg{display:flex;gap:8px}
+.rf-seg-item{flex:1;position:relative}
+.rf-seg-item input{position:absolute;inset:0;opacity:0}
+.rf-seg-item span{
+  display:block;text-align:center;padding:12px;border-radius:999px;border:1px solid #e5e7eb;background:#f8fafc;font-weight:800
 }
-.rf-prod-thumb{
-  width:84px;height:84px;border-radius:10px;object-fit:cover;background:#eee;flex:0 0 auto
-}
+.rf-seg-item input:checked + span{background:#111827;color:#fff;border-color:#111827}
+
+/* 버튼 */
+.rf-actions{display:flex;justify-content:flex-end;gap:10px;margin:4px 0 10px}
+.rf-btn{padding:12px 16px;border-radius:12px;border:1px solid transparent;font-weight:800;cursor:pointer}
+.rf-btn-dark{background:#111827;color:#fff}
+.rf-btn-primary{background:#5b5ee6;color:#fff}
+.rf-btn-outlined{background:#fff;border-color:#e5e7eb;color:#111827}
+.rf-btn-ghost{background:#fff;border-color:#e5e7eb;color:#374151}
+.rf-btn-danger{background:#ffe5e5;color:#b91c1c;border:1px solid #ffd6d6}
+.rf-btn:active{transform:translateY(1px)}
+
+/* 상품 카드 리스트 */
+.rf-prods{display:grid;gap:10px}
+.rf-empty{padding:12px;border:1px dashed #e5e7eb;border-radius:12px;color:#9aa3af;font-weight:700}
+.rf-prod{display:flex;gap:12px;border:1px solid #eef0f3;border-radius:12px;background:#fff;padding:10px}
+.rf-prod-thumb{width:84px;height:84px;border-radius:10px;object-fit:cover;background:#eee;flex:0 0 auto}
 .rf-prod-body{flex:1 1 auto;min-width:0}
 .rf-prod-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rf-prod-meta{display:flex;gap:8px;color:var(--muted);font-size:.9rem;margin:4px 0}
-.rf-prod-row{display:flex;gap:8px;align-items:center;margin-top:6px}
-.rf-prod-row input[type="number"]{width:120px}
-.rf-prod-detail{width:100%;min-height:84px}
-.rf-x{
-  margin-left:auto;border:0;background:#f1f5f9;border-radius:8px;padding:6px 8px;cursor:pointer
-}
-@media (prefers-color-scheme: dark){ .rf-x{background:#1a2230;color:var(--text)} }
+.rf-prod-meta{display:flex;gap:8px;color:#6b7280;font-size:.9rem;margin:4px 0}
+.rf-prod-actions{display:flex;gap:8px;margin-top:6px}
 
-/* ---------- Buttons ---------- */
-.rf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:var(--gap-2)}
-.rf-primary,.rf-secondary{
-  padding:12px 16px;border-radius:var(--radius-2);border:1px solid transparent;
-  font-weight:800;cursor:pointer;transition:transform .05s ease, filter .15s ease, opacity .15s ease
-}
-.rf-primary{background:var(--pri);color:#fff}
-.rf-primary:active{transform:translateY(1px)}
-.rf-primary:disabled{opacity:.6;cursor:not-allowed}
-.rf-secondary{background:transparent;border-color:var(--line);color:var(--text)}
-.rf-btn.thin{padding:10px 12px}
-
-/* ---------- Utility ---------- */
-.req{color:var(--danger)}
-.rf-row{display:flex;gap:var(--gap-2)}
+/* 중앙 정렬 버튼 필드 */
+.rf-field-button{display:flex;justify-content:flex-end}
