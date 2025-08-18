@@ -18,7 +18,7 @@
   /* 상단 스택: 배너 + (헤더 0) + 탭 */
   --banner-h: 40px;
   --header-h: 0px;     /* 헤더 제거 */
-  --top-h:    48px;
+  --top-h:    12px;
   --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h));
 }
 
