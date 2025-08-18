@@ -67,34 +67,40 @@ body{
 }
 
 /* 상단 탭 (네이버 스타일) */
+/* 상단 탭: 불투명 배경 + 경계선만 유지 (mask 제거) */
 #top-tab-container{
-  position:sticky;
-  top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
-  z-index:990;
-  background:transparent;                 /* ← 배경 제거 */
-  border-bottom:1px solid #f1f3f5;
-  height:var(--top-h);
+  position: sticky;
+  top: calc(var(--safe-top) + var(--banner-h) + var(--header-h));
+  z-index: 990;
+  background: #fff;            /* ← 불투명 유지 */
+  border-bottom: 1px solid #f1f3f5;
+  height: var(--top-h);
+  /* mask-image: 제거! */
 }
+
+/* 탭 항목 스타일 유지 + 활성 탭은 퍼플 */
 #top-tab-container > ul{
-  display:flex; gap:14px; padding:6px 12px; margin:0; list-style:none;
+  display:flex; gap:10px; padding:6px 12px; margin:0; list-style:none;
   overflow-x:auto; overflow-y:hidden;
   -ms-overflow-style:none; scrollbar-width:none;
 }
-#top-tab-container > ul::-webkit-scrollbar{display:none;}
-#top-tab-container a,
-#top-tab-container button{
-  display:inline-flex; align-items:center;
-  height:calc(var(--top-h) - 12px);
-  padding:0 6px; line-height:36px;
-  border:0; border-radius:0;
-  background:transparent;
-  color:#6b7280;
-  font-weight:800; font-size:.95rem; white-space:nowrap;
-  position:relative;
-  transition:color .15s ease;
+#top-tab-container > ul::-webkit-scrollbar{ display:none; }
+#top-tab-container a{
+  display:inline-flex; align-items:center; height:34px; padding:0 14px;
+  border-radius:999px;
+  border:1px solid #e0e0f5;
+  background: var(--pri-weak);
+  color: var(--pri);
+  font-weight:800; font-size:.9rem; white-space:nowrap;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+  box-shadow: 0 1px 0 rgba(108,99,255,.04);
 }
-#top-tab-container a:hover{color:var(--text)}
-#top-tab-container a:focus-visible{outline:2px solid rgba(108,99,255,.35); outline-offset:2px}
+#top-tab-container a.active{
+  background: var(--pri);
+  color:#fff;
+  border-color: var(--pri);
+  box-shadow: 0 6px 14px rgba(108,99,255,.22);
+}
 
 /* 활성 탭: 보라색 + 밑줄 인디케이터 */
 #top-tab-container .active{ color:var(--pri) }
