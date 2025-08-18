@@ -1,0 +1,48 @@
+/* 폼 래퍼 */
+.cf-wrap{max-width:840px;margin:24px auto 90px;padding:0 16px}
+.cf-title{font-size:22px;font-weight:800;margin:6px 0 14px}
+.cf-notice{background:#fff4f4;color:#a32020;border:1px solid #ffd6d6;padding:12px;border-radius:12px}
+
+.cf-form{background:#fff;border:1px solid #eceff1;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
+.cf-block{margin:14px 0}
+.cf-h2{font-size:16px;font-weight:800;margin:0 0 8px}
+.cf-field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.cf-field>label{font-size:14px;font-weight:600;color:#222}
+.cf-field input[type="text"],.cf-field input[type="url"],.cf-field input[type="date"],.cf-field input[type="time"],.cf-field input[type="number"],.cf-field select,.cf-field textarea{
+  border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;font-size:14px;outline:none
+}
+.cf-field textarea{resize:vertical}
+.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.cf-grid{grid-template-columns:1fr}}
+
+.cf-thumb{display:flex;align-items:center;gap:12px}
+.cf-thumb img{width:144px;height:96px;object-fit:cover;background:#f6f7f9;border:1px solid #eee;border-radius:12px}
+.cf-help{color:#6b7280;font-size:12px}
+.cf-checkbox{flex-direction:row;align-items:center;gap:10px;margin-top:26px}
+
+.cf-seg{display:flex;gap:8px}
+.cf-seg-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid #e5e7eb;border-radius:999px;background:#f8fafc;font-weight:800}
+.cf-seg-item input{width:18px;height:18px}
+
+.cf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+.cf-primary,.cf-secondary,.cf-btn-outlined,.cf-btn-danger{
+  padding:12px 16px;border-radius:12px;border:1px solid transparent;font-weight:700;cursor:pointer
+}
+.cf-primary{background:#111827;color:#fff}
+.cf-primary:disabled{opacity:.6;cursor:not-allowed}
+.cf-secondary{background:#fff;border-color:#e5e7eb;color:#111827}
+.cf-btn-outlined{background:#fff;border-color:#e5e7eb}
+.cf-btn-danger{background:#fff;border-color:#fecaca;color:#b91c1c}
+
+.req{color:#ef4444}
+
+/* 상품 카드 */
+.cf-prods{display:grid;gap:10px}
+.cf-prod{display:flex;gap:10px;border:1px solid #eef0f3;border-radius:12px;padding:10px;background:#fff}
+.cf-prod-thumb{width:84px;height:84px;border-radius:10px;object-fit:cover;background:#eee;flex:0 0 auto}
+.cf-prod-body{flex:1;min-width:0}
+.cf-prod-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-prod-meta{display:flex;gap:8px;color:#6b7280;font-size:.9rem;margin:4px 0}
+.cf-prod-actions{display:flex;gap:8px;margin-top:4px}
+.cf-empty{padding:12px;border:1px dashed #e5e7eb;border-radius:12px;color:#9aa3af;font-weight:700}
+.cf-field-button{justify-content:flex-end}
