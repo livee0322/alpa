@@ -36,10 +36,21 @@
       <h2 class="mypage-title">브랜드</h2>
       <ul class="mypage-list">
         <li>
-          <a href="/alpa/recruits.html?mine=1" class="mypage-item">
+          <!-- 기존 recruits.html -> campaigns.html 로 교체 -->
+          <a href="/alpa/campaigns.html?mine=1" class="mypage-item">
             <div class="mi-body">
-              <div class="mi-title">내가 등록한 공고</div>
-              <div class="mi-sub">등록/수정/상태 확인</div>
+              <div class="mi-title">내가 등록한 캠페인</div>
+              <div class="mi-sub">목록 확인 / 수정 / 삭제</div>
+            </div>
+            <span class="mi-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <!-- 새 캠페인 등록 바로가기 추가 -->
+          <a href="/alpa/campaign-new.html" class="mypage-item">
+            <div class="mi-body">
+              <div class="mi-title">새 캠페인 등록</div>
+              <div class="mi-sub">상품 캠페인 / 쇼호스트 모집</div>
             </div>
             <span class="mi-arrow" aria-hidden="true">›</span>
           </a>
@@ -61,6 +72,7 @@
           </a>
         </li>
         <li>
+          <!-- 찜 목록은 호환 라우터 유지: 필요시 campaigns.html?fav=1 로 전환 가능 -->
           <a href="/alpa/recruits.html?fav=1" class="mypage-item">
             <div class="mi-body">
               <div class="mi-title">내가 찜한 공고</div>
