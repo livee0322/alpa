@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>캠페인 등록 - ALPA</title>
+
+  <!-- 공통 CSS -->
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0815" />
+  <!-- 페이지 전용 CSS -->
+  <link rel="stylesheet" href="/alpa/frontend/css/campaign-form.css?v=0818" />
+</head>
+<body data-page="campaign-form">
+  <!-- 고정 스택 -->
+  <div id="banner-container" class="lv-banner"></div>
+  <header id="header-container" class="lv-header"></header>
+  <nav id="top-tab-container" class="lv-top"></nav>
+
+  <main class="cf-wrap" aria-labelledby="cfTitle">
+    <h1 id="cfTitle" class="cf-title">캠페인 등록</h1>
+    <p id="cfNotice" class="cf-notice" hidden></p>
+
+    <form id="campaignForm" class="cf-form" autocomplete="off">
+      <!-- 대표 썸네일 -->
+      <section class="cf-block">
+        <h2 class="cf-h2">대표 썸네일</h2>
+        <div class="cf-field">
+          <label for="cfThumb">대표 이미지</label>
+          <div class="cf-thumb">
+            <img id="cfThumbPreview" alt="미리보기" />
+            <input id="cfThumb" type="file" accept="image/*" />
+            <input type="hidden" id="cfImageUrl" />
+          </div>
+          <progress id="cfUploadProg" max="100" value="0" hidden></progress>
+          <small class="cf-help">이미지 선택 시 자동 업로드됩니다.</small>
+        </div>
+      </section>
+
+      <!-- 유형 -->
+      <section class="cf-block">
+        <h2 class="cf-h2">캠페인 유형</h2>
+        <div class="cf-seg">
+          <label class="cf-seg-item">
+            <input type="radio" name="cfType" value="product" checked />
+            <span>상품 캠페인</span>
+          </label>
+          <label class="cf-seg-item">
+            <input type="radio" name="cfType" value="recruit" />
+            <span>쇼호스트 모집</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- (선택1) 상품 캠페인 -->
+      <section id="cfSectionProduct" class="cf-block" data-mode="product">
+        <h2 class="cf-h2">상품 등록</h2>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfProdUrl">상품 URL</label>
+            <input id="cfProdUrl" type="url" placeholder="네이버/쿠팡/지마켓 등 상품 URL" />
+            <small class="cf-help">URL 입력 후 ‘불러오기’를 누르면 썸네일/상품명/가격을 자동으로 가져옵니다.</small>
+          </div>
+          <div class="cf-field cf-field-button">
+            <button type="button" id="cfProdFetchBtn" class="cf-btn-outlined">불러오기</button>
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label>등록된 상품</label>
+          <div id="cfProdList" class="cf-prods" aria-live="polite">
+            <div class="cf-empty">아직 등록된 상품이 없습니다.</div>
+          </div>
+        </div>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfSalePrice">공통 할인가(선택)</label>
+            <input id="cfSalePrice" type="number" inputmode="decimal" placeholder="예) 19900" />
+          </div>
+          <div class="cf-field">
+            <label for="cfSaleDuration">할인 유지시간 (최대 3시간)</label>
+            <select id="cfSaleDuration">
+              <option value="">설정 안 함</option>
+              <option value="3600">1시간</option>
+              <option value="7200">2시간</option>
+              <option value="10800">3시간 (최대)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfLiveDate">라이브 날짜</label>
+            <input id="cfLiveDate" type="date" />
+          </div>
+          <div class="cf-field">
+            <label for="cfLiveTime">라이브 시간</label>
+            <input id="cfLiveTime" type="time" />
+          </div>
+        </div>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfBrand">브랜드명</label>
+            <input id="cfBrand" type="text" placeholder="예) ALPA" />
+          </div>
+          <div class="cf-field">
+            <label for="cfCategory">상품군</label>
+            <input id="cfCategory" type="text" placeholder="예) 뷰티/패션/가전" />
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label for="cfDesc">상세 설명 (HTML 가능)</label>
+          <textarea id="cfDesc" rows="7" placeholder="상세페이지에 노출할 소개/가이드/주의사항 등을 작성하세요."></textarea>
+        </div>
+      </section>
+
+      <!-- (선택2) 쇼호스트 모집 -->
+      <section id="cfSectionRecruit" class="cf-block" data-mode="recruit" hidden>
+        <h2 class="cf-h2">쇼호스트 모집</h2>
+
+        <div class="cf-field">
+          <label for="cfTitleRecruit">제목 <span class="req">*</span></label>
+          <input id="cfTitleRecruit" type="text" placeholder="예) 잘 먹는 쇼호스트 찾습니다" />
+        </div>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfDate">촬영일 <span class="req">*</span></label>
+            <input id="cfDate" type="date" />
+          </div>
+          <div class="cf-field">
+            <label for="cfTime">촬영시간</label>
+            <input id="cfTime" type="time" />
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label for="cfLocation">촬영 장소</label>
+          <input id="cfLocation" type="text" placeholder="예) 서울 강남구 ○○스튜디오" />
+        </div>
+
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfPay">출연료</label>
+            <input id="cfPay" type="text" inputmode="numeric" placeholder="예) 30만원" />
+          </div>
+          <div class="cf-field cf-checkbox">
+            <input id="cfPayNeg" type="checkbox" />
+            <label for="cfPayNeg">협의 가능</label>
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label for="cfCategoryRecruit">상품군</label>
+          <input id="cfCategoryRecruit" type="text" placeholder="예) 뷰티/패션/가전" />
+        </div>
+
+        <div class="cf-field">
+          <label for="cfDescRecruit">요구사항/우대사항</label>
+          <textarea id="cfDescRecruit" rows="7" placeholder="방송 내용, 요구 스킬, 우대사항 등을 상세히 적어주세요."></textarea>
+        </div>
+      </section>
+
+      <!-- 공통 타이틀 -->
+      <section class="cf-block">
+        <div class="cf-field">
+          <label for="cfTitle">캠페인 제목 <span class="req">*</span></label>
+          <input id="cfTitle" type="text" placeholder="예) 8/20 라이브 — 신제품 특가전" required />
+        </div>
+      </section>
+
+      <div class="cf-actions">
+        <button type="button" class="cf-secondary" id="cfCancelBtn">취소</button>
+        <button type="submit" class="cf-primary" id="cfSubmitBtn">등록하기</button>
+      </div>
+
+      <!-- 상품 카드 템플릿 -->
+      <template id="cfProdItemTpl">
+        <article class="cf-prod">
+          <img class="cf-prod-thumb" alt="" />
+          <div class="cf-prod-body">
+            <div class="cf-prod-title"></div>
+            <div class="cf-prod-meta">
+              <span class="price"></span>
+              <span class="sale"></span>
+            </div>
+            <div class="cf-prod-actions">
+              <button type="button" class="cf-btn-outlined" data-act="edit">수정</button>
+              <button type="button" class="cf-btn-danger" data-act="remove">삭제</button>
+            </div>
+          </div>
+        </article>
+      </template>
+    </form>
+  </main>
+
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+
+  <!-- 공통 모듈 -->
+  <script src="/alpa/frontend/js/modules/banner.js"></script>
+  <script src="/alpa/frontend/js/modules/header.js"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js?v=0818"></script>
+
+  <!-- 페이지 JS -->
+  <script src="/alpa/frontend/js/campaign-form.js?v=0818"></script>
+
+  <!-- 단순 모드 토글 -->
+  <script>
+  (function(){
+    const radios = document.querySelectorAll('input[name="cfType"]');
+    const secP = document.getElementById('cfSectionProduct');
+    const secR = document.getElementById('cfSectionRecruit');
+    function apply(){
+      const v = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
+      secP.hidden = v !== 'product';
+      secR.hidden = v !== 'recruit';
+    }
+    radios.forEach(r=>r.addEventListener('change', apply));
+    apply();
+  })();
+  </script>
+</body>
+</html>
