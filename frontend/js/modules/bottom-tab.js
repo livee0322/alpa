@@ -14,11 +14,11 @@
   };
 
   const items = [
-    { key:'home',       label:'홈',    href:'/alpa/index.html',         icon:icons.home },
-    { key:'recruits',   label:'공고',  href:'/alpa/recruitlist.html',  icon:icons.calendar },
+    { key:'home',       label:'홈',      href:'/alpa/index.html',         icon:icons.home },
+    { key:'campaigns',  label:'캠페인',  href:'/alpa/campaigns.html',     icon:icons.calendar },
     { key:'library',    label:'라이브러리', href:'/alpa/blank/blank.html?p=showhost', icon:icons.bookmark },
     { key:'influencer', label:'인플루언서', href:'/alpa/blank/blank.html?p=influencer', icon:icons.bookmark },
-    { key:'my',         label:myLabel, href: myHref,                   icon:icons.user }
+    { key:'my',         label:myLabel,   href: myHref,                   icon:icons.user }
   ];
 
   const pageKey = (document.body.dataset.page || '').toLowerCase();
@@ -30,6 +30,7 @@
     `).join('')}
   `;
 
+  // dataset.page 없는 경우 fallback: 현재 URL path 매칭
   if(!pageKey){
     const path = location.pathname + location.search;
     mount.querySelectorAll('a[data-key]').forEach(a=>{
