@@ -1,4 +1,4 @@
-/* =========================
+/* ==/* =========================
    GLOBAL TOKENS
 ========================= */
 :root{
@@ -212,4 +212,64 @@ body[data-page="login"] #top-tab-container{ display:none !important; }
 body[data-page="login"] .lv-main,
 body[data-page="login"] .page{
   margin-top: calc(var(--banner-h) + 8px) !important;
+}
+
+/* =========================
+   OVERRIDES
+   (로고 크기 ↑, 상단탭 네이버 스타일)
+========================= */
+
+/* 1) 헤더 로고 크기 ↑ */
+#header-container img{
+  height: 34px;              /* 기존 28px → 34px */
+}
+@media (min-width: 480px){
+  #header-container img{ height: 38px; }
+}
+
+/* 2) 상단 탭 컨테이너 배경/마스크 제거 */
+#top-tab-container{
+  background: transparent;   /* 기존 #fff → 투명 */
+  mask-image: none;
+  -webkit-mask-image: none;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+/* 3) 탭 스타일 → 네이버형 */
+#top-tab-container a,
+#top-tab-container button{
+  height: auto;
+  padding: 0 6px;
+  line-height: 36px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 800;
+  box-shadow: none;
+  position: relative;
+  transition: color .15s ease;
+}
+#top-tab-container a:hover{ color: var(--text); }
+#top-tab-container a:focus-visible{
+  outline: 2px solid rgba(108,99,255,.35);
+  outline-offset: 2px;
+}
+#top-tab-container .active{
+  color: var(--pri);
+}
+#top-tab-container .active::after{
+  content:"";
+  position:absolute;
+  left: 6px; right: 6px; bottom: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--pri);
+  transition: transform .2s ease;
+}
+#top-tab-container > ul{ gap: 14px; padding: 6px 12px; }
+
+@media (prefers-reduced-motion: reduce){
+  #top-tab-container .active::after{ transition: none; }
+  #top-tab-container a{ transition: none; }
 }
