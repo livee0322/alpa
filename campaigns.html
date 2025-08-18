@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>캠페인 관리 - ALPA</title>
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0815" />
+  <link rel="stylesheet" href="/alpa/frontend/css/campaign-list.css?v=0818" />
+</head>
+<body data-page="campaigns">
+  <div id="banner-container" class="lv-banner"></div>
+  <header id="header-container" class="lv-header"></header>
+  <nav id="top-tab-container" class="lv-top"></nav>
+
+  <main class="cl-wrap">
+    <div class="cl-head">
+      <h1>캠페인 관리</h1>
+      <a class="cl-new" href="/alpa/campaign-new.html">+ 새 캠페인</a>
+    </div>
+    <section id="clList" class="cl-list" aria-live="polite">
+      <div class="cl-skeleton"></div>
+      <div class="cl-skeleton"></div>
+      <div class="cl-skeleton"></div>
+    </section>
+    <p id="clEmpty" class="cl-empty" hidden>캠페인이 없습니다.</p>
+  </main>
+
+  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+
+  <script src="/alpa/frontend/js/modules/banner.js"></script>
+  <script src="/alpa/frontend/js/modules/header.js"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js?v=0818"></script>
+  <script src="/alpa/frontend/js/campaign-list.js?v=0818"></script>
+</body>
+</html>
