@@ -1,150 +1,172 @@
-/* ===== Livee Minimal v4 — ReviewPlace 스타일 ===== */
+/* =========================
+   TOKENS
+========================= */
 :root{
-  /* 컬러 */
-  --bg:#fafafa;
-  --surface:#fff;
-  --text:#121417;
-  --muted:#6b7280;
-  --line:#eceff1;
+  --bg:#fff; --text:#1f2937; --muted:#6b7280; --line:#eceff1;
 
-  --pri:#6C63FF;          /* 포인트 컬러(탭 인디케이터만) */
-  --chip:#f4f6ff;
+  /* Livee 퍼플 */
+  --pri:#6C63FF;
+  --pri-weak:#f6f7ff;
+  --ok:#10b981;
 
-  /* 라운드/그림자 */
-  --r-lg:16px; --r-md:12px; --r-sm:10px;
-  --s1:0 6px 18px rgba(18,20,23,.06);
+  --shadow-1:0 2px 8px rgba(0,0,0,.06);
+  --shadow-2:0 8px 24px rgba(0,0,0,.08);
 
-  /* 안전/스택 (헤더 없음) */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --banner-h:40px;     /* 필요 없으면 0으로 */
-  --header-h:0px;      /* ★ 헤더 제거 */
-  --top-h:52px;
+
+  /* 상단 스택: 배너 + (헤더 0) + 탭 */
+  --banner-h: 40px;
+  --header-h: 0px;     /* 헤더 제거 */
+  --top-h:    48px;
   --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h));
 }
 
-/* 리셋 */
-*{box-sizing:border-box; min-width:0}
-html,body{height:100%; overflow-x:hidden}
-img,video,canvas{display:block; max-width:100%; height:auto}
-a{text-decoration:none; color:inherit}
+/* =========================
+   RESET & BASE
+========================= */
+html,body{height:100%; max-width:100%; overflow-x:hidden;}
+*{box-sizing:border-box; min-width:0;}
+img,video,canvas{max-width:100%; height:auto; display:block;}
+a{color:inherit; text-decoration:none;}
+
 body{
-  margin:0; background:var(--bg); color:var(--text);
-  font-family:Pretendard, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', sans-serif;
-  letter-spacing:-0.01em; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"SUIT Variable", SUIT, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  font-variation-settings:"wght" 430;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
 
-/* 배너(옵션) */
+/* =========================
+   STICKY STACK
+========================= */
+/* 배너 */
 #banner-container{
   position:sticky; top:var(--safe-top); z-index:1100;
-  background:#6C63FF; color:#fff; min-height:var(--banner-h);
+  background:var(--pri); color:#fff; min-height:var(--banner-h);
 }
-#banner-container .lv-banner-in{padding:12px 16px; font-weight:800; font-size:14px}
+#banner-container .lv-banner-in{
+  padding:10px 16px; font-variation-settings:"wght" 650; font-size:14px;
+}
 
-/* ★ 헤더 숨김 (HTML은 남겨도 됨) */
-#header-container{ display:none !important; height:0 !important; }
-
-/* 상단 탭 — 텍스트형, 보라 인디케이터, 배경 투명감X */
+/* 상단 탭 */
 #top-tab-container{
   position:sticky;
   top:calc(var(--safe-top) + var(--banner-h));
   z-index:990;
-  background:var(--surface);
-  border-bottom:1px solid var(--line);
-  height:var(--top-h);
+  background:#fff; border-bottom:1px solid #f1f3f5; height:var(--top-h);
 }
 #top-tab-container > ul{
-  display:flex; align-items:center; gap:22px;
-  padding:0 16px; margin:0; list-style:none;
-  overflow-x:auto; -ms-overflow-style:none; scrollbar-width:none;
+  display:flex; gap:8px; padding:6px 12px; margin:0; list-style:none;
+  overflow-x:auto; overflow-y:hidden;
+  -ms-overflow-style:none; scrollbar-width:none;
 }
-#top-tab-container > ul::-webkit-scrollbar{display:none}
+#top-tab-container > ul::-webkit-scrollbar{display:none;}
+
 #top-tab-container a{
-  position:relative; display:inline-flex; align-items:center;
-  height:var(--top-h); padding:0 2px;
-  font-weight:800; font-size:17px; color:#7a7f8b; /* 연한 회색 톤 */
-  transition:color .15s ease;
+  position:relative;
+  display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 12px; border-radius:999px;
+  font-size:15.5px; letter-spacing:-0.01em;
+  font-variation-settings:"wght" 650; color:#374151;
 }
-#top-tab-container a:hover{color:#4b4f5a}
-#top-tab-container a.active{color:#2c2f36}
+#top-tab-container a.active{
+  color:var(--pri);
+}
 #top-tab-container a.active::after{
-  content:""; position:absolute; left:0; right:0; bottom:-1px; height:3px;
-  border-radius:3px 3px 0 0; background:var(--pri);
+  content:""; position:absolute; left:10px; right:10px; bottom:-8px;
+  height:3px; border-radius:3px; background:var(--pri);
 }
 
-/* 메인 래퍼 (상단 여백 최소, RP 톤) */
+/* =========================
+   MAIN
+========================= */
 .lv-main,.page{
-  width:100%; max-width:760px; margin:0 auto;
-  padding:18px 16px calc(94px + var(--safe-bottom));
-  margin-top:calc(var(--stack-h) + 2px);  /* 요청: 2px */
+  width:100%; max-width:720px; margin:0 auto;
+  padding:16px 14px calc(92px + var(--safe-bottom));
+  /* 상단 스택 아래로 2px만 띄우기 (요청) */
+  margin-top: calc(var(--stack-h) + 2px);
 }
 
-/* 섹션 타이틀/부제 — 큼직, 담백 */
-.lv-section{margin-top:26px}
-.lv-section-head{display:flex; align-items:flex-end; gap:.6em; margin:6px 0 14px}
-.lv-section-head h2{margin:0; font-size:24px; font-weight:900; letter-spacing:-.02em}
+/* 섹션 */
+.lv-section{margin-top:18px}
+.lv-section-head{
+  display:flex; align-items:center; gap:.6em; margin:0 0 10px;
+}
+.lv-section-head h2{
+  margin:0; font-size:22px; letter-spacing:-0.02em;
+  font-variation-settings:"wght" 800;
+}
 
-/* “더보기” 버튼 — 배경색 제거(담백한 외곽선) */
+/* 더보기: 칩 배경 제거 → 텍스트 링크 */
 .lv-more{
-  margin-left:auto; padding:8px 14px; font-weight:800; font-size:13px;
-  border-radius:999px; border:1px solid #e3e6ec; background:transparent; color:#5a6070;
+  margin-left:auto;
+  padding:6px 8px;
+  font-size:14.5px;
+  font-variation-settings:"wght" 650;
+  color:#6b7280;
+  border:0; background:transparent;
 }
-.lv-more:active{transform:translateY(1px)}
+.lv-more:hover{ color:#374151; text-decoration:underline; }
 
-/* 칩/태그 (필터) — 필요 시 사용, 기본은 연한 회색 */
-.chips{display:flex; gap:8px; flex-wrap:wrap}
-.chip{
-  display:inline-flex; align-items:center; height:36px; padding:0 14px;
-  background:#f6f7fb; color:#3b4050; border:1px solid #e6e9f2; border-radius:999px;
-  font-weight:800; font-size:14px;
+/* 카드/리스트 */
+.lv-hscroll{
+  display:flex; gap:12px; overflow-x:auto;
+  padding:4px 2px 10px; scroll-snap-type:x mandatory;
 }
-.chip.is-active{border-color:#cfd5e4; background:#f0f2f8}
+.lv-hscroll > *{flex:0 0 auto; min-width:0}
+.lv-hscroll::-webkit-scrollbar{height:6px}
+.lv-hscroll::-webkit-scrollbar-thumb{background:#e5e7eb; border-radius:999px}
 
-/* 카드(2열) */
-.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-@media (max-width:420px){ .grid{grid-template-columns:1fr} }
-
-.card{
-  background:var(--surface); border:1px solid #eef1f5; border-radius:var(--r-lg);
-  box-shadow:var(--s1); overflow:hidden; transition:transform .14s ease, box-shadow .14s ease;
+.lv-card{
+  min-width:176px; background:#fff; border-radius:16px;
+  box-shadow:var(--shadow-1); padding:10px; border:1px solid #f3f4f6;
+  transition:transform .18s ease, box-shadow .18s ease; scroll-snap-align:start;
 }
-.card:hover{transform:translateY(-2px)}
-.card-thumb{width:100%; aspect-ratio:4/3; object-fit:cover; background:#eff2f6}
-.card-body{padding:14px}
-.card-title{font-weight:900; font-size:17px; line-height:1.3; margin:4px 0 6px}
-.card-meta{color:var(--muted); font-size:13px}
+.lv-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-2)}
+.lv-thumb{width:100%; height:112px; border-radius:12px; background:#eee; object-fit:cover}
+.lv-title{margin:8px 2px 0; font-variation-settings:"wght" 700; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lv-meta{margin:4px 2px 0; color:var(--muted); font-size:.86rem}
 
 /* 일정 리스트 */
-.lv-schedule{display:flex; flex-direction:column; gap:12px}
+.lv-schedule{display:flex; flex-direction:column; gap:10px}
 .lv-s-item{
-  display:flex; gap:12px; align-items:center; background:var(--surface);
-  border:1px solid #eef0f4; border-radius:14px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+  background:#fff; border:1px solid #f1f3f5;
+  border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-1)
 }
-.lv-s-thumb{width:52px; height:52px; border-radius:12px; object-fit:cover; background:#edf0f5}
-.lv-s-title{font-weight:800; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.lv-s-meta{font-size:13px; color:var(--muted); margin-top:2px}
+.lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
+.lv-s-title{font-variation-settings:"wght" 700; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lv-s-meta{font-size:.86rem; color:var(--muted); margin-top:2px}
 
 /* 빈 상태 */
 .lv-empty{
-  padding:16px 14px; border:1px dashed #e5e7eb; border-radius:12px;
-  color:#9aa3af; font-weight:700; background:rgba(255,255,255,.65)
+  padding:14px 12px; border:1px dashed #e5e7eb; border-radius:12px;
+  color:#9aa3af; font-variation-settings:"wght" 700;
 }
 
-/* 바텀 탭 (톤 다운) */
+/* =========================
+   BOTTOM TABS
+========================= */
 .lv-bottom{
-  position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex;
-  background:var(--surface); border-top:1px solid var(--line);
-  box-shadow:0 -8px 22px rgba(17,24,39,.06)
+  position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; background:#fff;
+  border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(0,0,0,.06)
 }
 .lv-bottom a{
   flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-  padding:10px 0 12px; color:#a0a7b5; font-weight:800; font-size:.82rem
+  padding:8px 0 10px; color:#9aa3af; font-size:.78rem; font-variation-settings:"wght" 700;
 }
 .lv-bottom .ico{width:26px; height:26px}
-.lv-bottom .ico svg{width:100%; height:100%; stroke:#a0a7b5; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
-.lv-bottom a.active{color:#2f3340}
-.lv-bottom a.active .ico svg{stroke:#6C63FF; transform:translateY(-1px)}
+.lv-bottom .ico svg{width:100%; height:100%; stroke:#9aa3af; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .15s ease, transform .15s ease}
+.lv-bottom a:focus-visible{outline:2px solid rgba(108,99,255,.35); outline-offset:2px}
+.lv-bottom a.active{color:var(--text)}
+.lv-bottom a.active .ico svg{stroke:var(--pri); transform:translateY(-1px)}
 
 /* 로그인 페이지 예외 */
-body[data-page="login"] #top-tab-container{display:none!important}
-body[data-page="login"] .lv-main,.page{margin-top:calc(var(--banner-h) + 8px)!important}
+body[data-page="login"] #top-tab-container{display:none !important}
+body[data-page="login"] .lv-main,
+body[data-page="login"] .page{margin-top: calc(var(--banner-h) + 8px) !important}
