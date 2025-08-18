@@ -3,66 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>로그인 - ALPA</title>
+  <title>로그인 - Livee</title>
   <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0811s2" />
-  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0816" />
+  <link rel="stylesheet" href="/alpa/frontend/css/login.css?v=0817-full" />
 </head>
 <body data-page="login">
-  <!-- 항상 배너 사용 -->
+  <!-- 배너 -->
   <div id="banner-container" class="lv-banner"></div>
 
-  <!-- 헤더/탭 컨테이너는 그대로 두되, main.css에서 login 페이지에만 숨김 -->
-  <header id="header-container" class="lv-header"></header>
-  <nav id="top-tab-container" class="lv-top"></nav>
+  <!-- 헤더/탑탭 제거 (로그인에서는 숨김 처리됨) -->
 
   <main class="lg-wrap" role="main">
+    <!-- 로고 -->
     <div class="lg-brand">
-      <img src="/alpa/frontend/img/logo.svg" alt="Livee" />
+      <img src="/alpa/liveelogo.png" alt="Livee" />
     </div>
 
-    <div class="lg-card">
-      <h1 class="lg-title">로그인</h1>
+    <div class="role-switch" role="tablist" aria-label="역할 선택">
+      <button type="button" class="su-pill" data-role="brand" aria-pressed="true">브랜드</button>
+      <button type="button" class="su-pill" data-role="showhost" aria-pressed="false">쇼호스트</button>
+    </div>
 
-      <div class="role-switch" role="tablist" aria-label="역할 선택">
-        <button type="button" class="su-pill" data-role="brand" aria-pressed="true">브랜드</button>
-        <button type="button" class="su-pill" data-role="showhost" aria-pressed="false">쇼호스트</button>
-      </div>
-
-      <form id="loginForm" class="lg-form" novalidate>
+    <form id="loginForm" class="lg-form" novalidate>
+      <div>
         <label class="lg-label" for="email">Email</label>
         <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="username" inputmode="email" />
+      </div>
 
+      <div>
         <label class="lg-label" for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
 
-        <button id="loginBtn" type="submit" class="lg-submit">로그인</button>
-        <p id="loginError" class="lg-error" hidden></p>
-      </form>
+      <button id="loginBtn" type="submit" class="lg-submit">로그인</button>
+      <p id="loginError" class="lg-error" hidden></p>
+    </form>
 
-      <p class="lg-links">아직 계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
-    </div>
+    <p class="lg-links">아직 계정이 없으신가요? <a href="/alpa/signup.html">회원가입</a></p>
   </main>
 
-  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+  <!-- 하단탭 제거 (로그인에서는 불필요) -->
 
   <!-- 공통 모듈 -->
-  <script defer src="/alpa/frontend/js/modules/banner.js"></script>
-  <script defer src="/alpa/frontend/js/modules/header.js"></script>
-  <script defer src="/alpa/frontend/js/modules/top-tab.js"></script>
-  <script defer src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script defer src="/alpa/frontend/js/config.js?v=0811c"></script>
   <script defer src="/alpa/frontend/js/login.js?v=0811c"></script>
 
   <script>
     // 역할 토글 저장
     (function(){
-      const pills = document.querySelectorAll('.su-pill');
-      let role = localStorage.getItem('lastRole') || 'brand';
-      const apply = r => pills.forEach(p=>{
-        const on = p.dataset.role===r; p.classList.toggle('active',on); p.setAttribute('aria-pressed',String(on));
+      const pills=document.querySelectorAll('.su-pill');
+      let role=localStorage.getItem('lastRole')||'brand';
+      const apply=r=>pills.forEach(p=>{
+        const on=p.dataset.role===r;
+        p.classList.toggle('active',on);
+        p.setAttribute('aria-pressed',String(on));
       });
       apply(role);
-      pills.forEach(p=>p.addEventListener('click',()=>{ role=p.dataset.role; localStorage.setItem('lastRole',role); apply(role); }));
+      pills.forEach(p=>p.addEventListener('click',()=>{
+        role=p.dataset.role;
+        localStorage.setItem('lastRole',role);
+        apply(role);
+      }));
     })();
   </script>
 </body>
