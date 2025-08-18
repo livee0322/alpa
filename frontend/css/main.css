@@ -1,40 +1,40 @@
-/* ===== Design System v2 ===== */
+/* ===== Livee UI v3 (ReviewPlace 무드) ===== */
 :root{
-  /* colors */
-  --bg:#fafafc;               /* 페이지 배경 */
-  --surface:#ffffff;          /* 카드/탭 */
-  --text:#111827;
-  --muted:#6b7280;
-  --line:#e9ecf1;
+  /* 컬러 팔레트 */
+  --bg:#fafafa;            /* 페이지 배경(미세 그레이) */
+  --surface:#ffffff;       /* 카드/내비 표면 */
+  --text:#121417;          /* 진한 본문 */
+  --muted:#677085;         /* 보조 텍스트 */
+  --line:#edf0f3;          /* 경계선 */
 
-  --pri:#6C63FF;              /* 브랜드 보라 */
+  --pri:#6C63FF;           /* 브랜드 보라 */
   --pri-600:#5a53ef;
   --pri-700:#4f46e5;
-  --pri-weak:#f3f2ff;
+  --chip:#f4f6ff;          /* 칩/태그 배경 */
 
   --ok:#10b981;
   --warn:#f59e0b;
   --danger:#ef4444;
 
-  /* radii & shadows */
+  /* 라운드/그림자/그리드 */
   --r-lg:16px; --r-md:12px; --r-sm:10px;
-  --shadow-1:0 6px 20px rgba(17, 24, 39, .06);
-  --shadow-2:0 14px 34px rgba(17, 24, 39, .10);
+  --s1:0 6px 18px rgba(18,20,23,.06);
+  --s2:0 16px 36px rgba(18,20,23,.10);
 
-  /* safe areas */
+  /* 안전영역 + 스택 높이 */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-
-  /* sticky stack */
-  --banner-h:40px; --header-h:64px; --top-h:50px;
+  --banner-h:40px;  /* 필요 없으면 0으로 */
+  --header-h:68px;  /* 헤더 조금 큼직하게 */
+  --top-h:52px;     /* 상단탭 높이 */
   --stack-h: calc(var(--banner-h) + var(--header-h) + var(--top-h));
 }
 
-/* Reset */
+/* 리셋 */
 *{box-sizing:border-box; min-width:0}
 html,body{height:100%; overflow-x:hidden}
 img,video,canvas{display:block; max-width:100%; height:auto}
-a{color:inherit; text-decoration:none}
+a{text-decoration:none; color:inherit}
 body{
   margin:0; background:var(--bg); color:var(--text);
   font-family:Pretendard, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', sans-serif;
@@ -42,28 +42,28 @@ body{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
 
-/* Banner */
+/* 배너(옵션) */
 #banner-container{
   position:sticky; top:var(--safe-top); z-index:1100;
   background:linear-gradient(90deg, var(--pri) 0%, var(--pri-700) 100%);
   color:#fff; min-height:var(--banner-h);
 }
-#banner-container .lv-banner-in{padding:12px 16px; font-size:14px; font-weight:700}
+#banner-container .lv-banner-in{padding:12px 16px; font-size:14px; font-weight:800}
 
-/* Header */
+/* 헤더 */
 #header-container{
   position:sticky; top:calc(var(--safe-top) + var(--banner-h)); z-index:1000;
   height:var(--header-h); background:var(--surface);
   display:flex; align-items:center; justify-content:space-between; gap:12px;
   padding:0 16px; border-bottom:1px solid var(--line);
 }
-#header-container img{height:40px}
-@media (min-width:480px){ #header-container img{height:44px} }
+#header-container .logo img{height:44px}
+@media (min-width:480px){ #header-container .logo img{height:48px} }
 #header-container a,#header-container button{
-  background:none; border:0; padding:8px 10px; font-weight:800; color:#4b5563;
+  border:0; background:none; padding:8px 10px; font-weight:800; color:#3d4251;
 }
 
-/* Top Tabs — text style */
+/* 상단 탭 (네이버형 텍스트 탭) */
 #top-tab-container{
   position:sticky; top:calc(var(--safe-top) + var(--banner-h) + var(--header-h));
   z-index:990; background:var(--surface); border-bottom:1px solid var(--line);
@@ -77,7 +77,7 @@ body{
 #top-tab-container a{
   position:relative; display:inline-flex; align-items:center;
   height:var(--top-h); padding:0 2px;
-  font-weight:800; font-size:16px; color:#6b7280; transition:color .15s ease;
+  font-weight:800; font-size:17px; color:#7a8090; transition:color .15s ease;
 }
 #top-tab-container a:hover{color:var(--pri-600)}
 #top-tab-container a.active{color:var(--pri)}
@@ -86,52 +86,66 @@ body{
   border-radius:3px 3px 0 0; background:var(--pri);
 }
 
-/* Main container */
+/* 메인 래퍼 */
 .lv-main,.page{
   width:100%; max-width:760px; margin:0 auto;
-  padding:20px 16px calc(92px + var(--safe-bottom));
-  margin-top:calc(var(--stack-h) + 2px);
+  padding:20px 16px calc(94px + var(--safe-bottom));
+  margin-top:calc(var(--stack-h) + 2px); /* 상단 여백 최소화 */
 }
 
-/* Section */
-.lv-section{margin-top:24px}
-.lv-section-head{display:flex; align-items:flex-end; gap:.6em; margin:4px 0 12px}
-.lv-section-head h2{margin:0; font-size:22px; font-weight:900; letter-spacing:-.015em}
+/* 섹션 타이틀 */
+.lv-section{margin-top:26px}
+.lv-section-head{display:flex; align-items:flex-end; gap:.6em; margin:6px 0 14px}
+.lv-section-head h2{margin:0; font-size:24px; font-weight:900; letter-spacing:-.02em}
 .lv-more{
   margin-left:auto; padding:8px 14px; font-weight:800; font-size:13px;
   border-radius:999px; border:1px solid #e2e5f7; color:var(--pri); background:#f6f5ff;
 }
 
-/* Cards */
-.lv-hscroll{display:flex; gap:14px; overflow-x:auto; padding:6px 2px 12px; scroll-snap-type:x mandatory}
-.lv-hscroll > *{flex:0 0 auto}
-.lv-card{
-  min-width:200px; background:var(--surface); border-radius:var(--r-lg);
-  border:1px solid #eef0f4; padding:14px; box-shadow:var(--shadow-1);
-  transition:transform .14s ease, box-shadow .14s ease; scroll-snap-align:start;
+/* 칩/태그 (필터) */
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  display:inline-flex; align-items:center; height:36px; padding:0 14px;
+  background:var(--chip); color:#354056; border:1px solid #e7ebff; border-radius:999px;
+  font-weight:800; font-size:14px;
 }
-.lv-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-2)}
-.lv-thumb{width:100%; height:128px; border-radius:12px; object-fit:cover; background:#edf0f5}
-.lv-title{margin:10px 2px 0; font-weight:800; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.lv-meta{margin:4px 2px 0; color:var(--muted); font-size:13px}
+.chip.is-active{background:var(--pri); color:#fff; border-color:var(--pri)}
 
-/* Schedule list */
+/* 카드 그리드(2열, 모바일 우선) */
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media (max-width:420px){ .grid{grid-template-columns:1fr} }
+
+.card{
+  background:var(--surface); border:1px solid #eef1f5; border-radius:var(--r-lg);
+  box-shadow:var(--s1); overflow:hidden; transition:transform .14s ease, box-shadow .14s ease;
+}
+.card:hover{transform:translateY(-2px); box-shadow:var(--s2)}
+.card-thumb{width:100%; aspect-ratio:4/3; object-fit:cover; background:#eff2f6}
+.card-body{padding:14px}
+.card-title{font-weight:900; font-size:17px; line-height:1.3; margin:4px 0 6px}
+.card-meta{color:var(--muted); font-size:13px}
+
+/* 가로 스크롤 카드(홈 상단) */
+.lv-hscroll{display:flex; gap:14px; overflow-x:auto; padding:6px 2px 12px; scroll-snap-type:x mandatory}
+.lv-hscroll > *{flex:0 0 auto; min-width:220px; scroll-snap-align:start}
+
+/* 일정 리스트 */
 .lv-schedule{display:flex; flex-direction:column; gap:12px}
 .lv-s-item{
   display:flex; gap:12px; align-items:center; background:var(--surface);
-  border:1px solid #eef0f4; border-radius:14px; padding:12px 14px; box-shadow:var(--shadow-1)
+  border:1px solid #eef0f4; border-radius:14px; padding:12px 14px; box-shadow:var(--s1)
 }
 .lv-s-thumb{width:52px; height:52px; border-radius:12px; object-fit:cover; background:#edf0f5}
 .lv-s-title{font-weight:800; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .lv-s-meta{font-size:13px; color:var(--muted); margin-top:2px}
 
-/* Empty */
+/* 빈 상태 */
 .lv-empty{
   padding:16px 14px; border:1px dashed #e5e7eb; border-radius:12px;
-  color:#9aa3af; font-weight:700; background:rgba(255,255,255,.6)
+  color:#9aa3af; font-weight:700; background:rgba(255,255,255,.65)
 }
 
-/* Buttons */
+/* 버튼 */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px;
   padding:12px 16px; border-radius:12px; font-weight:800; border:1px solid transparent; cursor:pointer}
 .btn-primary{background:var(--pri); color:#fff}
@@ -139,7 +153,7 @@ body{
 .btn-outline{background:#fff; border-color:#e6e8ee; color:#111827}
 .btn-outline:hover{border-color:#cfd5e4}
 
-/* Bottom tabs */
+/* 바텀 탭 */
 .lv-bottom{
   position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex;
   background:var(--surface); border-top:1px solid var(--line); box-shadow:0 -8px 22px rgba(17,24,39,.06)
@@ -153,7 +167,7 @@ body{
 .lv-bottom a.active{color:var(--text)}
 .lv-bottom a.active .ico svg{stroke:var(--pri); transform:translateY(-1px)}
 
-/* Login page exceptions */
+/* 로그인 페이지 예외 */
 body[data-page="login"] #header-container,
 body[data-page="login"] #top-tab-container{display:none!important}
 body[data-page="login"] .lv-main,
