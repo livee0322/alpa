@@ -1,15 +1,97 @@
-.cl-wrap{max-width:840px;margin:24px auto 90px;padding:0 16px}
-.cl-head{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
-.cl-head h1{margin:0;font-size:22px;font-weight:800}
-.cl-new{margin-left:auto;background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-weight:700}
-.cl-list{display:grid;gap:12px}
-.cl-card{display:flex;gap:12px;border:1px solid #eceff1;border-radius:14px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.03);padding:12px}
-.cl-thumb{width:112px;height:70px;object-fit:cover;border-radius:10px;background:#eee}
-.cl-body{flex:1;min-width:0}
-.cl-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cl-meta{color:#6b7280;font-size:.9rem;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
-.cl-act{display:flex;gap:8px;margin-left:auto}
-.cl-act a,.cl-act button{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:8px 10px;font-weight:700}
-.cl-empty{margin-top:20px;color:#9aa3af}
-.cl-skeleton{height:88px;border-radius:14px;background:linear-gradient(90deg,#f3f4f6,#eceff1,#f3f4f6);animation:sh 1.1s infinite}
-@keyframes sh{0%{background-position:-200px 0}100%{background-position:200px 0}}
+/* /alpa/frontend/css/campaign-list.css */
+/* 페이지 전용 톤 */
+body[data-page="campaigns"]{
+  font-family:"SUIT Variable", SUIT, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  background:#fff;
+}
+
+/* 이 페이지는 헤더 숨김 (상단탭만) */
+body[data-page="campaigns"] #header-container{ display:none !important; }
+
+/* 래퍼: 상단 스택 만큼 마진, 하단탭 피해서 패딩 */
+.cl-wrap{
+  width:100%;
+  max-width:860px;
+  margin: calc(var(--banner-h) + var(--top-h) + 8px) auto 0;
+  padding: 0 14px calc(100px + var(--safe-bottom));
+}
+
+/* 헤더 영역 */
+.cl-head{
+  display:flex; align-items:center; gap:12px;
+  margin: 2px 0 12px;
+}
+.cl-head .cl-title{
+  margin:0; font-size:20px; letter-spacing:-.02em; font-variation-settings:"wght" 780;
+}
+.cl-head .cl-new{
+  margin-left:auto;
+  padding:6px 10px; border-radius:10px;
+  background:var(--pri); color:#fff; font-variation-settings:"wght" 800;
+}
+
+/* 리스트: grid */
+.cl-list{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+@media (max-width:680px){ .cl-list{ grid-template-columns: 1fr; } }
+
+/* 카드 */
+.cl-card{
+  display:grid;
+  grid-template-columns: 148px 1fr auto;
+  gap:12px;
+  align-items:center;
+  background:#fff;
+  border:1px solid #eef0f3;
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.04);
+}
+.cl-thumb{
+  width:148px; height:84px; border-radius:10px;
+  object-fit:cover; background:#f3f4f6; border:1px solid #e5e7eb;
+}
+.cl-body{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+.cl-row1{ display:flex; align-items:center; gap:8px; }
+.cl-title{
+  font-variation-settings:"wght" 750; font-size:16px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* 유형 배지 */
+.cl-badge{
+  display:inline-flex; align-items:center; height:24px;
+  padding:0 10px; border-radius:999px; font-size:12px;
+  font-variation-settings:"wght" 800;
+}
+.cl-badge--product{ background:#eef2ff; color:#3b49df; }
+.cl-badge--recruit{ background:#ecfdf5; color:#0f766e; }
+
+/* 액션버튼 */
+.cl-act{ display:flex; gap:8px; }
+.cl-btn{
+  height:36px; padding:0 12px; border-radius:10px;
+  background:#fff; border:1px solid #d9dde5; color:#374151;
+  font-variation-settings:"wght" 780;
+}
+.cl-btn--danger{
+  background:#fee2e2; border-color:#fecaca; color:#b91c1c;
+}
+
+/* 빈 상태 / 에러 */
+.cl-empty{
+  margin:18px 0; padding:12px 14px; text-align:center;
+  color:#6b7280; border:1px dashed #e5e7eb; border-radius:12px;
+}
+.cl-error{ color:#b91c1c; padding:10px 0; }
+
+/* 스켈레톤 */
+.cl-skeleton{
+  height:106px; border-radius:14px;
+  background:linear-gradient(90deg,#f3f4f6 0%,#eef0f3 50%,#f3f4f6 100%);
+  animation: sk 1.2s infinite linear; opacity:.8;
+}
+@keyframes sk{ 0%{background-position:-200px 0} 100%{background-position:200px 0} }
