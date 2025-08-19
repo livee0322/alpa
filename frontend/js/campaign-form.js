@@ -1,11 +1,11 @@
 /* /alpa/frontend/js/campaign-form.js */
 (function () {
-  const { API_BASE, thumb } = window.LIVEE_CONFIG || {};
+  const { API_BASE } = window.LIVEE_CONFIG || {};
   const notice = document.getElementById('cfNotice');
 
   /* ---------- helpers ---------- */
   const val = (el) => (el && typeof el.value === 'string' ? el.value : '');
-  const safeVal = (el) => String(val(el) || '').trim();              // undefined 보호
+  const safeVal = (el) => String(val(el) || '').trim();
   const num = (el) => (safeVal(el) ? Number(safeVal(el)) : undefined);
   const txtOrUndef = (el) => (safeVal(el) ? safeVal(el) : undefined);
 
@@ -38,15 +38,11 @@
     });
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
-      ['liveeToken', 'liveeName', 'liveeRole', 'liveeTokenExp'].forEach(k =>
-        localStorage.removeItem(k)
-      );
+      ['liveeToken', 'liveeName', 'liveeRole', 'liveeTokenExp'].forEach(k => localStorage.removeItem(k));
       location.href = '/alpa/login.html';
       throw new Error('UNAUTH');
     }
-    if (!res.ok || data.ok === false) {
-      throw new Error(data.message || `HTTP_${res.status}`);
-    }
+    if (!res.ok || data.ok === false) throw new Error(data.message || `HTTP_${res.status}`);
     return data;
   }
 
@@ -58,7 +54,7 @@
     // thumb
     file: document.getElementById('cfThumb'),
     img: document.getElementById('cfThumbPreview'),
-    hiddenUrl: document.getElementById('cfImageUrl'),
+    hiddenUrl: document.getElementById('cfImageUrl'), // hidden input (coverImageUrl 저장)
     prog: document.getElementById('cfUploadProg'),
     // common
     title: document.getElementById('cfTitle'),
@@ -84,9 +80,7 @@
     descRecruit: document.getElementById('cfDescRecruit'),
   };
 
-  const state = {
-    products: [], // {url,title,price,thumbnail,salePrice?}
-  };
+  const state = { products: [] }; // {url,title,price,thumbnail,salePrice?}
 
   /* ---------- Cloudinary Upload ---------- */
   async function getUploadSignature() {
@@ -101,9 +95,7 @@
     try {
       const [head, tail] = originalUrl.split('/upload/');
       return `${head}/upload/${transform}/${tail}`;
-    } catch {
-      return originalUrl;
-    }
+    } catch { return originalUrl; }
   }
   async function uploadToCloudinary(file) {
     const { cloudName, apiKey, timestamp, signature, folder } = await getUploadSignature();
@@ -116,10 +108,7 @@
 
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
     const prog = ui.prog;
-    if (prog) {
-      prog.hidden = false;
-      prog.value = 0;
-    }
+    if (prog) { prog.hidden = false; prog.value = 0; }
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -135,9 +124,7 @@
               if (!json.secure_url) return reject(new Error('URL 없음'));
               resolve(json.secure_url);
             } else reject(new Error(json.error?.message || `Cloudinary HTTP_${xhr.status}`));
-          } catch {
-            reject(new Error('응답 파싱 실패'));
-          }
+          } catch { reject(new Error('응답 파싱 실패')); }
         }
       };
       xhr.onerror = () => reject(new Error('네트워크 오류'));
@@ -150,24 +137,16 @@
     ui.file.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
-      if (!/^image\//.test(f.type)) {
-        showNotice('이미지 파일만 업로드 가능합니다.');
-        ui.file.value = '';
-        return;
-      }
-      if (f.size > 8 * 1024 * 1024) {
-        showNotice('파일 용량은 8MB 이하');
-        ui.file.value = '';
-        return;
-      }
+      if (!/^image\//.test(f.type)) { showNotice('이미지 파일만 업로드 가능합니다.'); ui.file.value=''; return; }
+      if (f.size > 8 * 1024 * 1024) { showNotice('파일 용량은 8MB 이하'); ui.file.value=''; return; }
       try {
         showNotice('이미지 업로드 중...', 'ok');
         const url = await uploadToCloudinary(f);
-        ui.hiddenUrl.value = url;
+        ui.hiddenUrl.value = url; // coverImageUrl 로 전송할 값
         ui.img.src = toTransformedUrl(
           url,
           (window.LIVEE_CONFIG?.thumb && window.LIVEE_CONFIG.thumb.card169) ||
-            'c_fill,g_auto,w_640,h_360,f_auto,q_auto'
+          'c_fill,g_auto,w_640,h_360,f_auto,q_auto'
         );
         showNotice('이미지 업로드 완료', 'ok');
       } catch (err) {
@@ -249,7 +228,7 @@
 
         const type = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
 
-        // ★ 유형 별 제목 우선순위(모집: cfTitleRecruit → cfTitle / 상품: cfTitle → cfTitleRecruit)
+        // 제목 우선순위: recruit는 cfTitleRecruit → cfTitle, product는 cfTitle → cfTitleRecruit
         const computedTitle =
           type === 'recruit'
             ? (safeVal(ui.titleRecruit) || safeVal(ui.title))
@@ -257,7 +236,7 @@
 
         const common = {
           title: computedTitle,
-          imageUrl: txtOrUndef(ui.hiddenUrl),
+          coverImageUrl: txtOrUndef(ui.hiddenUrl),   // ✅ 서버 스키마와 일치
         };
         if (!common.title) throw new Error('캠페인 제목은 필수입니다.');
 
@@ -278,14 +257,14 @@
             },
             brand: txtOrUndef(ui.brand),
             category: txtOrUndef(ui.category),
-            descriptionHtml: txtOrUndef(ui.desc),
+            descriptionHTML: txtOrUndef(ui.desc),   // ✅ 서버에서 sanitize 대상
           };
         } else {
           payload = {
             ...common,
             type: 'recruit',
             recruit: {
-              title: computedTitle,                     // 제목 일관 반영
+              title: computedTitle,
               date: txtOrUndef(ui.date),
               time: txtOrUndef(ui.time),
               location: txtOrUndef(ui.location),
