@@ -8,7 +8,38 @@
   <!-- 공통 CSS -->
   <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0815" />
   <!-- 페이지 전용 CSS -->
-  <link rel="stylesheet" href="/alpa/frontend/css/campaign-form.css?v=0818" />
+  <link rel="stylesheet" href="/alpa/frontend/css/campaign-form.css?v=0819a" />
+  <style>
+    /* 요청사항 빠르게 반영하는 보강 스타일 */
+
+    /* 헤더 숨김(상단 탭만) */
+    body[data-page="campaign-form"] #header-container{ display:none !important; }
+
+    /* 하단 고정 액션바 */
+    .cf-actions{
+      position: sticky;
+      bottom: calc(64px + var(--safe-bottom)); /* 하단 탭 높이 피해서 */
+      display:flex; gap:10px; justify-content:flex-end;
+      padding:10px 0 14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.0), rgba(255,255,255,1) 38%);
+      z-index:5;
+    }
+    .cf-primary,.cf-secondary{ min-width:112px; height:48px; border-radius:12px; font-weight:800 }
+    .cf-primary{ background:var(--pri); color:#fff; border:0 }
+    .cf-secondary{ background:#eef0f5; color:#374151; border:0 }
+
+    /* 체크박스 한 줄 */
+    .cf-checkbox{ display:flex; align-items:center; gap:8px; }
+    .cf-checkbox input[type="checkbox"]{ width:18px; height:18px; }
+
+    /* 시간 2개 나란히 */
+    .cf-time-row{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width:480px){ .cf-time-row{ grid-template-columns:1fr 1fr; } }
+    .cf-duration{ margin-top:6px; color:#6b7280; font-weight:700; }
+
+    /* 페이지 상단 여백: 네이버식 2px */
+    .cf-wrap{ margin-top: calc(var(--banner-h) + var(--top-h) + 2px); }
+  </style>
 </head>
 <body data-page="campaign-form">
   <!-- 고정 스택 -->
@@ -16,8 +47,9 @@
   <header id="header-container" class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <main class="cf-wrap" aria-labelledby="cfTitle">
-    <h1 id="cfTitle" class="cf-title">캠페인 등록</h1>
+  <main class="cf-wrap" aria-labelledby="cfPageTitle">
+    <!-- ✅ ID 변경: cfTitle -> cfPageTitle -->
+    <h1 id="cfPageTitle" class="cf-title">캠페인 등록</h1>
     <p id="cfNotice" class="cf-notice" hidden></p>
 
     <form id="campaignForm" class="cf-form" autocomplete="off">
@@ -59,7 +91,7 @@
           <div class="cf-field">
             <label for="cfProdUrl">상품 URL</label>
             <input id="cfProdUrl" type="url" placeholder="네이버/쿠팡/지마켓 등 상품 URL" />
-            <small class="cf-help">URL 입력 후 ‘불러오기’를 누르면 썸네일/상품명/가격을 자동으로 가져옵니다.</small>
+            <small class="cf-help">URL 입력 후 ‘불러오기’를 누르면 메타(썸네일/상품명/가격)를 시도합니다. 실패 시 수동추가를 안내합니다.</small>
           </div>
           <div class="cf-field cf-field-button">
             <button type="button" id="cfProdFetchBtn" class="cf-btn-outlined">불러오기</button>
@@ -132,8 +164,12 @@
             <input id="cfDate" type="date" />
           </div>
           <div class="cf-field">
-            <label for="cfTime">촬영시간</label>
-            <input id="cfTime" type="time" />
+            <label>촬영시간</label>
+            <div class="cf-time-row">
+              <input id="cfTimeStart" type="time" aria-label="시작시간" />
+              <input id="cfTimeEnd" type="time" aria-label="종료시간" />
+            </div>
+            <div id="cfDuration" class="cf-duration">촬영시간: -</div>
           </div>
         </div>
 
@@ -204,12 +240,12 @@
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-  <script src="/alpa/frontend/js/config.js?v=0818"></script>
+  <script src="/alpa/frontend/js/config.js?v=0819a"></script>
 
   <!-- 페이지 JS -->
-  <script src="/alpa/frontend/js/campaign-form.js?v=0818"></script>
+  <script src="/alpa/frontend/js/campaign-form.js?v=0819a"></script>
 
-  <!-- 단순 모드 토글 -->
+  <!-- 유형 토글 -->
   <script>
   (function(){
     const radios = document.querySelectorAll('input[name="cfType"]');
