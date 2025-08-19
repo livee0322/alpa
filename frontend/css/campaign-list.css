@@ -1,47 +1,50 @@
 /* /alpa/frontend/css/campaign-list.css */
-/* 페이지 전용 톤 */
+
+/* 페이지 전용: SUIT 톤 */
 body[data-page="campaigns"]{
   font-family:"SUIT Variable", SUIT, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
   background:#fff;
 }
 
-/* 이 페이지는 헤더 숨김 (상단탭만) */
+/* 이 페이지는 헤더 숨김(상단 탭만 보임) */
 body[data-page="campaigns"] #header-container{ display:none !important; }
 
-/* 래퍼: 상단 스택 만큼 마진, 하단탭 피해서 패딩 */
+/* 래퍼: 상단 스택 만큼 띄우고 하단탭 피해서 패딩 */
 .cl-wrap{
   width:100%;
   max-width:860px;
-  margin: calc(var(--banner-h) + var(--top-h) + 8px) auto 0;
+  margin: calc(var(--banner-h) + var(--top-h) + 2px) auto 0; /* 네이버식 2px */
   padding: 0 14px calc(100px + var(--safe-bottom));
 }
 
-/* 헤더 영역 */
+/* 상단 행 */
 .cl-head{
   display:flex; align-items:center; gap:12px;
   margin: 2px 0 12px;
 }
-.cl-head .cl-title{
+.cl-head h1{
   margin:0; font-size:20px; letter-spacing:-.02em; font-variation-settings:"wght" 780;
 }
-.cl-head .cl-new{
+.cl-new{
   margin-left:auto;
-  padding:6px 10px; border-radius:10px;
+  padding:8px 12px; border-radius:12px;
   background:var(--pri); color:#fff; font-variation-settings:"wght" 800;
 }
 
-/* 리스트: grid */
+/* 리스트 그리드 */
 .cl-list{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:12px;
 }
-@media (max-width:680px){ .cl-list{ grid-template-columns: 1fr; } }
+@media (max-width:680px){
+  .cl-list{ grid-template-columns: 1fr; }
+}
 
 /* 카드 */
 .cl-card{
   display:grid;
-  grid-template-columns: 148px 1fr auto;
+  grid-template-columns: 148px 1fr auto; /* 썸네일 / 본문 / 액션 */
   gap:12px;
   align-items:center;
   background:#fff;
@@ -50,32 +53,40 @@ body[data-page="campaigns"] #header-container{ display:none !important; }
   padding:10px;
   box-shadow:0 6px 18px rgba(0,0,0,.04);
 }
+
+/* 썸네일 16:9 고정 */
 .cl-thumb{
-  width:148px; height:84px; border-radius:10px;
-  object-fit:cover; background:#f3f4f6; border:1px solid #e5e7eb;
+  width:148px; height:84px; /* 16:9 */
+  border-radius:10px;
+  object-fit:cover;
+  background:#f3f4f6; border:1px solid #e5e7eb;
+  display:block;
 }
+
+/* 본문 */
 .cl-body{ display:flex; flex-direction:column; gap:6px; min-width:0; }
-.cl-row1{ display:flex; align-items:center; gap:8px; }
+.cl-row1{ display:flex; align-items:center; gap:8px; min-width:0; }
 .cl-title{
   font-variation-settings:"wght" 750; font-size:16px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
 }
 
 /* 유형 배지 */
 .cl-badge{
-  display:inline-flex; align-items:center; height:24px;
+  display:inline-flex; align-items:center; justify-content:center;
+  height:24px; line-height:24px;
   padding:0 10px; border-radius:999px; font-size:12px;
-  font-variation-settings:"wght" 800;
+  font-variation-settings:"wght" 800; flex-shrink:0;
 }
 .cl-badge--product{ background:#eef2ff; color:#3b49df; }
 .cl-badge--recruit{ background:#ecfdf5; color:#0f766e; }
 
-/* 액션버튼 */
-.cl-act{ display:flex; gap:8px; }
+/* 액션 버튼 */
+.cl-act{ display:flex; gap:8px; align-items:center; }
 .cl-btn{
   height:36px; padding:0 12px; border-radius:10px;
   background:#fff; border:1px solid #d9dde5; color:#374151;
-  font-variation-settings:"wght" 780;
+  font-variation-settings:"wght" 780; cursor:pointer;
 }
 .cl-btn--danger{
   background:#fee2e2; border-color:#fecaca; color:#b91c1c;
@@ -83,10 +94,11 @@ body[data-page="campaigns"] #header-container{ display:none !important; }
 
 /* 빈 상태 / 에러 */
 .cl-empty{
-  margin:18px 0; padding:12px 14px; text-align:center;
+  grid-column:1/-1;
+  margin:6px 0 0; padding:12px 14px; text-align:center;
   color:#6b7280; border:1px dashed #e5e7eb; border-radius:12px;
 }
-.cl-error{ color:#b91c1c; padding:10px 0; }
+.cl-error{ grid-column:1/-1; color:#b91c1c; padding:10px 0; }
 
 /* 스켈레톤 */
 .cl-skeleton{
@@ -94,4 +106,7 @@ body[data-page="campaigns"] #header-container{ display:none !important; }
   background:linear-gradient(90deg,#f3f4f6 0%,#eef0f3 50%,#f3f4f6 100%);
   animation: sk 1.2s infinite linear; opacity:.8;
 }
-@keyframes sk{ 0%{background-position:-200px 0} 100%{background-position:200px 0} }
+@keyframes sk{
+  0%{background-position:-200px 0}
+  100%{background-position:200px 0}
+}
