@@ -1,75 +1,102 @@
 (() => {
   const { API_BASE } = window.LIVEE_CONFIG || {};
-  const list = document.getElementById("campaignList");
+  const list  = document.getElementById('clList');   // ✅ id 일치
+  const empty = document.getElementById('clEmpty');
 
-  const toThumb = (url = "") => {
-    if (!url) return "";
-    const [h, t] = url.split("/upload/");
-    if (!t) return url;
-    return `${h}/upload/c_fill,g_auto,w_320,h_180,f_auto,q_auto/${t}`;
+  if (!list) return;
+
+  const authHeaders = () => {
+    const t = localStorage.getItem('liveeToken');
+    return t ? { Authorization: `Bearer ${t}` } : {};
+  };
+
+  const toThumb = (url = '') => {
+    try {
+      if (!url) return '';
+      const [h, t] = String(url).split('/upload/');
+      return t ? `${h}/upload/c_fill,g_auto,w_320,h_180,f_auto,q_auto/${t}` : url;
+    } catch { return url || ''; }
   };
 
   async function loadMine() {
-    const token = localStorage.getItem("liveeToken");
-    if (!token) return;
+    list.innerHTML = `
+      <div class="cl-skeleton"></div>
+      <div class="cl-skeleton"></div>
+      <div class="cl-skeleton"></div>
+    `;
+    empty.hidden = true;
 
-    const res = await fetch(`${API_BASE}/campaigns/mine`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    render(data.items || []);
+    try {
+      const res  = await fetch(`${API_BASE}/campaigns/mine`, { headers: authHeaders() });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || `HTTP_${res.status}`);
+
+      const items = json.items || json.data || [];
+      render(items);
+    } catch (e) {
+      list.innerHTML = `<p class="cl-error">목록을 불러오지 못했습니다. ${e.message || ''}</p>`;
+      empty.hidden = true;
+    }
   }
 
-  function render(items) {
-    list.innerHTML = "";
+  function render(items = []) {
+    list.innerHTML = '';
+    if (!items.length) {
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+
     items.forEach((it) => {
-      const card = document.createElement("div");
-      card.className = "cl-card";
+      const card = document.createElement('article');
+      card.className = 'cl-card';
 
-      const img = document.createElement("img");
-      img.className = "cl-thumb";
-      // ✅ 보강: coverImageUrl도 고려
-      img.src =
-        it.thumbnailUrl ||
-        toThumb(it.imageUrl) ||
-        toThumb(it.coverImageUrl) ||
-        "";
+      // 썸네일
+      const img = document.createElement('img');
+      img.className = 'cl-thumb';
+      img.src = it.thumbnailUrl || toThumb(it.imageUrl) || toThumb(it.coverImageUrl) || '';
+      img.alt = '';
 
-      const body = document.createElement("div");
-      body.className = "cl-body";
+      // 본문
+      const body = document.createElement('div');
+      body.className = 'cl-body';
 
-      const title = document.createElement("div");
-      title.className = "cl-title";
-      title.textContent = it.title;
+      const row1 = document.createElement('div');
+      row1.className = 'cl-row1';
 
-      const meta = document.createElement("div");
-      meta.className = "cl-meta";
-      meta.textContent = it.type;
+      const badge = document.createElement('span');
+      badge.className = `cl-badge ${it.type === 'recruit' ? 'cl-badge--recruit' : 'cl-badge--product'}`;
+      badge.textContent = it.type === 'recruit' ? '쇼호스트 모집' : '상품 캠페인';
 
-      body.appendChild(title);
-      body.appendChild(meta);
+      const title = document.createElement('div');
+      title.className = 'cl-title';
+      title.textContent = it.title || '(제목 없음)';
 
-      const act = document.createElement("div");
-      act.className = "cl-act";
+      row1.appendChild(badge);
+      row1.appendChild(title);
 
-      const btnEdit = document.createElement("button");
-      btnEdit.textContent = "수정";
-      btnEdit.onclick = () => {
-        location.href = `/livee-beta/frontend/campaign-edit.html?id=${it.id}`;
-      };
+      body.appendChild(row1);
 
-      const btnDel = document.createElement("button");
-      btnDel.textContent = "삭제";
-      btnDel.className = "danger";
-      btnDel.onclick = async () => {
-        if (!confirm("삭제하시겠습니까?")) return;
-        const token = localStorage.getItem("liveeToken");
-        await fetch(`${API_BASE}/campaigns/${it.id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
+      // 액션
+      const act = document.createElement('div');
+      act.className = 'cl-act';
+
+      const btnEdit = document.createElement('a');
+      btnEdit.className = 'cl-btn';
+      btnEdit.textContent = '수정';
+      btnEdit.href = `/alpa/campaign-new.html?edit=${encodeURIComponent(it.id || it._id || '')}`;
+
+      const btnDel = document.createElement('button');
+      btnDel.className = 'cl-btn cl-btn--danger';
+      btnDel.textContent = '삭제';
+      btnDel.addEventListener('click', async () => {
+        if (!confirm('삭제하시겠어요?')) return;
+        const res = await fetch(`${API_BASE}/campaigns/${encodeURIComponent(it.id || it._id)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
         });
-        loadMine();
-      };
+        if (res.ok) loadMine();
+      });
 
       act.appendChild(btnEdit);
       act.appendChild(btnDel);
@@ -77,7 +104,6 @@
       card.appendChild(img);
       card.appendChild(body);
       card.appendChild(act);
-
       list.appendChild(card);
     });
   }
