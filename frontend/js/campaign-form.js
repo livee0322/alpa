@@ -1,7 +1,18 @@
-/* /alpa/frontend/js/campaign-form.js */
+/* /alpa/frontend/js/campaign-form.js (SAFE FINAL) */
 (function () {
   const { API_BASE, thumb } = window.LIVEE_CONFIG || {};
   const notice = document.getElementById('cfNotice');
+
+  /* ---------- helpers ---------- */
+  const safeVal = (el) => (el && typeof el.value === 'string' ? el.value.trim() : '');
+  const numOrUndef = (el) => {
+    const v = safeVal(el);
+    return v === '' ? undefined : Number(v);
+  };
+  const txtOrUndef = (el) => {
+    const v = safeVal(el);
+    return v === '' ? undefined : v;
+  };
 
   const ui = {
     form: document.getElementById('campaignForm'),
@@ -54,6 +65,8 @@
       notice.style.borderColor = '#ffd6d6';
     }
   }
+  function clearNotice(){ if(notice) notice.hidden = true; }
+
   function authHeaders() {
     const t = localStorage.getItem('liveeToken');
     return t ? { Authorization: `Bearer ${t}` } : {};
@@ -137,12 +150,12 @@
       try {
         showNotice('이미지 업로드 중...', 'ok');
         const url = await uploadToCloudinary(f);
-        ui.hiddenUrl.value = url;
-        ui.img.src = toTransformedUrl(url, thumb?.card169 || 'c_fill,g_auto,w_640,h_360,f_auto,q_auto');
+        if (ui.hiddenUrl) ui.hiddenUrl.value = url;
+        if (ui.img) ui.img.src = toTransformedUrl(url, thumb?.card169 || 'c_fill,g_auto,w_640,h_360,f_auto,q_auto');
         showNotice('이미지 업로드 완료', 'ok');
       } catch (err) {
-        ui.hiddenUrl.value = '';
-        ui.img.removeAttribute('src');
+        if (ui.hiddenUrl) ui.hiddenUrl.value = '';
+        if (ui.img) ui.img.removeAttribute('src');
         showNotice(`이미지 업로드 실패: ${err.message}`);
       }
     });
@@ -151,6 +164,7 @@
   /* ===== 상품 메타 불러오기 ===== */
   function renderProducts() {
     const box = ui.prodList;
+    if (!box) return;
     box.innerHTML = '';
     if (!state.products.length) {
       const div = document.createElement('div');
@@ -182,7 +196,7 @@
 
   if (ui.fetchBtn) {
     ui.fetchBtn.addEventListener('click', async () => {
-      const url = ui.prodUrl.value.trim();
+      const url = safeVal(ui.prodUrl);
       if (!url) return showNotice('상품 URL을 입력하세요.');
       try {
         const res = await api(`/scrape/product?url=${encodeURIComponent(url)}`);
@@ -194,7 +208,7 @@
           thumbnail: meta.thumbnail || '',
         });
         renderProducts();
-        ui.prodUrl.value = '';
+        if (ui.prodUrl) ui.prodUrl.value = '';
         showNotice('상품을 추가했습니다.', 'ok');
       } catch (e) {
         showNotice(`상품 불러오기 실패: ${e.message}`);
@@ -212,6 +226,7 @@
   if (ui.form) {
     ui.form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      clearNotice();
       try {
         const me = await api('/users/me');
         const role = me?.data?.role || me.role;
@@ -219,8 +234,8 @@
 
         const type = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
         const common = {
-          title: ui.title.value.trim(),
-          imageUrl: ui.hiddenUrl.value || undefined,
+          title: safeVal(ui.title),
+          imageUrl: txtOrUndef(ui.hiddenUrl),
         };
         if (!common.title) throw new Error('캠페인 제목은 필수입니다.');
 
@@ -232,43 +247,43 @@
             type: 'product',
             products: state.products,
             sale: {
-              price: ui.salePrice.value ? Number(ui.salePrice.value) : undefined,
-              durationSec: ui.saleDuration.value ? Number(ui.saleDuration.value) : undefined,
+              price: numOrUndef(ui.salePrice),
+              durationSec: numOrUndef(ui.saleDuration),
             },
             live: {
-              date: ui.liveDate.value || undefined,
-              time: ui.liveTime.value || undefined,
+              date: txtOrUndef(ui.liveDate),
+              time: txtOrUndef(ui.liveTime),
             },
-            brand: ui.brand.value || undefined,
-            category: ui.category.value || undefined,
-            descriptionHtml: ui.desc.value || undefined,
+            brand: txtOrUndef(ui.brand),
+            category: txtOrUndef(ui.category),
+            descriptionHtml: txtOrUndef(ui.desc),
           };
         } else {
           payload = {
             ...common,
             type: 'recruit',
             recruit: {
-              title: ui.titleRecruit.value.trim() || common.title,
-              date: ui.date.value || undefined,
-              time: ui.time.value || undefined,
-              location: ui.location.value || undefined,
-              pay: ui.pay.value || undefined,
-              payNegotiable: !!ui.payNeg.checked,
-              category: ui.categoryRecruit.value || undefined,
-              description: ui.descRecruit.value || undefined,
+              title: safeVal(ui.titleRecruit) || common.title,
+              date: txtOrUndef(ui.date),
+              time: txtOrUndef(ui.time),
+              location: txtOrUndef(ui.location),
+              pay: txtOrUndef(ui.pay),
+              payNegotiable: !!(ui.payNeg && ui.payNeg.checked),
+              category: txtOrUndef(ui.categoryRecruit),
+              description: txtOrUndef(ui.descRecruit),
             }
           };
         }
 
-        ui.submit.disabled = true;
+        if (ui.submit) ui.submit.disabled = true;
         showNotice('저장 중...', 'ok');
         await api('/campaigns', { method: 'POST', body: JSON.stringify(payload) });
         showNotice('캠페인이 등록되었습니다.', 'ok');
         setTimeout(()=> location.href = '/alpa/campaigns.html', 500);
       } catch (err) {
-        showNotice(err.message || '저장 실패');
+        showNotice(err?.message || '저장 실패');
       } finally {
-        ui.submit.disabled = false;
+        if (ui.submit) ui.submit.disabled = false;
       }
     });
   }
