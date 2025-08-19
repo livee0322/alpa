@@ -1,19 +1,56 @@
-/* /alpa/frontend/js/campaign-form.js (SAFE FINAL) */
+/* /alpa/frontend/js/campaign-form.js */
 (function () {
   const { API_BASE, thumb } = window.LIVEE_CONFIG || {};
   const notice = document.getElementById('cfNotice');
 
   /* ---------- helpers ---------- */
-  const safeVal = (el) => (el && typeof el.value === 'string' ? el.value.trim() : '');
-  const numOrUndef = (el) => {
-    const v = safeVal(el);
-    return v === '' ? undefined : Number(v);
-  };
-  const txtOrUndef = (el) => {
-    const v = safeVal(el);
-    return v === '' ? undefined : v;
-  };
+  const val = (el) => (el && typeof el.value === 'string' ? el.value : '');
+  const safeVal = (el) => String(val(el) || '').trim();              // undefined 보호
+  const num = (el) => (safeVal(el) ? Number(safeVal(el)) : undefined);
+  const txtOrUndef = (el) => (safeVal(el) ? safeVal(el) : undefined);
 
+  function showNotice(msg, type = 'error') {
+    if (!notice) return;
+    notice.textContent = msg;
+    notice.hidden = false;
+    if (type === 'ok') {
+      notice.style.background = '#f5fff5';
+      notice.style.color = '#0f6b2b';
+      notice.style.borderColor = '#b9efc9';
+    } else {
+      notice.style.background = '#fff4f4';
+      notice.style.color = '#a32020';
+      notice.style.borderColor = '#ffd6d6';
+    }
+  }
+  function authHeaders() {
+    const t = localStorage.getItem('liveeToken');
+    return t ? { Authorization: `Bearer ${t}` } : {};
+  }
+  async function api(path, opts = {}) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...opts,
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+        ...(opts.headers || {}),
+      },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      ['liveeToken', 'liveeName', 'liveeRole', 'liveeTokenExp'].forEach(k =>
+        localStorage.removeItem(k)
+      );
+      location.href = '/alpa/login.html';
+      throw new Error('UNAUTH');
+    }
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.message || `HTTP_${res.status}`);
+    }
+    return data;
+  }
+
+  /* ---------- UI refs ---------- */
   const ui = {
     form: document.getElementById('campaignForm'),
     submit: document.getElementById('cfSubmitBtn'),
@@ -51,46 +88,7 @@
     products: [], // {url,title,price,thumbnail,salePrice?}
   };
 
-  function showNotice(msg, type = 'error') {
-    if (!notice) return;
-    notice.textContent = msg;
-    notice.hidden = false;
-    if (type === 'ok') {
-      notice.style.background = '#f5fff5';
-      notice.style.color = '#0f6b2b';
-      notice.style.borderColor = '#b9efc9';
-    } else {
-      notice.style.background = '#fff4f4';
-      notice.style.color = '#a32020';
-      notice.style.borderColor = '#ffd6d6';
-    }
-  }
-  function clearNotice(){ if(notice) notice.hidden = true; }
-
-  function authHeaders() {
-    const t = localStorage.getItem('liveeToken');
-    return t ? { Authorization: `Bearer ${t}` } : {};
-  }
-  async function api(path, opts = {}) {
-    const res = await fetch(`${API_BASE}${path}`, {
-      ...opts,
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-        ...(opts.headers || {}),
-      },
-    });
-    const data = await res.json().catch(() => ({}));
-    if (res.status === 401) {
-      ['liveeToken','liveeName','liveeRole','liveeTokenExp'].forEach(k=>localStorage.removeItem(k));
-      location.href = '/alpa/login.html';
-      return Promise.reject(new Error('UNAUTH'));
-    }
-    if (!res.ok || data.ok === false) throw new Error(data.message || `HTTP_${res.status}`);
-    return data;
-  }
-
-  /* ===== Upload (Cloudinary signed) ===== */
+  /* ---------- Cloudinary Upload ---------- */
   async function getUploadSignature() {
     const res = await fetch(`${API_BASE}/uploads/signature`, { headers: authHeaders() });
     const json = await res.json();
@@ -103,7 +101,9 @@
     try {
       const [head, tail] = originalUrl.split('/upload/');
       return `${head}/upload/${transform}/${tail}`;
-    } catch { return originalUrl; }
+    } catch {
+      return originalUrl;
+    }
   }
   async function uploadToCloudinary(file) {
     const { cloudName, apiKey, timestamp, signature, folder } = await getUploadSignature();
@@ -116,7 +116,10 @@
 
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
     const prog = ui.prog;
-    if (prog) { prog.hidden = false; prog.value = 0; }
+    if (prog) {
+      prog.hidden = false;
+      prog.value = 0;
+    }
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -132,7 +135,9 @@
               if (!json.secure_url) return reject(new Error('URL 없음'));
               resolve(json.secure_url);
             } else reject(new Error(json.error?.message || `Cloudinary HTTP_${xhr.status}`));
-          } catch { reject(new Error('응답 파싱 실패')); }
+          } catch {
+            reject(new Error('응답 파싱 실패'));
+          }
         }
       };
       xhr.onerror = () => reject(new Error('네트워크 오류'));
@@ -145,26 +150,37 @@
     ui.file.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
-      if (!/^image\//.test(f.type)) { showNotice('이미지 파일만 업로드 가능합니다.'); ui.file.value=''; return; }
-      if (f.size > 8 * 1024 * 1024) { showNotice('파일 용량은 8MB 이하'); ui.file.value=''; return; }
+      if (!/^image\//.test(f.type)) {
+        showNotice('이미지 파일만 업로드 가능합니다.');
+        ui.file.value = '';
+        return;
+      }
+      if (f.size > 8 * 1024 * 1024) {
+        showNotice('파일 용량은 8MB 이하');
+        ui.file.value = '';
+        return;
+      }
       try {
         showNotice('이미지 업로드 중...', 'ok');
         const url = await uploadToCloudinary(f);
-        if (ui.hiddenUrl) ui.hiddenUrl.value = url;
-        if (ui.img) ui.img.src = toTransformedUrl(url, thumb?.card169 || 'c_fill,g_auto,w_640,h_360,f_auto,q_auto');
+        ui.hiddenUrl.value = url;
+        ui.img.src = toTransformedUrl(
+          url,
+          (window.LIVEE_CONFIG?.thumb && window.LIVEE_CONFIG.thumb.card169) ||
+            'c_fill,g_auto,w_640,h_360,f_auto,q_auto'
+        );
         showNotice('이미지 업로드 완료', 'ok');
       } catch (err) {
-        if (ui.hiddenUrl) ui.hiddenUrl.value = '';
-        if (ui.img) ui.img.removeAttribute('src');
+        ui.hiddenUrl.value = '';
+        ui.img.removeAttribute('src');
         showNotice(`이미지 업로드 실패: ${err.message}`);
       }
     });
   }
 
-  /* ===== 상품 메타 불러오기 ===== */
+  /* ---------- 상품 스크래핑 & 렌더 ---------- */
   function renderProducts() {
     const box = ui.prodList;
-    if (!box) return;
     box.innerHTML = '';
     if (!state.products.length) {
       const div = document.createElement('div');
@@ -208,7 +224,7 @@
           thumbnail: meta.thumbnail || '',
         });
         renderProducts();
-        if (ui.prodUrl) ui.prodUrl.value = '';
+        ui.prodUrl.value = '';
         showNotice('상품을 추가했습니다.', 'ok');
       } catch (e) {
         showNotice(`상품 불러오기 실패: ${e.message}`);
@@ -216,7 +232,7 @@
     });
   }
 
-  /* ===== 제출 ===== */
+  /* ---------- 제출 ---------- */
   if (ui.cancel) {
     ui.cancel.addEventListener('click', () => {
       history.length > 1 ? history.back() : (location.href = '/alpa/campaigns.html');
@@ -226,15 +242,21 @@
   if (ui.form) {
     ui.form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      clearNotice();
       try {
         const me = await api('/users/me');
         const role = me?.data?.role || me.role;
-        if (!['brand','admin'].includes(role)) throw new Error('브랜드/관리자만 등록 가능');
+        if (!['brand', 'admin'].includes(role)) throw new Error('브랜드/관리자만 등록 가능');
 
         const type = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
+
+        // ★ 유형 별 제목 우선순위(모집: cfTitleRecruit → cfTitle / 상품: cfTitle → cfTitleRecruit)
+        const computedTitle =
+          type === 'recruit'
+            ? (safeVal(ui.titleRecruit) || safeVal(ui.title))
+            : (safeVal(ui.title) || safeVal(ui.titleRecruit));
+
         const common = {
-          title: safeVal(ui.title),
+          title: computedTitle,
           imageUrl: txtOrUndef(ui.hiddenUrl),
         };
         if (!common.title) throw new Error('캠페인 제목은 필수입니다.');
@@ -247,8 +269,8 @@
             type: 'product',
             products: state.products,
             sale: {
-              price: numOrUndef(ui.salePrice),
-              durationSec: numOrUndef(ui.saleDuration),
+              price: num(ui.salePrice),
+              durationSec: num(ui.saleDuration),
             },
             live: {
               date: txtOrUndef(ui.liveDate),
@@ -263,7 +285,7 @@
             ...common,
             type: 'recruit',
             recruit: {
-              title: safeVal(ui.titleRecruit) || common.title,
+              title: computedTitle,                     // 제목 일관 반영
               date: txtOrUndef(ui.date),
               time: txtOrUndef(ui.time),
               location: txtOrUndef(ui.location),
@@ -271,19 +293,19 @@
               payNegotiable: !!(ui.payNeg && ui.payNeg.checked),
               category: txtOrUndef(ui.categoryRecruit),
               description: txtOrUndef(ui.descRecruit),
-            }
+            },
           };
         }
 
-        if (ui.submit) ui.submit.disabled = true;
+        ui.submit.disabled = true;
         showNotice('저장 중...', 'ok');
         await api('/campaigns', { method: 'POST', body: JSON.stringify(payload) });
         showNotice('캠페인이 등록되었습니다.', 'ok');
-        setTimeout(()=> location.href = '/alpa/campaigns.html', 500);
+        setTimeout(() => (location.href = '/alpa/campaigns.html'), 500);
       } catch (err) {
-        showNotice(err?.message || '저장 실패');
+        showNotice(err.message || '저장 실패');
       } finally {
-        if (ui.submit) ui.submit.disabled = false;
+        ui.submit.disabled = false;
       }
     });
   }
