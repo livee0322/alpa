@@ -4,16 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>캠페인 관리 - ALPA</title>
-
-  <!-- 공통 -->
-  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0815" />
-  <!-- 페이지 전용 -->
-  <link rel="stylesheet" href="/alpa/frontend/css/campaign-list.css?v=0819a" />
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0820b" />
+  <link rel="stylesheet" href="/alpa/frontend/css/campaign-list.css?v=0820b" />
 </head>
 <body data-page="campaigns">
   <!-- 상단 스택 -->
   <div id="banner-container" class="lv-banner"></div>
-  <header id="header-container" class="lv-header"></header> <!-- CSS로 숨김 -->
+  <header id="header-container" class="lv-header"></header>
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="cl-wrap" role="main">
@@ -22,6 +19,7 @@
       <a class="cl-new" href="/alpa/campaign-new.html">+ 새 캠페인</a>
     </div>
 
+    <!-- ✅ id는 clList (JS와 일치) -->
     <section id="clList" class="cl-list" aria-live="polite">
       <div class="cl-skeleton"></div>
       <div class="cl-skeleton"></div>
@@ -38,7 +36,7 @@
   <script src="/alpa/frontend/js/modules/header.js"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-  <script src="/alpa/frontend/js/config.js?v=0819a"></script>
-  <script src="/alpa/frontend/js/campaign-list.js?v=0819a"></script>
+  <script src="/alpa/frontend/js/config.js?v=0820b"></script>
+  <script src="/alpa/frontend/js/campaign-list.js?v=0820b"></script>
 </body>
 </html>
