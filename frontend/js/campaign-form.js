@@ -54,7 +54,7 @@
     // thumb
     file: document.getElementById('cfThumb'),
     img: document.getElementById('cfThumbPreview'),
-    hiddenUrl: document.getElementById('cfImageUrl'), // hidden input (coverImageUrl 저장)
+    hiddenUrl: document.getElementById('cfImageUrl'), // coverImageUrl 저장
     prog: document.getElementById('cfUploadProg'),
     // common
     title: document.getElementById('cfTitle'),
@@ -72,7 +72,9 @@
     // recruit section
     titleRecruit: document.getElementById('cfTitleRecruit'),
     date: document.getElementById('cfDate'),
-    time: document.getElementById('cfTime'),
+    timeStart: document.getElementById('cfTimeStart'),
+    timeEnd: document.getElementById('cfTimeEnd'),
+    duration: document.getElementById('cfDuration'),
     location: document.getElementById('cfLocation'),
     pay: document.getElementById('cfPay'),
     payNeg: document.getElementById('cfPayNeg'),
@@ -142,7 +144,7 @@
       try {
         showNotice('이미지 업로드 중...', 'ok');
         const url = await uploadToCloudinary(f);
-        ui.hiddenUrl.value = url; // coverImageUrl 로 전송할 값
+        ui.hiddenUrl.value = url; // coverImageUrl
         ui.img.src = toTransformedUrl(
           url,
           (window.LIVEE_CONFIG?.thumb && window.LIVEE_CONFIG.thumb.card169) ||
@@ -206,10 +208,50 @@
         ui.prodUrl.value = '';
         showNotice('상품을 추가했습니다.', 'ok');
       } catch (e) {
-        showNotice(`상품 불러오기 실패: ${e.message}`);
+        // Fallback: 수동 추가 안내
+        showNotice(`상품 불러오기 실패: ${e.message}`, 'error');
+        const goManual = confirm('메타를 불러오지 못했습니다. 수동으로 추가하시겠어요?');
+        if (!goManual) return;
+        const title = prompt('상품명(선택):', '');
+        const price = prompt('가격(숫자, 선택):', '');
+        state.products.push({
+          url,
+          title: title || '',
+          price: price ? Number(price) : 0,
+          thumbnail: '',
+        });
+        renderProducts();
+        ui.prodUrl.value = '';
+        showNotice('수동으로 상품을 추가했습니다.', 'ok');
       }
     });
   }
+
+  /* ---------- 촬영시간 계산(모집) ---------- */
+  function parseHHMM(str){ if(!str) return null; const [h,m]=str.split(':').map(Number); if(Number.isNaN(h)||Number.isNaN(m)) return null; return h*60+m; }
+  function updateDuration(){
+    const s = parseHHMM(safeVal(ui.timeStart));
+    const e = parseHHMM(safeVal(ui.timeEnd));
+    if (s==null || e==null){
+      ui.duration.textContent = '촬영시간: -';
+      if (ui.timeEnd) ui.timeEnd.min = safeVal(ui.timeStart) || '';
+      return;
+    }
+    // 종료는 시작 이후만 허용
+    if (e <= s){
+      ui.duration.textContent = '촬영시간: 종료시간은 시작시간 이후여야 합니다.';
+      return;
+    }
+    ui.duration.textContent = `촬영시간: ${e - s}분`;
+  }
+  ['change','input'].forEach(ev=>{
+    ui.timeStart?.addEventListener(ev, ()=>{
+      if (ui.timeEnd) ui.timeEnd.min = safeVal(ui.timeStart) || '';
+      updateDuration();
+    });
+    ui.timeEnd?.addEventListener(ev, updateDuration);
+  });
+  updateDuration();
 
   /* ---------- 제출 ---------- */
   if (ui.cancel) {
@@ -236,7 +278,7 @@
 
         const common = {
           title: computedTitle,
-          coverImageUrl: txtOrUndef(ui.hiddenUrl),   // ✅ 서버 스키마와 일치
+          coverImageUrl: txtOrUndef(ui.hiddenUrl),   // 서버 스키마와 일치
         };
         if (!common.title) throw new Error('캠페인 제목은 필수입니다.');
 
@@ -257,7 +299,7 @@
             },
             brand: txtOrUndef(ui.brand),
             category: txtOrUndef(ui.category),
-            descriptionHTML: txtOrUndef(ui.desc),   // ✅ 서버에서 sanitize 대상
+            descriptionHTML: txtOrUndef(ui.desc),
           };
         } else {
           payload = {
@@ -266,7 +308,8 @@
             recruit: {
               title: computedTitle,
               date: txtOrUndef(ui.date),
-              time: txtOrUndef(ui.time),
+              timeStart: txtOrUndef(ui.timeStart),
+              timeEnd: txtOrUndef(ui.timeEnd),
               location: txtOrUndef(ui.location),
               pay: txtOrUndef(ui.pay),
               payNegotiable: !!(ui.payNeg && ui.payNeg.checked),
@@ -274,6 +317,12 @@
               description: txtOrUndef(ui.descRecruit),
             },
           };
+          // 유효성: 시간 순서
+          if (ui.timeStart && ui.timeEnd){
+            const s = parseHHMM(safeVal(ui.timeStart));
+            const e = parseHHMM(safeVal(ui.timeEnd));
+            if (s!=null && e!=null && e<=s) throw new Error('종료시간은 시작시간 이후여야 합니다.');
+          }
         }
 
         ui.submit.disabled = true;
