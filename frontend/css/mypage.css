@@ -1,56 +1,49 @@
-/* 네이버 설정처럼 섹션+리스트 스타일 */
-:root{
-  --line:#eceff1; --muted:#6b7280; --title:#111827;
-  --bg:#fff; --tap:#f8fafc;
-}
+/* SUIT는 main.css 전역 적용 가정 */
 
-/* 섹션 타이틀 */
+.mypage-section{ margin-top:20px; }
 .mypage-title{
-  margin:8px 2px 10px;
-  font-size:1.06rem;
-  font-weight:900;
-  color:var(--title);
+  margin:0 0 10px;
+  font-size:20px;
+  font-variation-settings:"wght" 750;
+  letter-spacing:-.01em;
 }
 
-/* 리스트 그룹 */
-.mypage-list{
-  margin:0 0 16px;
-  padding:0;
-  list-style:none;
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-}
-
-/* 개별 항목 */
+/* 리스트 */
+.mypage-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+.mypage-list.compact{ margin-top:10px; }
 .mypage-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:14px 12px;
-  border-bottom:1px solid var(--line);
-  color:inherit;
-  text-decoration:none;
-  background:#fff;
+  display:flex; align-items:center; gap:12px;
+  background:#fff; border:1px solid #eef0f3; border-radius:14px;
+  padding:12px 14px;
 }
-.mypage-item:active{ background:var(--tap); }
-.mypage-list li:last-child .mypage-item{ border-bottom:0; }
+.mi-body{ flex:1; min-width:0; }
+.mi-title{ font-variation-settings:"wght" 700; }
+.mi-sub{ color:#6b7280; font-size:.9rem; margin-top:2px; }
+.mi-arrow{ color:#c7c9cf; font-size:22px; line-height:1; }
 
-.mi-body{ min-width:0; flex:1 1 auto; }
-.mi-title{
-  font-weight:900;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+/* 쇼호스트 탭(챕칩) */
+.mp-tabs{ display:flex; gap:8px; margin:4px 0 8px; overflow:auto; padding-bottom:2px; }
+.mp-tab{
+  flex:0 0 auto;
+  height:36px; padding:0 14px;
+  border-radius:999px; border:1px solid #e6e8ec;
+  background:#f6f7ff; color:#4b4f68;
+  font-variation-settings:"wght" 700;
 }
-.mi-sub{
-  margin-top:2px; font-size:.9rem; color:var(--muted);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.mi-arrow{
-  font-size:20px; line-height:1; color:#9aa3af;
-  transform:translateX(2px);
-}
+.mp-tab:active{ transform:translateY(1px); }
 
-/* 섹션 여백 */
-.mypage-section{ margin-top:18px; }
+/* 팝업 */
+.mp-modal{ border:0; padding:0; width:min(92vw,480px); }
+.mp-modal::backdrop{ background:rgba(0,0,0,.3); }
+.mp-modal-card{ background:#fff; border:1px solid #eef0f3; border-radius:16px; padding:18px 16px; }
+.mp-modal-text{ margin:4px 2px 14px; font-variation-settings:"wght" 700; }
+.mp-modal-actions{ display:flex; justify-content:flex-end; gap:8px; }
+.mp-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  height:38px; padding:0 14px;
+  background:var(--pri); color:#fff; border:0; border-radius:10px;
+  font-variation-settings:"wght" 750;
+}
+.mp-btn-sub{
+  background:#eef1f6; color:#374151; border:1px solid #e5e7eb;
+}
