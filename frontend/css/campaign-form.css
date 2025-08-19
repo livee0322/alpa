@@ -1,68 +1,154 @@
-/* 페이지 전역 톤 (SUIT 가 main.css에 전역 적용된 상태 가정) */
+/* /alpa/frontend/css/campaign-form.css */
+/* SUIT 폰트 전제(메인에서 이미 import됨) */
+
 body[data-page="campaign-form"]{
   background:#fff;
+  font-family:"SUIT Variable", SUIT, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
 }
 
-/* 이 페이지는 헤더 숨김 */
+/* 이 페이지에서는 헤더 숨김 (리뷰플레이스 톤) */
 body[data-page="campaign-form"] #header-container{ display:none !important; }
 
-/* 상단 제목/알림 */
-.cf-wrap{ width:100%; max-width:720px; margin:calc(var(--banner-h) + var(--top-h) + 2px) auto 0; padding:16px 14px calc(92px + var(--safe-bottom)); }
-.cf-title{ margin:0 0 10px; font-size:20px; font-variation-settings:"wght" 750; }
-.cf-notice{ margin:8px 0 14px; padding:12px 14px; border:1px solid #f8d7da; background:#fdecec; color:#9b1c27; border-radius:12px; font-variation-settings:"wght" 700; }
-
-/* 블록/필드 */
-.cf-block{ background:#fff; border:1px solid #eef0f3; border-radius:16px; padding:14px; margin:12px 0; }
-.cf-h2{ margin:0 0 12px; font-size:16px; font-variation-settings:"wght" 750; }
-.cf-field{ display:flex; flex-direction:column; gap:8px; margin:8px 0; }
-.cf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-@media (max-width:560px){ .cf-grid{ grid-template-columns:1fr; } }
-
-.cf-help{ color:#6b7280; font-size:.9rem; }
-
-/* 입력 요소 */
-.cf-form input[type="text"],
-.cf-form input[type="url"],
-.cf-form input[type="number"],
-.cf-form input[type="date"],
-.cf-form input[type="time"],
-.cf-form select,
-.cf-form textarea{
-  width:100%; height:46px; padding:0 14px;
-  border:1px solid #e5e7eb; border-radius:12px; background:#fff; color:#111827;
-  outline:0; transition:border-color .15s, box-shadow .15s; font-size:15px;
-}
-.cf-form textarea{ height:auto; padding:10px 14px; }
-.cf-form input:focus, .cf-form select:focus, .cf-form textarea:focus{
-  border-color:var(--pri); box-shadow:0 0 0 3px #eef2ff;
+/* 레이아웃 */
+.cf-wrap{
+  width:100%;
+  max-width:760px;
+  margin: calc(var(--banner-h) + var(--top-h) + 8px) auto 0;
+  padding: 0 14px 120px;
 }
 
-/* 썸네일 업로드 */
+.cf-title{
+  margin:0 0 10px;
+  font-size:24px;
+  font-variation-settings:"wght" 820;
+  letter-spacing:-.02em;
+}
+
+/* 알림 */
+.cf-notice{
+  margin: 8px 0 16px;
+  padding: 12px 14px;
+  border:1px solid #ffd6d6;
+  background:#fff4f4;
+  color:#a32020;
+  border-radius:12px;
+}
+
+/* 블록 카드 */
+.cf-block{
+  background:#fff;
+  border:1px solid #eef0f3;
+  border-radius:16px;
+  padding:16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.04);
+  margin: 12px 0;
+}
+
+/* 소제목 */
+.cf-h2{
+  margin:0 0 10px;
+  font-size:18px;
+  font-variation-settings:"wght" 780;
+}
+
+/* form fields */
+.cf-field{ margin:10px 0; }
+.cf-field > label{ display:block; margin-bottom:6px; color:#111827; font-variation-settings:"wght" 720; }
+.cf-help{ display:block; margin-top:6px; color:#6b7280; font-size:.9rem; }
+
+.cf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:520px){ .cf-grid{ grid-template-columns:1fr; } }
+
+.cf-field input[type="text"],
+.cf-field input[type="url"],
+.cf-field input[type="number"],
+.cf-field input[type="date"],
+.cf-field input[type="time"],
+.cf-field textarea,
+.cf-field select{
+  width:100%;
+  height:48px;
+  padding:0 14px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  background:#fff;
+  color:#111827;
+  outline:0;
+  transition:border-color .15s, box-shadow .15s;
+  font-size:16px;
+}
+.cf-field textarea{ height:auto; padding:12px 14px; min-height:128px; resize:vertical; }
+.cf-field :is(input,textarea,select):focus{ border-color:var(--pri); box-shadow:0 0 0 3px #eef2ff; }
+
+/* 섬네일 업로드 */
 .cf-thumb{ display:flex; align-items:center; gap:12px; }
-.cf-thumb img{ width:84px; height:84px; border-radius:12px; object-fit:cover; background:#f3f4f6; border:1px solid #eef0f3; }
+.cf-thumb img{ width:160px; height:90px; border-radius:10px; background:#f3f4f6; object-fit:cover; border:1px solid #e5e7eb; }
 
-/* 세그먼트 */
-.cf-seg{ display:flex; gap:8px; }
-.cf-seg-item{ display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid #e6e8ec; border-radius:12px; background:#f6f7ff; }
-.cf-seg-item input{ accent-color:var(--pri); }
-
-/* 버튼 */
-.cf-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
-.cf-primary, .cf-secondary, .cf-btn-outlined, .cf-btn-danger{
-  height:42px; padding:0 16px; border-radius:12px; font-variation-settings:"wght" 800; cursor:pointer;
+/* 세그먼트(유형) */
+.cf-seg{ display:flex; gap:10px; flex-wrap:wrap; }
+.cf-seg-item{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #e6e8ec;
+  background:#f7f8fa;
+  cursor:pointer;
 }
-.cf-primary{ background:var(--pri); color:#fff; border:0; }
-.cf-secondary{ background:#eef1f6; color:#111827; border:1px solid #e5e7eb; }
-.cf-btn-outlined{ background:#fff; color:#111827; border:1px solid #e5e7eb; }
-.cf-btn-danger{ background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
+.cf-seg-item input{ appearance:none; width:18px; height:18px; border-radius:50%; border:2px solid #bfc4d4; display:inline-block; position:relative; }
+.cf-seg-item input:checked{ border-color:var(--pri); }
+.cf-seg-item input:checked::after{
+  content:""; position:absolute; inset:3px; border-radius:50%; background:var(--pri);
+}
+.cf-seg-item span{ font-variation-settings:"wght" 750; }
 
-/* 상품 리스트(간단) */
+/* 체크박스(협의 가능) — 줄바꿈 방지 */
+.cf-field.cf-checkbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.cf-field.cf-checkbox input{ margin:0; width:18px; height:18px; }
+.cf-field.cf-checkbox label{ margin:0; }
+
+/* 상품 리스트 */
 .cf-prods{ display:flex; flex-direction:column; gap:10px; }
-.cf-prod{ display:flex; gap:10px; border:1px solid #eef0f3; border-radius:12px; padding:10px; }
-.cf-prod-thumb{ width:72px; height:72px; border-radius:10px; object-fit:cover; background:#f3f4f6; }
-.cf-prod-body{ flex:1; min-width:0; }
-.cf-prod-title{ font-variation-settings:"wght" 700; }
-.cf-prod-meta{ color:#6b7280; font-size:.9rem; display:flex; gap:8px; }
-.cf-prod-actions{ display:flex; gap:6px; margin-top:6px; }
+.cf-empty{
+  padding:12px 14px; border:1px dashed #e5e7eb; border-radius:12px; color:#6b7280; text-align:center;
+}
 
-.cf-empty{ padding:12px; border:1px dashed #e5e7eb; border-radius:12px; color:#9aa3af; font-variation-settings:"wght" 700; }
+/* 상품 카드 템플릿 */
+.cf-prod{ display:flex; gap:12px; border:1px solid #eef0f3; border-radius:12px; padding:10px; align-items:center; }
+.cf-prod-thumb{ width:88px; height:88px; border-radius:10px; object-fit:cover; background:#f3f4f6; }
+.cf-prod-body{ flex:1; display:flex; flex-direction:column; gap:6px; }
+.cf-prod-title{ font-variation-settings:"wght" 750; }
+.cf-prod-meta{ color:#6b7280; display:flex; gap:8px; }
+.cf-prod-actions{ margin-top:6px; display:flex; gap:8px; }
+
+.cf-btn-outlined{
+  height:36px; padding:0 12px; border-radius:10px;
+  background:#fff; border:1px solid #d9dde5; font-variation-settings:"wght" 750; color:#374151;
+}
+.cf-btn-danger{
+  height:36px; padding:0 12px; border-radius:10px;
+  background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; font-variation-settings:"wght" 800;
+}
+
+/* 액션 버튼 */
+.cf-actions{
+  position:sticky; bottom:calc(60px + var(--safe-bottom));
+  display:flex; gap:10px; justify-content:flex-end;
+  background:linear-gradient(180deg, transparent, #fff 30%);
+  padding:14px 0 0; margin-top:10px;
+}
+.cf-primary, .cf-secondary{
+  height:48px; padding:0 18px; border-radius:12px; font-size:16px; font-variation-settings:"wght" 850; border:0;
+}
+.cf-primary{ background:var(--pri); color:#fff; }
+.cf-primary:disabled{ background:#d8dbe2; color:#fff; }
+.cf-secondary{ background:#eef1f6; color:#374151; }
+
+/* 페이지 특수: 제목간격 */
+#cfTitle{ }
+
+/* 상단 탭이 비치지 않도록 */
+#top-tab-container{ background:#fff; }
