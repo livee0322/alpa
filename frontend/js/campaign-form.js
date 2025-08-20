@@ -6,13 +6,9 @@
   /* ---------- helpers ---------- */
   const qs = (k) => new URLSearchParams(location.search).get(k);
   const EDIT_ID = qs('edit');        // 있으면 수정 모드
-
   const val = (el) => (el && typeof el.value === 'string' ? el.value : '');
   const safeVal = (el) => String(val(el) || '').trim();
-  const num = (el) => {
-    const v = safeVal(el).replace(/[^\d]/g, '');
-    return v ? Number(v) : undefined;
-  };
+  const num = (el) => (safeVal(el) ? Number(safeVal(el)) : undefined);
   const txtOrUndef = (el) => (safeVal(el) ? safeVal(el) : undefined);
 
   function showNotice(msg, type = 'error') {
@@ -29,12 +25,10 @@
       notice.style.borderColor = '#ffd6d6';
     }
   }
-
   const authHeaders = () => {
     const t = localStorage.getItem('liveeToken');
     return t ? { Authorization: `Bearer ${t}` } : {};
   };
-
   async function api(path, opts = {}) {
     const res = await fetch(`${API_BASE}${path}`, {
       ...opts,
@@ -50,41 +44,27 @@
     return data;
   }
 
-  /* ---------- 카테고리: API 우선, 실패 시 기본값 ---------- */
-  const FALLBACK_CATEGORIES = ['뷰티','가전','음식','패션','리빙','스포츠','키즈','반려','디지털'];
-  async function loadCategories() {
-    try {
-      const res = await fetch(`${API_BASE}/meta/categories`);
-      const json = await res.json().catch(() => ({}));
-      const arr = json.items || json.data || json.result || [];
-      return Array.isArray(arr) && arr.length ? arr : FALLBACK_CATEGORIES;
-    } catch { return FALLBACK_CATEGORIES; }
-  }
-
   /* ---------- UI refs ---------- */
   const ui = {
     form: document.getElementById('campaignForm'),
     submit: document.getElementById('cfSubmitBtn'),
     cancel: document.getElementById('cfCancelBtn'),
-
-    // 내부용 캠페인 제목(본인만 보는 메모용)
-    campaignTitle: document.getElementById('cfCampaignTitle'),
-
-    // 공개제목
-    title: document.getElementById('cfTitle'),
-    titleRecruit: document.getElementById('cfTitleRecruit'),
-
-    // 브랜드 (상품/모집 각각)
-    brand: document.getElementById('cfBrand'),
-    brandRecruit: document.getElementById('cfBrandRecruit'),
-
-    // 썸네일
-    file: document.getElementById('cfThumb'),            // 실제 input[type=file]
-    fileBtn: document.getElementById('cfThumbBtn'),      // 커스텀 버튼
+    // file
+    file: document.getElementById('cfThumb'),
+    fileBtn: document.getElementById('cfThumbBtn'),
     img: document.getElementById('cfThumbPreview'),
-    hiddenUrl: document.getElementById('cfImageUrl'),    // coverImageUrl 저장
+    hiddenUrl: document.getElementById('cfImageUrl'),
     prog: document.getElementById('cfUploadProg'),
-
+    // internal title
+    internalTitle: document.getElementById('cfCampaignTitle'),
+    // product public
+    title: document.getElementById('cfTitle'),
+    brand: document.getElementById('cfBrand'),
+    categorySel: document.getElementById('cfCategorySel'),
+    // recruit public
+    titleRecruit: document.getElementById('cfTitleRecruit'),
+    brandRecruit: document.getElementById('cfBrandRecruit'),
+    categoryRecruitSel: document.getElementById('cfCategoryRecruitSel'),
     // product section
     prodUrl: document.getElementById('cfProdUrl'),
     fetchBtn: document.getElementById('cfProdFetchBtn'),
@@ -93,25 +73,18 @@
     saleDuration: document.getElementById('cfSaleDuration'),
     liveDate: document.getElementById('cfLiveDate'),
     liveTime: document.getElementById('cfLiveTime'),
-    categorySel: document.getElementById('cfCategorySel'),
     desc: document.getElementById('cfDesc'),
-
     // recruit section
     date: document.getElementById('cfDate'),
-    deadline: document.getElementById('cfDeadline'),     // ✅ 모집 마감일
+    deadline: document.getElementById('cfDeadline'),
     timeStart: document.getElementById('cfTimeStart'),
     timeEnd: document.getElementById('cfTimeEnd'),
     duration: document.getElementById('cfDuration'),
     location: document.getElementById('cfLocation'),
-    payWan: document.getElementById('cfPayWan'),         // ✅ 숫자만(만원 단위)
+    payWan: document.getElementById('cfPayWan'),
     payWanPreview: document.getElementById('cfPayWanPreview'),
     payNeg: document.getElementById('cfPayNeg'),
-    categoryRecruitSel: document.getElementById('cfCategoryRecruitSel'),
     descRecruit: document.getElementById('cfDescRecruit'),
-
-    // 섹션 토글
-    secP: document.getElementById('cfSectionProduct'),
-    secR: document.getElementById('cfSectionRecruit'),
   };
 
   const state = { products: [] }; // {url,title,price,thumbnail,salePrice?}
@@ -167,11 +140,6 @@
     });
   }
 
-  // 파일 버튼 UI
-  if (ui.fileBtn && ui.file) {
-    ui.fileBtn.addEventListener('click', () => ui.file.click());
-  }
-
   if (ui.file) {
     ui.file.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
@@ -195,6 +163,29 @@
       }
     });
   }
+  // 커스텀 파일 버튼
+  ui.fileBtn?.addEventListener('click', ()=> ui.file?.click());
+
+  /* ---------- 메타(카테고리/브랜드) 초기화 ---------- */
+  async function initMeta() {
+    try {
+      const r = await api('/campaigns/meta'); // { data: { categories:{product, recruit}, brands:[{name,count}] } }
+      const meta = r.data || r;
+      const prodCats = meta.categories?.product || [];
+      const recCats  = meta.categories?.recruit || [];
+
+      if (ui.categorySel) {
+        ui.categorySel.innerHTML = '<option value="">선택하세요</option>' +
+          prodCats.map(c=>`<option value="${c}">${c}</option>`).join('');
+      }
+      if (ui.categoryRecruitSel) {
+        ui.categoryRecruitSel.innerHTML = '<option value="">선택하세요</option>' +
+          recCats.map(c=>`<option value="${c}">${c}</option>`).join('');
+      }
+    } catch(e) {
+      console.debug('[meta] load failed', e);
+    }
+  }
 
   /* ---------- 상품 스크래핑 & 렌더 ---------- */
   function renderProducts() {
@@ -217,8 +208,7 @@
       node.querySelector('[data-act="edit"]').addEventListener('click', () => {
         const v = prompt('할인가(원 단위, 빈칸이면 해제):', p.salePrice || '');
         if (v === null) return;
-        const d = String(v).replace(/[^\d]/g,'');
-        p.salePrice = d ? Number(d) : undefined;
+        p.salePrice = v ? Number(v) : undefined;
         renderProducts();
       });
       node.querySelector('[data-act="remove"]').addEventListener('click', () => {
@@ -239,7 +229,7 @@
         state.products.push({
           url: meta.url || url,
           title: meta.title || '',
-          price: meta.price ? Number(String(meta.price).replace(/[^\d]/g,'')) : 0,
+          price: meta.price ? Number(meta.price) : 0,
           thumbnail: meta.thumbnail || '',
         });
         renderProducts();
@@ -247,11 +237,19 @@
         showNotice('상품을 추가했습니다.', 'ok');
       } catch (e) {
         showNotice(`상품 불러오기 실패: ${e.message}`, 'error');
+        const goManual = confirm('메타를 불러오지 못했습니다. 수동으로 추가하시겠어요?');
+        if (!goManual) return;
+        const title = prompt('상품명(선택):', '');
+        const price = prompt('가격(숫자, 선택):', '');
+        state.products.push({ url, title: title || '', price: price ? Number(price) : 0, thumbnail: '' });
+        renderProducts();
+        ui.prodUrl.value = '';
+        showNotice('수동으로 상품을 추가했습니다.', 'ok');
       }
     });
   }
 
-  /* ---------- 촬영시간 계산(모집) ---------- */
+  /* ---------- 촬영시간 & 출연료(만원) ---------- */
   function parseHHMM(str){ if(!str) return null; const [h,m]=str.split(':').map(Number); if(Number.isNaN(h)||Number.isNaN(m)) return null; return h*60+m; }
   function updateDuration(){
     const s = parseHHMM(safeVal(ui.timeStart));
@@ -275,14 +273,14 @@
     ui.timeEnd?.addEventListener(ev, updateDuration);
   });
 
-  /* ---------- 모집 : 출연료(만원) 미리보기 ---------- */
-  function updatePayPreview(){
-    if (!ui.payWan || !ui.payWanPreview) return;
-    const n = num(ui.payWan);
-    ui.payWan.value = (n ?? '').toString(); // 숫자만 유지
-    ui.payWanPreview.textContent = n ? `${n.toLocaleString()}만원` : '';
+  // 출연료(만원) 전용 처리
+  function sanitizeDigits(s){ return (s||'').replace(/[^\d]/g,''); }
+  function updatePayWanPreview(){
+    const raw = sanitizeDigits(ui.payWan?.value);
+    if (ui.payWan) ui.payWan.value = raw;
+    if (ui.payWanPreview) ui.payWanPreview.textContent = raw ? `${Number(raw).toLocaleString()}만원` : '';
   }
-  ui.payWan?.addEventListener('input', updatePayPreview);
+  ui.payWan?.addEventListener('input', updatePayWanPreview);
 
   /* ---------- 수정 모드: 기존 데이터 채우기 ---------- */
   async function loadForEdit() {
@@ -294,20 +292,27 @@
       if (!res.ok) throw new Error(json.message || `HTTP_${res.status}`);
 
       const it = json.data || json;
-
-      // 타입 라디오 & 섹션 토글
       const type = it.type === 'recruit' ? 'recruit' : 'product';
+      // 라디오 토글
       const radio = document.querySelector(`input[name="cfType"][value="${type}"]`);
       if (radio) { radio.checked = true; }
-      if (ui.secP && ui.secR) {
-        ui.secP.hidden = type !== 'product';
-        ui.secR.hidden = type !== 'recruit';
+      // 섹션 show/hide
+      const secP = document.getElementById('cfSectionProduct');
+      const secR = document.getElementById('cfSectionRecruit');
+      const whenEls = document.querySelectorAll('[data-when]');
+      if (secP && secR){
+        secP.hidden = type !== 'product';
+        secR.hidden = type !== 'recruit';
+        whenEls.forEach(el=>{
+          const t = el.getAttribute('data-when');
+          el.style.display = (t === type) ? '' : 'none';
+        });
       }
 
-      // 공통
-      ui.campaignTitle && (ui.campaignTitle.value = it.internalTitle || '');
-      ui.title.value = it.title || '';
-      ui.titleRecruit.value = it.recruit?.title || it.title || '';
+      // 내부용 제목
+      ui.internalTitle.value = it.internalTitle || '';
+
+      // 공통 이미지
       ui.hiddenUrl.value = it.coverImageUrl || it.imageUrl || '';
       if (ui.hiddenUrl.value) {
         ui.img.src = toTransformedUrl(
@@ -318,27 +323,38 @@
       }
 
       if (type === 'product') {
+        // 공개 제목/브랜드/카테고리
+        ui.title.value  = it.title || '';
+        ui.brand.value  = it.brand || '';
+        if (ui.categorySel && it.category) ui.categorySel.value = it.category;
+
+        // 상품들
         state.products = Array.isArray(it.products) ? it.products.slice() : [];
         renderProducts();
+        // 세일/라이브/설명
         ui.salePrice.value   = it.sale?.price ?? '';
         ui.saleDuration.value= it.sale?.durationSec ?? '';
         ui.liveDate.value    = it.live?.date || '';
         ui.liveTime.value    = it.live?.time || '';
-        ui.brand.value       = it.brand || '';
-        ui.categorySel.value = it.category || '';
         ui.desc.value        = it.descriptionHTML || it.descriptionHtml || '';
       } else {
-        ui.brandRecruit.value    = it.brand || '';
-        ui.date.value            = it.recruit?.date || '';
-        ui.deadline.value        = it.recruit?.deadline || '';
-        ui.timeStart.value       = it.recruit?.timeStart || '';
-        ui.timeEnd.value         = it.recruit?.timeEnd || it.recruit?.time || '';
-        ui.location.value        = it.recruit?.location || '';
-        ui.payWan.value          = it.recruit?.payWan ?? (Number(String(it.recruit?.pay||'').replace(/[^\d]/g,'')) || '');
-        updatePayPreview();
-        ui.payNeg && (ui.payNeg.checked = !!it.recruit?.payNegotiable);
-        ui.categoryRecruitSel.value = it.recruit?.category || '';
-        ui.descRecruit.value     = it.recruit?.description || '';
+        // 공개 제목/브랜드/카테고리
+        ui.titleRecruit.value   = it.recruit?.title || it.title || '';
+        ui.brandRecruit.value   = it.brand || it.recruit?.brand || '';
+        if (ui.categoryRecruitSel && it.recruit?.category) ui.categoryRecruitSel.value = it.recruit.category;
+
+        // 일정/장소/출연료/설명
+        ui.date.value           = it.recruit?.date || '';
+        ui.deadline.value       = it.recruit?.deadline || '';
+        ui.timeStart.value      = it.recruit?.timeStart || '';
+        ui.timeEnd.value        = it.recruit?.timeEnd || it.recruit?.time || '';
+        ui.location.value       = it.recruit?.location || '';
+        // 출연료(만원) → 문자열/숫자 어느 쪽이든 대응
+        const payWanNum = it.recruit?.payWan ?? (typeof it.recruit?.pay === 'string' && it.recruit.pay.endsWith('만원') ? Number((it.recruit.pay||'').replace(/[^\d]/g,'')) : undefined);
+        if (ui.payWan) ui.payWan.value = payWanNum ? String(payWanNum) : '';
+        updatePayWanPreview();
+        if (ui.payNeg) ui.payNeg.checked = !!it.recruit?.payNegotiable;
+        ui.descRecruit.value    = it.recruit?.description || '';
         updateDuration();
       }
 
@@ -365,18 +381,15 @@
         if (!['brand', 'admin'].includes(role)) throw new Error('브랜드/관리자만 등록 가능');
 
         const type = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
-
-        // 공개제목 계산
-        const displayTitle =
+        const publicTitle =
           type === 'recruit'
             ? (safeVal(ui.titleRecruit) || safeVal(ui.title))
             : (safeVal(ui.title) || safeVal(ui.titleRecruit));
 
         const common = {
-          internalTitle: txtOrUndef(ui.campaignTitle),   // ✅ 본인만 보는 캠페인 제목
-          title: displayTitle,                           // ✅ 실제 공개 제목
+          title: publicTitle,                   // 외부 노출 제목
+          internalTitle: txtOrUndef(ui.internalTitle), // 내부용 제목
           coverImageUrl: txtOrUndef(ui.hiddenUrl),
-          brand: type === 'recruit' ? txtOrUndef(ui.brandRecruit) : txtOrUndef(ui.brand),
         };
         if (!common.title) throw new Error('제목은 필수입니다.');
 
@@ -386,10 +399,11 @@
           payload = {
             ...common,
             type: 'product',
+            brand: txtOrUndef(ui.brand),
+            category: safeVal(ui.categorySel) || undefined,
             products: state.products,
             sale: { price: num(ui.salePrice), durationSec: num(ui.saleDuration) },
             live: { date: txtOrUndef(ui.liveDate), time: txtOrUndef(ui.liveTime) },
-            category: txtOrUndef(ui.categorySel),
             descriptionHTML: txtOrUndef(ui.desc),
           };
         } else {
@@ -398,21 +412,23 @@
           const eM = parseHHMM(safeVal(ui.timeEnd));
           if (s!=null && eM!=null && eM<=s) throw new Error('종료시간은 시작시간 이후여야 합니다.');
 
-          const payWan = num(ui.payWan); // 만원 단위 숫자
+          const payWanNum = ui.payWan ? Number(sanitizeDigits(ui.payWan.value)) : undefined;
           payload = {
             ...common,
             type: 'recruit',
+            brand: txtOrUndef(ui.brandRecruit),
             recruit: {
-              title: displayTitle,
+              title: publicTitle,
               date: txtOrUndef(ui.date),
-              deadline: txtOrUndef(ui.deadline),         // ✅ 마감일
+              deadline: txtOrUndef(ui.deadline),
               timeStart: txtOrUndef(ui.timeStart),
               timeEnd: txtOrUndef(ui.timeEnd),
               location: txtOrUndef(ui.location),
-              payWan,                                     // ✅ 숫자(만원)
-              pay: payWan != null ? String(payWan) : undefined, // (하위호환) 숫자 그대로 저장
+              // 저장 형태: pay(문자열: "30만원"), payWan(숫자: 30)
+              payWan: Number.isFinite(payWanNum) ? payWanNum : undefined,
+              pay: Number.isFinite(payWanNum) ? `${payWanNum}만원` : txtOrUndef(ui.payWanPreview)?.replace(/[^\d]*/,'').replace(/$/,'만원'),
               payNegotiable: !!(ui.payNeg && ui.payNeg.checked),
-              category: txtOrUndef(ui.categoryRecruitSel),
+              category: safeVal(ui.categoryRecruitSel) || undefined,
               description: txtOrUndef(ui.descRecruit),
             },
           };
@@ -438,18 +454,8 @@
     });
   }
 
-  // 초기화
+  // 초기 렌더 & 메타 & 수정 로딩
   renderProducts();
-  // 카테고리 옵션 주입
-  (async () => {
-    const cats = await loadCategories();
-    const toOpts = (sel) => {
-      if (!sel) return;
-      sel.innerHTML = `<option value="">선택하세요</option>` +
-        cats.map(c => `<option value="${c}">${c}</option>`).join('');
-    };
-    toOpts(ui.categorySel);
-    toOpts(ui.categoryRecruitSel);
-    loadForEdit();
-  })();
+  initMeta();
+  loadForEdit();
 })();
