@@ -135,46 +135,35 @@ body{
 .lv-meta{margin:4px 2px 0; color:var(--muted); font-size:.86rem}
 
 /* =========================
-   SCHEDULE – DEFAULT (큰 카드)
+   SCHEDULE (네이버식 라인업)
 ========================= */
-.lv-schedule{display:flex; flex-direction:column; gap:10px}
+.lv-schedule{display:flex; flex-direction:column; gap:8px; padding:2px 0}
 .lv-s-item{
   display:flex; align-items:center; gap:12px;
   background:#fff; border:1px solid #f1f3f5;
-  border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-1)
-}
-.lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
-.lv-s-title{font-variation-settings:"wght" 700; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.lv-s-meta{font-size:.86rem; color:var(--muted); margin-top:2px}
-
-/* =========================
-   SCHEDULE – COMPACT LIST (오늘의 라인업)
-========================= */
-.lv-mini{ display:flex; flex-direction:column; gap:10px; }
-.lv-mini-item{
-  display:flex; align-items:center; gap:12px;
-  padding:10px 12px;
-  background:#fff;
-  border:1px solid #edf0f3;
-  border-radius:14px;
+  border-radius:14px; padding:10px 12px;
   box-shadow:var(--shadow-1);
 }
-.lv-mini-thumb{
-  width:40px; height:40px; flex:0 0 auto;
-  border-radius:10px; object-fit:cover; background:#eee;
+.lv-schedule .lv-s-thumb{
+  width:44px; height:44px; flex:0 0 auto;
+  border-radius:10px; object-fit:cover; background:#eee
 }
-.lv-mini-body{ min-width:0; display:flex; flex-direction:column; }
-.lv-mini-title{
+.lv-s-body{min-width:0; flex:1}
+.lv-s-title{
   font-size:15px; font-variation-settings:"wght" 780;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.lv-mini-sub{
-  margin-top:2px; display:flex; align-items:center; gap:8px;
-  font-size:12px; color:#6b7280; min-height:16px;
+.lv-s-meta{
+  margin-top:2px; display:flex; align-items:center; gap:6px;
+  font-size:13px; color:#6b7280;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.lv-mini-time{ color:var(--pri); font-variation-settings:"wght" 820; }
-.lv-mini-dot{ color:#d1d5db; }
-.lv-mini-brand{ color:#6b7280; }
+.lv-s-brand{color:#6b7280}
+.lv-s-time{
+  color:#e11d48;                 /* 분홍 강조 */
+  font-variation-settings:"wght" 820;
+}
+.lv-s-dot{color:#d1d5db}
 
 /* 빈 상태 */
 .lv-empty{
