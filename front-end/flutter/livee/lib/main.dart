@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/common_banner.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/common_header.dart';
-import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
+import 'package:livee/domain/repositories/auth_repository.dart';
+import 'package:livee/domain/usecases/auth_use_case.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/routes/app_router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(create: (_) => AuthRepository()),
+        Provider(
+          create: (context) => AuthUseCase(
+            context.read<AuthRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthProvider(
+            context.read<AuthUseCase>(),
+          ),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,22 +31,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Column(
-          children: [
-            CommonHeader(),
-            CommonBanner(),
-            CommonTopTabBar(),
-            Expanded(
-              child: Center(
-                child: Text('여기에 메인 콘텐츠가 표시됩니다.'),
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: CommonBottomNavBar(),
-      ),
+    return MaterialApp.router(
+      title: 'Livee',
+      routerConfig: router,
     );
   }
 }

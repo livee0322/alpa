@@ -1,0 +1,48 @@
+import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/login_screen.dart';
+import 'package:livee/presentation/screens/main_screen.dart';
+import 'package:livee/presentation/screens/mypage_screen.dart';
+import 'package:livee/presentation/screens/signup_screen.dart';
+import 'package:provider/provider.dart';
+
+// GoRouter 인스턴스
+final GoRouter router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const MainScreen(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignupScreen(),
+    ),
+    GoRoute(
+      path: '/mypage',
+      builder: (context, state) => const MypageScreen(),
+    ),
+  ],
+  redirect: (context, state) {
+    final authProvider = context.read<AuthProvider>();
+    final isLoggedIn = authProvider.isLoggedIn;
+
+    final loggingIn = state.uri.toString() == '/login';
+    final signingUp = state.uri.toString() == '/signup';
+    final goingToProtected = state.uri.toString() == '/mypage';
+
+    if (!isLoggedIn) {
+      return (loggingIn || signingUp) ? null : '/login';
+    }
+
+    if (loggingIn || signingUp) {
+      return '/';
+    }
+
+    return null;
+  },
+);
