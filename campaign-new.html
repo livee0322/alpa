@@ -10,15 +10,18 @@
   <!-- 페이지 전용 CSS -->
   <link rel="stylesheet" href="/alpa/frontend/css/campaign-form.css?v=0819a" />
   <style>
-    /* 요청사항 빠르게 반영하는 보강 스타일 */
+    /* ===== 페이지 보강 스타일 (복붙 OK) ===== */
 
     /* 헤더 숨김(상단 탭만) */
     body[data-page="campaign-form"] #header-container{ display:none !important; }
 
+    /* 페이지 상단 여백: 네이버식 2px */
+    .cf-wrap{ margin-top: calc(var(--banner-h) + var(--top-h) + 2px); }
+
     /* 하단 고정 액션바 */
     .cf-actions{
       position: sticky;
-      bottom: calc(64px + var(--safe-bottom)); /* 하단 탭 높이 피해서 */
+      bottom: calc(64px + var(--safe-bottom));
       display:flex; gap:10px; justify-content:flex-end;
       padding:10px 0 14px;
       background:linear-gradient(180deg, rgba(255,255,255,.0), rgba(255,255,255,1) 38%);
@@ -28,17 +31,41 @@
     .cf-primary{ background:var(--pri); color:#fff; border:0 }
     .cf-secondary{ background:#eef0f5; color:#374151; border:0 }
 
+    /* 필드/그리드 */
+    .cf-field{ margin:12px 0; }
+    .cf-field > label{ display:block; font-weight:800; margin-bottom:6px; }
+    .cf-help{ color:#6b7280; font-size:12px; margin-top:4px; }
+    .cf-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width:640px){ .cf-grid{ grid-template-columns:1fr; } }
+
+    /* 섹션 */
+    .cf-block{ margin:18px 0; }
+    .cf-h2{ margin:0 0 8px; font-size:18px; font-weight:900; }
+
+    /* 파일 UI */
+    .cf-thumb{ display:flex; gap:12px; align-items:flex-start; }
+    .cf-thumb img{ width:160px; aspect-ratio:16/9; object-fit:cover; border-radius:10px; background:#f3f4f6; border:1px solid #e5e7eb; }
+    .cf-file-ctrls{ display:flex; align-items:center; gap:8px; }
+    .btn{ padding:8px 12px; border-radius:10px; background:#6C63FF; color:#fff; font-weight:800; border:0; }
+
+    /* 시간 2개 나란히 */
+    .cf-time-row{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .cf-duration{ margin-top:6px; color:#6b7280; font-weight:700; }
+
+    /* 숫자 입력 + 접미사 */
+    .cf-input-suffix{ position:relative; display:flex; align-items:center; }
+    .cf-input-suffix input{ width:100%; padding-right:48px; }
+    .cf-input-suffix .suffix{
+      position:absolute; right:10px; color:#6b7280; font-weight:800;
+    }
+
     /* 체크박스 한 줄 */
     .cf-checkbox{ display:flex; align-items:center; gap:8px; }
     .cf-checkbox input[type="checkbox"]{ width:18px; height:18px; }
 
-    /* 시간 2개 나란히 */
-    .cf-time-row{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    @media (max-width:480px){ .cf-time-row{ grid-template-columns:1fr 1fr; } }
-    .cf-duration{ margin-top:6px; color:#6b7280; font-weight:700; }
-
-    /* 페이지 상단 여백: 네이버식 2px */
-    .cf-wrap{ margin-top: calc(var(--banner-h) + var(--top-h) + 2px); }
+    /* 타입별 노출 컨트롤 */
+    [data-when="product"]{ display:none; }
+    [data-when="recruit"]{ display:none; }
   </style>
 </head>
 <body data-page="campaign-form">
@@ -48,23 +75,18 @@
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="cf-wrap" aria-labelledby="cfPageTitle">
-    <!-- ✅ ID 변경: cfTitle -> cfPageTitle -->
     <h1 id="cfPageTitle" class="cf-title">캠페인 등록</h1>
     <p id="cfNotice" class="cf-notice" hidden></p>
 
     <form id="campaignForm" class="cf-form" autocomplete="off">
-      <!-- 대표 썸네일 -->
+
+      <!-- 내부용 캠페인 제목 -->
       <section class="cf-block">
-        <h2 class="cf-h2">대표 썸네일</h2>
+        <h2 class="cf-h2">캠페인 제목(내부용)</h2>
         <div class="cf-field">
-          <label for="cfThumb">대표 이미지</label>
-          <div class="cf-thumb">
-            <img id="cfThumbPreview" alt="미리보기" />
-            <input id="cfThumb" type="file" accept="image/*" />
-            <input type="hidden" id="cfImageUrl" />
-          </div>
-          <progress id="cfUploadProg" max="100" value="0" hidden></progress>
-          <small class="cf-help">이미지 선택 시 자동 업로드됩니다.</small>
+          <label for="cfCampaignTitle">캠페인 제목</label>
+          <input id="cfCampaignTitle" type="text" placeholder="예) 9월 2주차 뷰티 런칭" />
+          <div class="cf-help">본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.</div>
         </div>
       </section>
 
@@ -83,6 +105,55 @@
         </div>
       </section>
 
+      <!-- 공개 제목 + 브랜드 (타입별로 보여줌) -->
+      <section class="cf-block">
+        <h2 class="cf-h2">공개 정보</h2>
+
+        <!-- 상품 전용 -->
+        <div class="cf-grid" data-when="product">
+          <div class="cf-field">
+            <label for="cfTitle">제목<span class="req">*</span></label>
+            <input id="cfTitle" type="text" placeholder="상품 캠페인 제목 (외부 노출)" />
+            <div class="cf-help">사용자에게 실제로 노출되는 제목입니다.</div>
+          </div>
+          <div class="cf-field">
+            <label for="cfBrand">브랜드명</label>
+            <input id="cfBrand" type="text" placeholder="예) MAC" />
+          </div>
+        </div>
+
+        <!-- 모집 전용 -->
+        <div class="cf-grid" data-when="recruit">
+          <div class="cf-field">
+            <label for="cfTitleRecruit">제목<span class="req">*</span></label>
+            <input id="cfTitleRecruit" type="text" placeholder="모집 공고 제목 (외부 노출)" />
+            <div class="cf-help">사용자에게 실제로 노출되는 제목입니다.</div>
+          </div>
+          <div class="cf-field">
+            <label for="cfBrandRecruit">브랜드명</label>
+            <input id="cfBrandRecruit" type="text" placeholder="예) ABC몰" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 대표 썸네일 -->
+      <section class="cf-block">
+        <h2 class="cf-h2">대표 썸네일</h2>
+        <div class="cf-field">
+          <label for="cfThumb">대표 이미지</label>
+          <div class="cf-thumb">
+            <img id="cfThumbPreview" alt="미리보기" />
+            <div class="cf-file-ctrls">
+              <button type="button" id="cfThumbBtn" class="btn">이미지 선택</button>
+              <progress id="cfUploadProg" max="100" value="0" hidden></progress>
+            </div>
+            <input id="cfThumb" type="file" accept="image/*" hidden />
+            <input type="hidden" id="cfImageUrl" />
+          </div>
+          <small class="cf-help">이미지 선택 시 자동 업로드됩니다.</small>
+        </div>
+      </section>
+
       <!-- (선택1) 상품 캠페인 -->
       <section id="cfSectionProduct" class="cf-block" data-mode="product">
         <h2 class="cf-h2">상품 등록</h2>
@@ -91,7 +162,7 @@
           <div class="cf-field">
             <label for="cfProdUrl">상품 URL</label>
             <input id="cfProdUrl" type="url" placeholder="네이버/쿠팡/지마켓 등 상품 URL" />
-            <small class="cf-help">URL 입력 후 ‘불러오기’를 누르면 메타(썸네일/상품명/가격)를 시도합니다. 실패 시 수동추가를 안내합니다.</small>
+            <small class="cf-help">URL 입력 후 ‘불러오기’를 누르면 메타(썸네일/상품명/가격)를 시도합니다.</small>
           </div>
           <div class="cf-field cf-field-button">
             <button type="button" id="cfProdFetchBtn" class="cf-btn-outlined">불러오기</button>
@@ -134,18 +205,16 @@
 
         <div class="cf-grid">
           <div class="cf-field">
-            <label for="cfBrand">브랜드명</label>
-            <input id="cfBrand" type="text" placeholder="예) ALPA" />
-          </div>
-          <div class="cf-field">
-            <label for="cfCategory">상품군</label>
-            <input id="cfCategory" type="text" placeholder="예) 뷰티/패션/가전" />
+            <label for="cfCategorySel">상품군</label>
+            <select id="cfCategorySel">
+              <option value="">선택하세요</option>
+            </select>
           </div>
         </div>
 
         <div class="cf-field">
           <label for="cfDesc">상세 설명 (HTML 가능)</label>
-          <textarea id="cfDesc" rows="7" placeholder="상세페이지에 노출할 소개/가이드/주의사항 등을 작성하세요."></textarea>
+          <textarea id="cfDesc" rows="7" placeholder="상세페이지 소개/가이드/주의사항 등을 작성하세요."></textarea>
         </div>
       </section>
 
@@ -153,24 +222,24 @@
       <section id="cfSectionRecruit" class="cf-block" data-mode="recruit" hidden>
         <h2 class="cf-h2">쇼호스트 모집</h2>
 
-        <div class="cf-field">
-          <label for="cfTitleRecruit">제목 <span class="req">*</span></label>
-          <input id="cfTitleRecruit" type="text" placeholder="예) 잘 먹는 쇼호스트 찾습니다" />
-        </div>
-
         <div class="cf-grid">
           <div class="cf-field">
             <label for="cfDate">촬영일 <span class="req">*</span></label>
             <input id="cfDate" type="date" />
           </div>
           <div class="cf-field">
-            <label>촬영시간</label>
-            <div class="cf-time-row">
-              <input id="cfTimeStart" type="time" aria-label="시작시간" />
-              <input id="cfTimeEnd" type="time" aria-label="종료시간" />
-            </div>
-            <div id="cfDuration" class="cf-duration">촬영시간: -</div>
+            <label for="cfDeadline">모집 마감일</label>
+            <input id="cfDeadline" type="date" />
           </div>
+        </div>
+
+        <div class="cf-field">
+          <label>촬영시간</label>
+          <div class="cf-time-row">
+            <input id="cfTimeStart" type="time" aria-label="시작시간" />
+            <input id="cfTimeEnd" type="time" aria-label="종료시간" />
+          </div>
+          <div id="cfDuration" class="cf-duration">촬영시간: -</div>
         </div>
 
         <div class="cf-field">
@@ -180,31 +249,30 @@
 
         <div class="cf-grid">
           <div class="cf-field">
-            <label for="cfPay">출연료</label>
-            <input id="cfPay" type="text" inputmode="numeric" placeholder="예) 30만원" />
+            <label for="cfPayWan">출연료</label>
+            <div class="cf-input-suffix">
+              <input id="cfPayWan" type="tel" inputmode="numeric" placeholder="숫자만 입력 (예: 30)">
+              <span class="suffix">만원</span>
+            </div>
+            <div id="cfPayWanPreview" class="cf-help"></div>
           </div>
           <div class="cf-field cf-checkbox">
-            <input id="cfPayNeg" type="checkbox" />
-            <label for="cfPayNeg">협의 가능</label>
+            <label><input id="cfPayNeg" type="checkbox" /> 협의 가능</label>
           </div>
         </div>
 
-        <div class="cf-field">
-          <label for="cfCategoryRecruit">상품군</label>
-          <input id="cfCategoryRecruit" type="text" placeholder="예) 뷰티/패션/가전" />
+        <div class="cf-grid">
+          <div class="cf-field">
+            <label for="cfCategoryRecruitSel">카테고리</label>
+            <select id="cfCategoryRecruitSel">
+              <option value="">선택하세요</option>
+            </select>
+          </div>
         </div>
 
         <div class="cf-field">
           <label for="cfDescRecruit">요구사항/우대사항</label>
           <textarea id="cfDescRecruit" rows="7" placeholder="방송 내용, 요구 스킬, 우대사항 등을 상세히 적어주세요."></textarea>
-        </div>
-      </section>
-
-      <!-- 공통 타이틀 -->
-      <section class="cf-block">
-        <div class="cf-field">
-          <label for="cfTitle">캠페인 제목 <span class="req">*</span></label>
-          <input id="cfTitle" type="text" placeholder="예) 8/20 라이브 — 신제품 특가전" required />
         </div>
       </section>
 
@@ -242,22 +310,33 @@
   <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
   <script src="/alpa/frontend/js/config.js?v=0819a"></script>
 
-  <!-- 페이지 JS -->
-  <script src="/alpa/frontend/js/campaign-form.js?v=0819a"></script>
+  <!-- 페이지 JS (리팩토링 버전과 매칭) -->
+  <script src="/alpa/frontend/js/campaign-form.js?v=0819b"></script>
 
-  <!-- 유형 토글 -->
+  <!-- 유형 토글 + data-when 제어 -->
   <script>
   (function(){
     const radios = document.querySelectorAll('input[name="cfType"]');
     const secP = document.getElementById('cfSectionProduct');
     const secR = document.getElementById('cfSectionRecruit');
+    const whenEls = document.querySelectorAll('[data-when]');
+
     function apply(){
       const v = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
       secP.hidden = v !== 'product';
       secR.hidden = v !== 'recruit';
+      whenEls.forEach(el=>{
+        const t = el.getAttribute('data-when');
+        el.style.display = (t === v) ? '' : 'none';
+      });
     }
     radios.forEach(r=>r.addEventListener('change', apply));
     apply();
+
+    // 커스텀 파일 버튼
+    document.getElementById('cfThumbBtn')?.addEventListener('click', () => {
+      document.getElementById('cfThumb')?.click();
+    });
   })();
   </script>
 </body>
