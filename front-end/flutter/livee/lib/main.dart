@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/common_header.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Column(
           children: [
+            CommonHeader(),
             CommonBanner(),
             Expanded(
               child: Center(
