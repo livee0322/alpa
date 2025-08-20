@@ -44,7 +44,6 @@ body{
 /* =========================
    STICKY STACK
 ========================= */
-/* 배너 */
 #banner-container{
   position:sticky; top:var(--safe-top); z-index:1100;
   background:var(--pri); color:#fff; min-height:var(--banner-h);
@@ -115,7 +114,9 @@ body{
 }
 .lv-more:hover{ color:#374151; text-decoration:underline; }
 
-/* 수평 카드(다른 섹션에서 사용) */
+/* =========================
+   HORIZONTAL CARDS (generic)
+========================= */
 .lv-hscroll{
   display:flex; gap:12px; overflow-x:auto;
   padding:4px 2px 10px; scroll-snap-type:x mandatory;
@@ -133,7 +134,9 @@ body{
 .lv-title{margin:8px 2px 0; font-variation-settings:"wght" 700; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .lv-meta{margin:4px 2px 0; color:var(--muted); font-size:.86rem}
 
-/* 일정 리스트 */
+/* =========================
+   SCHEDULE – DEFAULT (큰 카드)
+========================= */
 .lv-schedule{display:flex; flex-direction:column; gap:10px}
 .lv-s-item{
   display:flex; align-items:center; gap:12px;
@@ -143,6 +146,35 @@ body{
 .lv-s-thumb{width:48px; height:48px; border-radius:12px; background:#eee; object-fit:cover}
 .lv-s-title{font-variation-settings:"wght" 700; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .lv-s-meta{font-size:.86rem; color:var(--muted); margin-top:2px}
+
+/* =========================
+   SCHEDULE – COMPACT LIST (오늘의 라인업)
+========================= */
+.lv-mini{ display:flex; flex-direction:column; gap:10px; }
+.lv-mini-item{
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px;
+  background:#fff;
+  border:1px solid #edf0f3;
+  border-radius:14px;
+  box-shadow:var(--shadow-1);
+}
+.lv-mini-thumb{
+  width:40px; height:40px; flex:0 0 auto;
+  border-radius:10px; object-fit:cover; background:#eee;
+}
+.lv-mini-body{ min-width:0; display:flex; flex-direction:column; }
+.lv-mini-title{
+  font-size:15px; font-variation-settings:"wght" 780;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.lv-mini-sub{
+  margin-top:2px; display:flex; align-items:center; gap:8px;
+  font-size:12px; color:#6b7280; min-height:16px;
+}
+.lv-mini-time{ color:var(--pri); font-variation-settings:"wght" 820; }
+.lv-mini-dot{ color:#d1d5db; }
+.lv-mini-brand{ color:#6b7280; }
 
 /* 빈 상태 */
 .lv-empty{
