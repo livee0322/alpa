@@ -42,13 +42,14 @@ class AuthRepository {
       },
     );
 
-    if (response.statusCode == 200) {
-      final json = jsonDecode(utf8.decode(response.bodyBytes));
-      final user = User.fromJson(json);
-      return user;
-    } else {
-      throw Exception('Failed to sign up: ${response.reasonPhrase}');
+    final data = jsonDecode(utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 || (data is Map && data['ok'] == false)) {
+      final message = data['message'] ?? '가입 실패';
+      throw Exception(message);
     }
+
+    final user = User.fromJson(data);
+    return user;
   }
 
   Future<void> logout() async {
