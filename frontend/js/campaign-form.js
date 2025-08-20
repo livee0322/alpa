@@ -4,6 +4,8 @@
   const notice = document.getElementById('cfNotice');
 
   /* ---------- helpers ---------- */
+  const qs = (k) => new URLSearchParams(location.search).get(k);
+  const EDIT_ID = qs('edit');        // 있으면 수정 모드
   const val = (el) => (el && typeof el.value === 'string' ? el.value : '');
   const safeVal = (el) => String(val(el) || '').trim();
   const num = (el) => (safeVal(el) ? Number(safeVal(el)) : undefined);
@@ -23,22 +25,18 @@
       notice.style.borderColor = '#ffd6d6';
     }
   }
-  function authHeaders() {
+  const authHeaders = () => {
     const t = localStorage.getItem('liveeToken');
     return t ? { Authorization: `Bearer ${t}` } : {};
-  }
+  };
   async function api(path, opts = {}) {
     const res = await fetch(`${API_BASE}${path}`, {
       ...opts,
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-        ...(opts.headers || {}),
-      },
+      headers: { 'Content-Type': 'application/json', ...authHeaders(), ...(opts.headers || {}) },
     });
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
-      ['liveeToken', 'liveeName', 'liveeRole', 'liveeTokenExp'].forEach(k => localStorage.removeItem(k));
+      ['liveeToken','liveeName','liveeRole','liveeTokenExp'].forEach(k=>localStorage.removeItem(k));
       location.href = '/alpa/login.html';
       throw new Error('UNAUTH');
     }
@@ -208,18 +206,12 @@
         ui.prodUrl.value = '';
         showNotice('상품을 추가했습니다.', 'ok');
       } catch (e) {
-        // Fallback: 수동 추가 안내
         showNotice(`상품 불러오기 실패: ${e.message}`, 'error');
         const goManual = confirm('메타를 불러오지 못했습니다. 수동으로 추가하시겠어요?');
         if (!goManual) return;
         const title = prompt('상품명(선택):', '');
         const price = prompt('가격(숫자, 선택):', '');
-        state.products.push({
-          url,
-          title: title || '',
-          price: price ? Number(price) : 0,
-          thumbnail: '',
-        });
+        state.products.push({ url, title: title || '', price: price ? Number(price) : 0, thumbnail: '' });
         renderProducts();
         ui.prodUrl.value = '';
         showNotice('수동으로 상품을 추가했습니다.', 'ok');
@@ -233,16 +225,15 @@
     const s = parseHHMM(safeVal(ui.timeStart));
     const e = parseHHMM(safeVal(ui.timeEnd));
     if (s==null || e==null){
-      ui.duration.textContent = '촬영시간: -';
+      if (ui.duration) ui.duration.textContent = '촬영시간: -';
       if (ui.timeEnd) ui.timeEnd.min = safeVal(ui.timeStart) || '';
       return;
     }
-    // 종료는 시작 이후만 허용
     if (e <= s){
-      ui.duration.textContent = '촬영시간: 종료시간은 시작시간 이후여야 합니다.';
+      if (ui.duration) ui.duration.textContent = '촬영시간: 종료시간은 시작시간 이후여야 합니다.';
       return;
     }
-    ui.duration.textContent = `촬영시간: ${e - s}분`;
+    if (ui.duration) ui.duration.textContent = `촬영시간: ${e - s}분`;
   }
   ['change','input'].forEach(ev=>{
     ui.timeStart?.addEventListener(ev, ()=>{
@@ -251,7 +242,72 @@
     });
     ui.timeEnd?.addEventListener(ev, updateDuration);
   });
-  updateDuration();
+
+  /* ---------- 수정 모드: 기존 데이터 채우기 ---------- */
+  async function loadForEdit() {
+    if (!EDIT_ID) return;
+    try {
+      showNotice('기존 데이터를 불러오는 중...', 'ok');
+      const res = await fetch(`${API_BASE}/campaigns/${encodeURIComponent(EDIT_ID)}`, { headers: authHeaders() });
+      const json = await res.json().catch(()=>({}));
+      if (!res.ok) throw new Error(json.message || `HTTP_${res.status}`);
+
+      const it = json.data || json;
+      // 타입 라디오 & 섹션 토글
+      const type = it.type === 'recruit' ? 'recruit' : 'product';
+      const radio = document.querySelector(`input[name="cfType"][value="${type}"]`);
+      if (radio) { radio.checked = true; }
+      // 섹션 show/hide (페이지 하단의 토글 스크립트가 있을 수 있으니 강제 적용)
+      const secP = document.getElementById('cfSectionProduct');
+      const secR = document.getElementById('cfSectionRecruit');
+      if (secP && secR) {
+        secP.hidden = type !== 'product';
+        secR.hidden = type !== 'recruit';
+      }
+
+      // 공통
+      ui.title.value = it.title || '';
+      ui.hiddenUrl.value = it.coverImageUrl || it.imageUrl || '';
+      if (ui.hiddenUrl.value) {
+        ui.img.src = toTransformedUrl(
+          ui.hiddenUrl.value,
+          (window.LIVEE_CONFIG?.thumb && window.LIVEE_CONFIG.thumb.card169) ||
+          'c_fill,g_auto,w_640,h_360,f_auto,q_auto'
+        );
+      }
+
+      if (type === 'product') {
+        // 상품들
+        state.products = Array.isArray(it.products) ? it.products.slice() : [];
+        renderProducts();
+        // 세일/라이브/메타
+        ui.salePrice.value   = it.sale?.price ?? '';
+        ui.saleDuration.value= it.sale?.durationSec ?? '';
+        ui.liveDate.value    = it.live?.date || '';
+        ui.liveTime.value    = it.live?.time || '';
+        ui.brand.value       = it.brand || '';
+        ui.category.value    = it.category || '';
+        ui.desc.value        = it.descriptionHTML || it.descriptionHtml || '';
+      } else {
+        // 모집
+        ui.titleRecruit.value   = (it.recruit?.title || it.title || '');
+        ui.date.value           = it.recruit?.date || '';
+        ui.timeStart.value      = it.recruit?.timeStart || '';
+        ui.timeEnd.value        = it.recruit?.timeEnd || it.recruit?.time || '';
+        ui.location.value       = it.recruit?.location || '';
+        ui.pay.value            = it.recruit?.pay || '';
+        if (ui.payNeg) ui.payNeg.checked = !!it.recruit?.payNegotiable;
+        ui.categoryRecruit.value= it.recruit?.category || '';
+        ui.descRecruit.value    = it.recruit?.description || '';
+        updateDuration();
+      }
+
+      ui.submit.textContent = '수정 저장';
+      showNotice('불러오기 완료', 'ok');
+    } catch (e) {
+      showNotice(`불러오기 실패: ${e.message || e}`, 'error');
+    }
+  }
 
   /* ---------- 제출 ---------- */
   if (ui.cancel) {
@@ -269,8 +325,6 @@
         if (!['brand', 'admin'].includes(role)) throw new Error('브랜드/관리자만 등록 가능');
 
         const type = document.querySelector('input[name="cfType"]:checked')?.value || 'product';
-
-        // 제목 우선순위: recruit는 cfTitleRecruit → cfTitle, product는 cfTitle → cfTitleRecruit
         const computedTitle =
           type === 'recruit'
             ? (safeVal(ui.titleRecruit) || safeVal(ui.title))
@@ -278,7 +332,7 @@
 
         const common = {
           title: computedTitle,
-          coverImageUrl: txtOrUndef(ui.hiddenUrl),   // 서버 스키마와 일치
+          coverImageUrl: txtOrUndef(ui.hiddenUrl),
         };
         if (!common.title) throw new Error('캠페인 제목은 필수입니다.');
 
@@ -289,19 +343,18 @@
             ...common,
             type: 'product',
             products: state.products,
-            sale: {
-              price: num(ui.salePrice),
-              durationSec: num(ui.saleDuration),
-            },
-            live: {
-              date: txtOrUndef(ui.liveDate),
-              time: txtOrUndef(ui.liveTime),
-            },
+            sale: { price: num(ui.salePrice), durationSec: num(ui.saleDuration) },
+            live: { date: txtOrUndef(ui.liveDate), time: txtOrUndef(ui.liveTime) },
             brand: txtOrUndef(ui.brand),
             category: txtOrUndef(ui.category),
             descriptionHTML: txtOrUndef(ui.desc),
           };
         } else {
+          // 시간 순서 체크
+          const s = parseHHMM(safeVal(ui.timeStart));
+          const eM = parseHHMM(safeVal(ui.timeEnd));
+          if (s!=null && eM!=null && eM<=s) throw new Error('종료시간은 시작시간 이후여야 합니다.');
+
           payload = {
             ...common,
             type: 'recruit',
@@ -317,18 +370,19 @@
               description: txtOrUndef(ui.descRecruit),
             },
           };
-          // 유효성: 시간 순서
-          if (ui.timeStart && ui.timeEnd){
-            const s = parseHHMM(safeVal(ui.timeStart));
-            const e = parseHHMM(safeVal(ui.timeEnd));
-            if (s!=null && e!=null && e<=s) throw new Error('종료시간은 시작시간 이후여야 합니다.');
-          }
         }
 
         ui.submit.disabled = true;
-        showNotice('저장 중...', 'ok');
-        await api('/campaigns', { method: 'POST', body: JSON.stringify(payload) });
-        showNotice('캠페인이 등록되었습니다.', 'ok');
+        showNotice(EDIT_ID ? '수정 중...' : '저장 중...', 'ok');
+
+        if (EDIT_ID) {
+          await api(`/campaigns/${encodeURIComponent(EDIT_ID)}`, { method: 'PUT', body: JSON.stringify(payload) });
+          showNotice('캠페인이 수정되었습니다.', 'ok');
+        } else {
+          await api('/campaigns', { method: 'POST', body: JSON.stringify(payload) });
+          showNotice('캠페인이 등록되었습니다.', 'ok');
+        }
+
         setTimeout(() => (location.href = '/alpa/campaigns.html'), 500);
       } catch (err) {
         showNotice(err.message || '저장 실패');
@@ -338,6 +392,7 @@
     });
   }
 
-  // 초기 렌더
+  // 초기 렌더 & 수정 모드 로딩
   renderProducts();
+  loadForEdit();
 })();
