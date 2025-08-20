@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class MypageScreen extends StatelessWidget {
   const MypageScreen({super.key});
 
-   @override
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final role = authProvider.role;
@@ -59,9 +59,7 @@ class MypageScreen extends StatelessWidget {
                     _buildMyPageItem(
                       title: '내가 등록한 캠페인',
                       subtitle: '목록 확인 / 수정 / 삭제',
-                      onTap: () {
-                        // TODO: 내가 등록한 캠페인 페이지 라우트 구현
-                      },
+                      onTap: () => GoRouter.of(context).go('/campaigns'),
                     ),
                     _buildMyPageItem(
                       title: '새 캠페인 등록',

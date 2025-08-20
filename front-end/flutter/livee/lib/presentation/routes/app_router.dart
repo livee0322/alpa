@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/campaigns_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
 import 'package:livee/presentation/screens/mypage_screen.dart';
@@ -25,6 +26,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/mypage',
       builder: (context, state) => const MypageScreen(),
+    ),
+    GoRoute(
+      path: '/campaigns',
+      builder: (context, state) => const CampaignsScreen(),
     ),
   ],
   redirect: (context, state) {
