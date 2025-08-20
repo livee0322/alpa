@@ -1,4 +1,5 @@
 // 임시 모델 (추후 상세 구현 예정)
+import 'package:livee/domain/models/live.dart';
 import 'package:livee/domain/models/product.dart';
 import 'package:livee/domain/models/recruit.dart';
 
@@ -13,6 +14,7 @@ class Campaign {
   final String? category;
   final String? date;
   final String? descriptionHTML;
+  final Live? live;
 
   Campaign({
     this.id,
@@ -25,6 +27,7 @@ class Campaign {
     this.category,
     this.date,
     this.descriptionHTML,
+    this.live,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) {
@@ -39,6 +42,7 @@ class Campaign {
       category: json['category'] as String?,
       date: json['date'] as String?,
       descriptionHTML: json['descriptionHTML'] as String?,
+      live: json['live'] != null ? Live.fromJson(json['live'] as Map<String, dynamic>) : null,
     );
   }
 }
