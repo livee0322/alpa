@@ -63,9 +63,7 @@
     .cf-checkbox{ display:flex; align-items:center; gap:8px; }
     .cf-checkbox input[type="checkbox"]{ width:18px; height:18px; }
 
-    /* 타입별 노출 컨트롤 */
-    [data-when="product"]{ display:none; }
-    [data-when="recruit"]{ display:none; }
+    /* ⚠️ 이전 버전의 [data-when="..."] 기본 숨김 제거! */
   </style>
 </head>
 <body data-page="campaign-form">
@@ -311,7 +309,7 @@
   <script src="/alpa/frontend/js/config.js?v=0819a"></script>
 
   <!-- 페이지 JS (리팩토링 버전과 매칭) -->
-  <script src="/alpa/frontend/js/campaign-form.js?v=0819b"></script>
+  <script src="/alpa/frontend/js/campaign-form.js?v=0819c"></script>
 
   <!-- 유형 토글 + data-when 제어 -->
   <script>
