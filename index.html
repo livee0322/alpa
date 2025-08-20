@@ -5,45 +5,27 @@
   <title>Livee - 홈</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link href="/alpa/frontend/css/main.css?v=1.78l9" rel="stylesheet" />
+  <!-- 메인 스타일 -->
+  <link href="/alpa/frontend/css/main.css?v=1.79jobs" rel="stylesheet" />
 
+  <!-- Pretendard Variable -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Pretendard:wdth,wght@100..125,400..900&display=swap"
     rel="stylesheet">
-
-  <style>
-    .lv-section-head h2{
-      font-weight: 900;
-      font-size: clamp(22px, 4.6vw, 26px);
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-    }
-    .lv-empty{
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: -0.01em;
-      color: #8a90a0;
-    }
-    .lv-more{
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: -0.01em;
-    }
-  </style>
 </head>
 
 <body data-page="home">
   <!-- 배너 -->
   <div id="banner-container" class="lv-banner">
-    <div class="lv-banner-in">지금! 쇼핑라이브 베타 오픈 🎉</div>
+    <div class="lv-banner-in">현재 클로즈 베타 테스트 중입니다. 피드백을 환영합니다! 🚀</div>
   </div>
 
-  <!-- 헤더(숨김은 main.css에서 처리) -->
+  <!-- 헤더(디자인 정책상 숨김: CSS에서 높이 0 처리) -->
   <header id="header-container" class="lv-header"></header>
 
-  <!-- 상단 탭 -->
+  <!-- 상단 텍스트 탭 -->
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="lv-main">
@@ -58,15 +40,14 @@
       </div>
     </section>
 
-    <!-- 라이브 상품 (2열 그리드) -->
+    <!-- 라이브 상품 -->
     <section class="lv-section">
       <div class="lv-section-head">
         <h2>라이브 상품</h2>
         <a class="lv-more" href="/alpa/blank/blank.html?p=products" aria-label="라이브 상품 더보기">더보기</a>
       </div>
-      <div id="productGrid" class="lv-grid" aria-live="polite">
-        <div class="lv-empty">등록된 상품 캠페인이 없습니다.</div>
-      </div>
+      <!-- 2열 그리드 컨테이너 -->
+      <div id="productGrid" class="lv-grid"></div>
     </section>
 
     <!-- 추천 공고 -->
@@ -75,19 +56,9 @@
         <h2>추천 공고</h2>
         <a class="lv-more" href="/alpa/recruits.html" aria-label="추천 공고 더보기">더보기</a>
       </div>
-      <div id="recruits" class="lv-hscroll">
+      <!-- 잡플 카드 리스트 -->
+      <div id="recruits" class="lv-jobs">
         <div class="lv-empty">등록된 공고가 없습니다</div>
-      </div>
-    </section>
-
-    <!-- 인기 쇼호스트 (원하면 유지/삭제) -->
-    <section class="lv-section">
-      <div class="lv-section-head">
-        <h2>인기 쇼호스트</h2>
-        <a class="lv-more" href="/alpa/portfolio.html" aria-label="인기 쇼호스트 더보기">더보기</a>
-      </div>
-      <div id="portfolios" class="lv-hscroll">
-        <div class="lv-empty">등록된 포트폴리오가 없습니다</div>
       </div>
     </section>
   </main>
@@ -99,10 +70,10 @@
   <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
   <script src="/alpa/frontend/js/modules/stack-size.js?v=1"></script>
+  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
 
-  <!-- 페이지 데이터 바인딩 -->
-  <script src="/alpa/frontend/js/main.js?v=20250820g"></script>
+  <!-- 페이지 스크립트 -->
+  <script src="/alpa/frontend/js/main.js?v=20250821jobs"></script>
 </body>
 </html>
