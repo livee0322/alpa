@@ -64,7 +64,7 @@ class MypageScreen extends StatelessWidget {
                     _buildMyPageItem(
                       title: '새 캠페인 등록',
                       subtitle: '상품 캠페인 / 쇼호스트 모집',
-                      onTap: () => GoRouter.of(context).go('/campaign-form'),
+                      onTap: () => GoRouter.of(context).go('/recruit-form'),
                     ),
                     const SizedBox(height: 20),
                   ],
