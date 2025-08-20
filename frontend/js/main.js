@@ -1,9 +1,9 @@
-// // /alpa/frontend/js/main.js
+// /alpa/frontend/js/main.js
 (function () {
   const { API_BASE } = window.LIVEE_CONFIG || {};
   const $ = (s) => document.querySelector(s);
 
-  // ---------- 공통 fetch (items / data.items / docs 안전 언래핑)
+  // ---------- fetch helper ----------
   async function getJson(path, opts = {}) {
     const url = `${API_BASE}${path}`;
     const res = await fetch(url, opts);
@@ -17,7 +17,7 @@
     return { ok, items: Array.isArray(arr) ? arr : [], json, res };
   }
 
-  // ---------- 썸네일 우선순위 + 폴백
+  // ---------- utils ----------
   function pickThumb(it, ratio = "card") {
     const src = it?.thumbnailUrl || it?.imageUrl || it?.coverImageUrl || it?.thumbnail || "";
     if (src) return src;
@@ -26,37 +26,51 @@
     if (ratio === "avatar") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/96/96`;
     return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/360`;
   }
-
-  // ---------- 날짜/시간 유틸
-  const toYMD = (d) =>
-    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const fmtDate = (v) => { try { return new Date(v).toLocaleDateString("ko-KR"); } catch { return ""; } };
-  const fmtTime = (v) => v || "";
   const n2 = (v) => (isFinite(v) ? Number(v).toLocaleString() : "");
 
-  // "2025-08-20", "14:30" → Date (현지 타임존)
-  function makeDateTime(dateStr, timeStr) {
-    if (!dateStr) return null;
-    const [y, m, d] = String(dateStr).split("-").map(Number);
-    if (!y || !m || !d) return null;
-    let hh = 0, mm = 0;
-    if (timeStr && /^\d{2}:\d{2}$/.test(timeStr)) {
-      [hh, mm] = timeStr.split(":").map(Number);
-    }
-    return new Date(y, m - 1, d, hh, mm, 0, 0);
-  }
+  // YYYY-MM-DD → Date(로컬 00:00)
+  const toDateOnly = (s) => {
+    if (!s) return null;
+    const [y,m,d] = String(s).split("-").map(Number);
+    if (!y||!m||!d) return null;
+    return new Date(y, m-1, d);
+  };
 
   /* ---------------------------------------
-     1) 오늘의 라이브 라인업 (#schedule)
-     - 컴팩트 리스트형 (썸네일 40) + 시간 "예정" + 브랜드
-  ----------------------------------------*/
+   * 1) 오늘의 라이브 라인업 (#schedule)
+   *    - 서버가 today/sort 미지원시 클라이언트 폴백
+   *    - 항목 클릭 시 상세(/alpa/campaign.html?id=...)
+   * -------------------------------------*/
   async function loadSchedule() {
     const box = $("#schedule");
     if (!box) return;
 
+    const today = new Date();
+    const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
     try {
-      // 서버에서 오늘 기준 + 시간순 정렬
-      const { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=6");
+      // 1차: 서버가 정렬/필터를 지원하는 경우
+      let { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=6");
+
+      // 2차: 폴백(전체에서 오늘만 필터 + timeStart/시간 오름차순)
+      if (!ok || !items.length) {
+        const fallback = await getJson("/campaigns?type=recruit&limit=50");
+        if (fallback.ok) {
+          items = (fallback.items || [])
+            .filter(it => {
+              const r = it.recruit || {};
+              const d = toDateOnly(r.date);
+              return d && d.getTime() === t0.getTime();
+            })
+            .sort((a,b) => {
+              const ra = a.recruit || {}, rb = b.recruit || {};
+              return String(ra.timeStart || ra.time || '').localeCompare(String(rb.timeStart || rb.time || ''));
+            })
+            .slice(0, 6);
+          ok = true;
+        }
+      }
+
       if (!ok || !items.length) {
         box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
         return;
@@ -66,12 +80,13 @@
         <div class="lv-mini">
           ${items.map((it) => {
             const r = it.recruit || {};
+            const id = encodeURIComponent(it.id || it._id || "");
             const brand = it.brand || r.brand || "브랜드 미정";
             const time  = r.timeStart || r.time || "";
             const timeHtml = time ? `<span class="lv-mini-time">${time} 예정</span>` : "";
             const dot      = time ? `<span class="lv-mini-dot">·</span>` : "";
             return `
-              <div class="lv-mini-item">
+              <a class="lv-mini-item" href="/alpa/campaign.html?id=${id}">
                 <img class="lv-mini-thumb"
                      src="${pickThumb(it, "avatar")}"
                      alt=""
@@ -84,7 +99,7 @@
                     <span class="lv-mini-brand">${brand}</span>
                   </div>
                 </div>
-              </div>
+              </a>
             `;
           }).join("")}
         </div>
@@ -96,18 +111,12 @@
   }
 
   /* -------------------------------------------
-     2) 추천 공고: 브랜드/제목/썸네일/D‑day/출연료/지원자
-  --------------------------------------------*/
+   * 2) 추천 공고: 클릭 → 상세로 이동
+   * -----------------------------------------*/
   async function loadRecruitList() {
     const box = $("#recruits");
     if (!box) return;
 
-    const toDateOnly = (s) => {
-      if (!s) return null;
-      const [y,m,d] = String(s).split("-").map(Number);
-      if (!y || !m || !d) return null;
-      return new Date(y, m - 1, d);
-    };
     const dday = (dateStr) => {
       const d = toDateOnly(dateStr);
       if (!d) return { label: "", ended: false };
@@ -132,7 +141,7 @@
         const applicants =
           (typeof r.applicantsCount === "number" && r.applicantsCount) ??
           (Array.isArray(r.applicants) ? r.applicants.length : 0);
-        const href = `/alpa/blank/blank.html?p=recruit&id=${encodeURIComponent(it.id || it._id || "")}`;
+        const href = `/alpa/campaign.html?id=${encodeURIComponent(it.id || it._id || "")}`;
         return `
           <a class="lv-job" href="${href}">
             <div class="lv-job-body">
@@ -160,8 +169,8 @@
   }
 
   /* ----------------------------------------------------
-     3) 라이브 상품: 2열 그리드 (#productGrid) 최대 10개
-  -----------------------------------------------------*/
+   * 3) 라이브 상품: 클릭 → 상세로 이동
+   * ---------------------------------------------------*/
   async function loadProductGrid() {
     const grid = $("#productGrid");
     if (!grid) return;
@@ -173,8 +182,9 @@
       }
       grid.innerHTML = items.map((it) => {
         const price = it?.sale?.price ?? it?.products?.[0]?.price ?? null;
+        const href = `/alpa/campaign.html?id=${encodeURIComponent(it.id || it._id || "")}`;
         return `
-          <a class="lv-g-card" href="/alpa/blank/blank.html?p=product&id=${encodeURIComponent(it.id || it._id || "")}">
+          <a class="lv-g-card" href="${href}">
             <img class="lv-g-thumb"
                  src="${pickThumb(it, "square")}"
                  alt="${(it.title || '상품')}"
