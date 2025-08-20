@@ -18,6 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passwordController = TextEditingController();
   String _errorMessage = '';
   bool _isLoading = false;
+  String _selectedRole = 'brand';
 
   Future<void> _signup() async {
     if (_formKey.currentState!.validate()) {
@@ -31,7 +32,7 @@ class _SignupScreenState extends State<SignupScreen> {
           _nicknameController.text,
           _emailController.text,
           _passwordController.text,
-          'brand', // 역할은 일단 'brand'로 고정
+          _selectedRole,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('회원가입이 완료되었습니다. 로그인 해주세요.')),
@@ -47,6 +48,49 @@ class _SignupScreenState extends State<SignupScreen> {
         });
       }
     }
+  }
+
+  // 역할 선택 버튼 위젯
+  Widget _buildRoleSelector() {
+    return Row(
+      children: [
+        _buildRoleButton('brand', '브랜드(업체)'),
+        const SizedBox(width: 8),
+        _buildRoleButton('showhost', '쇼호스트'),
+      ],
+    );
+  }
+
+  // 역할 버튼 개별 위젯
+  Widget _buildRoleButton(String role, String label) {
+    final isSelected = _selectedRole == role;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedRole = role; //
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: isSelected ? const Color(0xFF111827) : const Color(0xFFE5E7EB),
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.white : const Color(0xFF374151),
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -71,7 +115,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  // 역할 선택은 추후 구현
+                  _buildRoleSelector(),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: _nicknameController,
                     decoration: const InputDecoration(
