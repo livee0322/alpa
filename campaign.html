@@ -2,111 +2,119 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>캠페인 상세 - ALPA</title>
+  <title>공고 상세 - Livee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- 공통 -->
-  <link rel="stylesheet" href="/alpa/frontend/css/main.css?v=0820" />
-  <!-- 상세 전용 -->
-  <link rel="stylesheet" href="/alpa/frontend/css/campaign-detail.css?v=0820a" />
+  <!-- 공통 메인 스타일 -->
+  <link href="/alpa/frontend/css/main.css?v=1.79jobs" rel="stylesheet" />
+  <!-- 상세 전용 스타일 -->
+  <link href="/alpa/frontend/css/recruit-detail.css?v=20250821a" rel="stylesheet" />
+
+  <!-- Pretendard Variable (옵션) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wdth,wght@100..125,400..900&display=swap"
+    rel="stylesheet">
 </head>
-<body data-page="campaign-detail">
-  <!-- 상단 스택 -->
-  <div id="banner-container" class="lv-banner"></div>
+
+<body data-page="recruit-detail">
+  <!-- 배너 -->
+  <div id="banner-container" class="lv-banner">
+    <div class="lv-banner-in">현재 클로즈 베타 테스트 중입니다. 피드백을 환영합니다! 🚀</div>
+  </div>
+
+  <!-- 헤더(디자인 정책상 숨김: main.css에서 높이 0 처리) -->
   <header id="header-container" class="lv-header"></header>
+
+  <!-- 상단 텍스트 탭 -->
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <main id="cdWrap" class="cd-wrap" aria-live="polite">
-    <!-- 알림 -->
-    <p id="cdNotice" class="cd-notice" hidden></p>
+  <main class="rd-wrap lv-main" aria-live="polite">
+    <p id="rdNotice" class="rd-notice" hidden></p>
 
-    <!-- 히어로(썸네일 + 배지) -->
-    <section class="cd-hero">
-      <div class="cd-hero-in">
-        <img id="cdThumb" alt="캠페인 썸네일" />
-        <div id="cdBadge" class="cd-badge" hidden></div>
+    <!-- 히어로 -->
+    <section id="rdHero" class="rd-hero" hidden>
+      <img id="rdThumb" class="rd-hero-thumb" alt="" />
+      <div class="rd-hero-head">
+        <div class="rd-brand" id="rdBrand">브랜드</div>
+        <h1 class="rd-title" id="rdTitle">제목</h1>
+        <div class="rd-dday" id="rdDday" hidden></div>
+      </div>
+
+      <ul class="rd-brief" id="rdBrief">
+        <!-- JS 렌더: 아이콘 + 텍스트 4종 -->
+      </ul>
+
+      <div class="rd-hero-actions">
+        <button id="rdShare" class="rd-icon-btn" aria-label="공유">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </section>
 
-    <!-- 타이틀/메타 -->
-    <section class="cd-head">
-      <div class="cd-brand" id="cdBrand">브랜드</div>
-      <h1 class="cd-title" id="cdTitle">제목</h1>
-      <div class="cd-meta" id="cdMeta"></div>
-    </section>
+    <!-- 탭 -->
+    <div id="rdTabs" class="rd-tabs" hidden>
+      <a href="#desc" class="active">상세요강</a>
+      <a href="#applicants">지원자현황</a>
+      <a href="#brand">브랜드정보</a>
+      <a href="#related">추천공고</a>
+    </div>
 
-    <!-- 본문 -->
-    <section class="cd-body">
-      <div id="cdDesc" class="cd-desc"></div>
+    <!-- 상세요강 -->
+    <section id="desc" class="rd-section" hidden>
+      <h2 class="rd-h2">상세요강</h2>
 
-      <!-- 상품 캠페인일 때만 표시 -->
-      <div id="cdProducts" class="cd-products" hidden>
-        <h2 class="cd-h2">상품 목록</h2>
-        <div id="cdProdGrid" class="cd-prod-grid"></div>
+      <div id="rdOutline" class="rd-outline"></div>
+
+      <div id="rdDesc" class="rd-desc">
+        <div class="rd-empty">상세요강이 준비중입니다.</div>
       </div>
     </section>
 
-    <!-- 비공개/권한/에러 안내 -->
-    <div id="cdGuard" class="cd-guard" hidden></div>
+    <!-- 지원자현황 (요약) -->
+    <section id="applicants" class="rd-section" hidden>
+      <h2 class="rd-h2">지원자현황</h2>
+      <div id="rdApplicants"></div>
+    </section>
+
+    <!-- 브랜드 -->
+    <section id="brand" class="rd-section" hidden>
+      <h2 class="rd-h2">브랜드 정보</h2>
+      <div id="rdBrandInfo" class="rd-brand-info">
+        <div class="rd-empty">브랜드 정보가 준비중입니다.</div>
+      </div>
+    </section>
+
+    <!-- 추천 공고 -->
+    <section id="related" class="rd-section" hidden>
+      <h2 class="rd-h2">추천 공고</h2>
+      <div id="rdRelated" class="lv-jobs"></div>
+    </section>
+
+    <!-- 하단 CTA -->
+    <div id="rdCTA" class="rd-cta" hidden>
+      <div class="rd-cta-left">
+        <span id="rdPayLabel">출연료</span>
+      </div>
+      <div class="rd-cta-right">
+        <button id="rdApplicantsBtn" class="rd-btn-outlined">지원자 현황</button>
+        <button id="rdApplyBtn" class="rd-btn-primary">지원하기</button>
+      </div>
+    </div>
   </main>
-
-  <!-- 하단 액션바 -->
-  <nav class="cd-actionbar" id="cdActionbar">
-    <div class="cd-action-left">
-      <div id="cdPrimaryInfo" class="cd-primary-info"></div>
-      <div id="cdSubInfo" class="cd-sub-info"></div>
-    </div>
-    <div class="cd-action-right">
-      <!-- 상태별로 한 개만 보이도록 JS에서 토글 -->
-      <button id="cdBtnLogin" class="cd-btn cd-btn-primary" hidden>로그인하고 지원</button>
-      <button id="cdBtnApply" class="cd-btn cd-btn-primary" hidden>지원하기</button>
-      <button id="cdBtnApplied" class="cd-btn cd-btn-ghost" disabled hidden>지원 완료</button>
-      <a id="cdBtnApplicants" class="cd-btn cd-btn-outline" hidden href="#">지원자 현황</a>
-      <button id="cdBtnClosed" class="cd-btn cd-btn-ghost" disabled hidden>모집 마감</button>
-    </div>
-  </nav>
-
-  <!-- 지원 모달 -->
-  <div id="cdApplyModal" class="cd-modal" hidden>
-    <div class="cd-modal-dim" data-close="1"></div>
-    <div class="cd-modal-panel">
-      <div class="cd-modal-head">
-        <h3>지원하기</h3>
-        <button class="cd-x" data-close="1" aria-label="닫기">×</button>
-      </div>
-      <div class="cd-modal-body">
-        <label class="cd-field">
-          <span>포트폴리오 링크</span>
-          <input id="cdApplyPortfolio" type="url" placeholder="예: https://..." />
-        </label>
-        <label class="cd-field">
-          <span>메시지</span>
-          <textarea id="cdApplyMsg" rows="5" placeholder="간단한 소개나 의지를 적어주세요."></textarea>
-        </label>
-        <label class="cd-check">
-          <input id="cdApplyAgree" type="checkbox" />
-          <span>개인정보 수집·제공에 동의합니다.</span>
-        </label>
-        <p id="cdApplyNotice" class="cd-notice" hidden></p>
-      </div>
-      <div class="cd-modal-foot">
-        <button class="cd-btn cd-btn-ghost" data-close="1">취소</button>
-        <button id="cdApplySubmit" class="cd-btn cd-btn-primary">지원 제출</button>
-      </div>
-    </div>
-  </div>
 
   <!-- 하단 탭 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
-  <!-- 공통 모듈 -->
-  <script src="/alpa/frontend/js/modules/banner.js"></script>
-  <script src="/alpa/frontend/js/modules/header.js"></script>
-  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
-  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
-  <script src="/alpa/frontend/js/config.js?v=0820"></script>
+  <!-- 공통 모듈 & 설정 -->
+  <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
+  <script src="/alpa/frontend/js/modules/stack-size.js?v=1"></script>
+  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
 
-  <!-- 상세 전용 JS -->
-  <script src="/alpa/frontend/js/campaign-detail.js?v=0820a"></script>
+  <!-- 상세 스크립트 -->
+  <script src="/alpa/frontend/js/recruit-detail.js?v=20250821a"></script>
 </body>
 </html>
