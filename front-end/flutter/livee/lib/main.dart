@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
+import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
           children: [
             CommonHeader(),
             CommonBanner(),
+            CommonTopTabBar(),
             Expanded(
               child: Center(
                 child: Text('여기에 메인 콘텐츠가 표시됩니다.'),
