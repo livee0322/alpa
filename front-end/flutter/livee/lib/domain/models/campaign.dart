@@ -1,9 +1,6 @@
 // 임시 모델 (추후 상세 구현 예정)
-class Product {
-  Product.fromJson(Map<String, dynamic> json);
-}
+import 'package:livee/domain/models/product.dart';
 
-// 임시 모델 (추후 상세 구현 예정)
 class Recruit {
   Recruit.fromJson(Map<String, dynamic> json);
 }
