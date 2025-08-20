@@ -1,8 +1,9 @@
+// /alpa/frontend/js/main.js
 (function () {
   const { API_BASE } = window.LIVEE_CONFIG || {};
   const $ = (s) => document.querySelector(s);
 
-  // 공통 fetch (items / data.items / docs 등 안전 언래핑)
+  // ---------- 공통 fetch (items / data.items / docs 안전 언래핑)
   async function getJson(path, opts = {}) {
     const url = `${API_BASE}${path}`;
     const res = await fetch(url, opts);
@@ -16,7 +17,7 @@
     return { ok, items: Array.isArray(arr) ? arr : [], json, res };
   }
 
-  // 썸네일 우선순위 + 폴백
+  // ---------- 썸네일 우선순위 + 폴백
   function pickThumb(it, ratio = "card") {
     const src = it?.thumbnailUrl || it?.imageUrl || it?.coverImageUrl || it?.thumbnail || "";
     if (src) return src;
@@ -26,43 +27,74 @@
     return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/360`;
   }
 
-  // 날짜/시간
+  // ---------- 날짜/시간 유틸
   const toYMD = (d) =>
     `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const fmtDate = (v) => { try { return new Date(v).toLocaleDateString("ko-KR"); } catch { return ""; } };
   const fmtTime = (v) => v || "";
   const n2 = (v) => (isFinite(v) ? Number(v).toLocaleString() : "");
 
+  // "2025-08-20", "14:30" → Date (현지 타임존)
+  function makeDateTime(dateStr, timeStr) {
+    if (!dateStr) return null;
+    const [y, m, d] = String(dateStr).split("-").map(Number);
+    if (!y || !m || !d) return null;
+    let hh = 0, mm = 0;
+    if (timeStr && /^\d{2}:\d{2}$/.test(timeStr)) {
+      [hh, mm] = timeStr.split(":").map(Number);
+    }
+    return new Date(y, m - 1, d, hh, mm, 0, 0);
+  }
+
   /* ---------------------------------------
      1) 오늘의 라이브 라인업 (#schedule)
+     - 모집 캠페인의 날짜/시작시간 기준
+     - 현재 시각 이후의 일정 5개 노출
   ----------------------------------------*/
   async function loadSchedule() {
     const box = $("#schedule");
     if (!box) return;
+
     try {
-      let items = [];
-      const trial1 = await getJson("/recruits/schedule");
-      if (trial1.ok && trial1.items.length) {
-        items = trial1.items;
-      } else {
-        const { ok, items: all } = await getJson("/campaigns?type=recruit&limit=50");
-        if (ok) {
-          const todayYMD = toYMD(new Date());
-          items = (all || [])
-            .filter(it => it?.recruit?.date)
-            .filter(it => String(it.recruit.date) >= todayYMD)
-            .sort((a,b) => String(a.recruit.date).localeCompare(String(b.recruit.date)))
-            .slice(0, 5);
-        }
-      }
-      if (!items.length) {
+      // 서버 전용 스케줄 API가 있어도, 모집 데이터 기반으로 일관 처리
+      const { ok, items: all } = await getJson("/campaigns?type=recruit&limit=100");
+      if (!ok) throw new Error("failed");
+
+      const now = new Date();
+      const todayYMD = toYMD(now);
+
+      // 이벤트 시작시각 계산 (date + timeStart, 없으면 time, 그것도 없으면 00:00)
+      const events = (all || [])
+        .map((it) => {
+          const r = it.recruit || {};
+          const start =
+            makeDateTime(r.date, r.timeStart) ||
+            makeDateTime(r.date, r.time) ||
+            makeDateTime(r.date, "00:00");
+          return start ? { it, r, start } : null;
+        })
+        .filter(Boolean);
+
+      // 1) 오늘이며 현재 시각 이후 → 우선
+      const todayUpcoming = events
+        .filter(ev => toYMD(ev.start) === todayYMD && ev.start >= now)
+        .sort((a,b) => a.start - b.start);
+
+      // 2) 그 다음은 오늘 이후 전체
+      const future = events
+        .filter(ev => toYMD(ev.start) > todayYMD)
+        .sort((a,b) => a.start - b.start);
+
+      const picked = [...todayUpcoming, ...future].slice(0, 5);
+
+      if (!picked.length) {
         box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
         return;
       }
-      box.innerHTML = items.map((it) => {
-        const r = it.recruit || it;
+
+      box.innerHTML = picked.map(({ it, r, start }) => {
         const date = r.date || it.date;
-        const time = r.timeStart || r.time || it.time;
+        const time = r.timeStart || r.time || it.time || "";
         return `
           <div class="lv-s-item">
             <img class="lv-s-thumb" src="${pickThumb(it, "avatar")}"
@@ -81,7 +113,7 @@
   }
 
   /* -------------------------------------------
-     2) 추천 공고: 카드 리스트 (브랜드/제목/썸네일/D‑day/출연료/지원자)
+     2) 추천 공고: 브랜드/제목/썸네일/D‑day/출연료/지원자
   --------------------------------------------*/
   async function loadRecruitList() {
     const box = $("#recruits");
