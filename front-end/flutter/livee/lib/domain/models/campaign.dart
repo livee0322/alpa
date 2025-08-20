@@ -1,9 +1,6 @@
 // 임시 모델 (추후 상세 구현 예정)
 import 'package:livee/domain/models/product.dart';
-
-class Recruit {
-  Recruit.fromJson(Map<String, dynamic> json);
-}
+import 'package:livee/domain/models/recruit.dart';
 
 class Campaign {
   final String? id;
