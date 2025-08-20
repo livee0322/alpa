@@ -12,6 +12,7 @@ class Campaign {
   final String? brand;
   final String? category;
   final String? date;
+  final String? descriptionHTML;
 
   Campaign({
     this.id,
@@ -23,6 +24,7 @@ class Campaign {
     this.brand,
     this.category,
     this.date,
+    this.descriptionHTML,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class Campaign {
       brand: json['brand'] as String?,
       category: json['category'] as String?,
       date: json['date'] as String?,
+      descriptionHTML: json['descriptionHTML'] as String?,
     );
   }
 }
