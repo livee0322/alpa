@@ -1,0 +1,76 @@
+/* campaign.css — 상세 전용(메인 공통 main.css와 함께 사용) */
+
+body[data-page="campaign-detail"] #header-container{ display:none !important; }
+
+/* 상단 여백: 네이버식 2px 오프셋 */
+.cd-wrap{
+  width:100%;
+  max-width:720px;
+  margin:0 auto;
+  padding:16px 14px calc(100px + var(--safe-bottom));
+  margin-top:calc(var(--stack-h) + 2px);
+}
+
+/* 커버 */
+.cd-cover{ border-radius:18px; overflow:hidden; box-shadow:var(--shadow-1); background:#f3f4f6; }
+.cd-cover img{ width:100%; display:block; object-fit:cover; aspect-ratio:16/9; }
+
+/* 제목/브랜드 */
+.cd-brand{ margin:12px 2px 0; color:#6b7280; font-size:14px; }
+.cd-title{ margin:4px 2px 10px; font-size:22px; line-height:1.28; font-variation-settings:"wght" 820; }
+
+/* 메타 카드 그리드 */
+.cd-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:12px 0 6px;
+}
+@media (max-width:560px){ .cd-meta{ grid-template-columns:1fr; } }
+
+.cd-item{
+  display:flex; gap:10px; align-items:flex-start;
+  padding:10px 12px; border:1px solid #f1f3f5;
+  border-radius:12px; background:#fff; box-shadow:var(--shadow-1);
+}
+.cd-ico{ width:22px; height:22px; display:flex; align-items:center; justify-content:center; }
+.cd-txt b{ display:block; font-size:12px; color:#6b7280; }
+.cd-txt span{ display:block; font-size:15px; font-variation-settings:"wght" 760; }
+
+/* 제품 리스트 (product 전용) */
+.cd-h2{ margin:14px 2px 6px; font-size:18px; font-weight:900; }
+.cd-products{ margin-top:6px; }
+.cd-prod-list{ display:flex; flex-direction:column; gap:8px; }
+.cd-prod{
+  display:flex; gap:10px; align-items:center;
+  padding:10px; border:1px solid #eef0f3; border-radius:12px; background:#fff; box-shadow:var(--shadow-1);
+}
+.cd-prod img{ width:64px; height:64px; border-radius:10px; object-fit:cover; background:#eee; }
+.cd-prod .t{ font-size:14px; font-variation-settings:"wght" 760; }
+.cd-prod .p{ font-size:14px; color:#374151; font-variation-settings:"wght" 800; margin-left:auto; }
+
+/* 상세 설명 */
+.cd-desc{
+  margin-top:14px; padding:12px; border:1px solid #f1f3f5; border-radius:12px; background:#fff;
+}
+.cd-desc h1,h2,h3{ margin:.6em 0 .3em; }
+
+/* 하단 고정 버튼 */
+.cd-bottom{
+  position:fixed; left:0; right:0; bottom:0; z-index:70; background:#fff;
+  border-top:1px solid var(--line);
+  padding:10px 14px calc(10px + var(--safe-bottom));
+  box-shadow:0 -8px 22px rgba(0,0,0,.06);
+}
+.cd-act{ display:flex; align-items:center; gap:10px; max-width:720px; margin:0 auto; }
+.cd-pay{ flex:1; font-size:16px; font-variation-settings:"wght" 800; color:#111827; }
+.cd-btn{
+  min-width:148px; height:48px; border-radius:12px;
+  background:var(--pri); color:#fff; border:0; font-variation-settings:"wght" 880;
+}
+
+/* 빈/에러 */
+.cd-empty, .cd-error{
+  margin:10px 0; padding:12px; border:1px dashed #e5e7eb; border-radius:12px; color:#6b7280;
+}
+.cd-error{ color:#b91c1c; border-color:#fecaca; background:#fff5f5; }
