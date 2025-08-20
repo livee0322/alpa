@@ -31,41 +31,37 @@
       "";
     if (src) return src;
     const seed = it?._id || it?.id || Math.random().toString(36).slice(2);
-    if (ratio === "square") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/320/320`;
+    if (ratio === "square") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/640`;
     if (ratio === "avatar") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/96/96`;
     return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/360`;
   }
 
-  // 날짜/시간 유틸
+  // 날짜/시간
   const toYMD = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const fmtDate = (v) => { try { return new Date(v).toLocaleDateString("ko-KR"); } catch { return ""; } };
   const fmtTime = (v) => v || "";
+  const n2 = (v) => (isFinite(v) ? Number(v).toLocaleString() : "");
 
   /* ---------------------------------------
      1) 오늘의 라이브 라인업 (#schedule)
-     - 서버에 전용 스케줄 API가 없어도 동작
-     - recruit.date가 오늘 이후인 모집 캠페인에서 상위 5개
   ----------------------------------------*/
   async function loadSchedule() {
     const box = $("#schedule");
     if (!box) return;
 
     try {
-      // 1) 기본: 전용 API가 있으면 먼저 사용
       let items = [];
       const trial1 = await getJson("/recruits/schedule");
       if (trial1.ok && trial1.items.length) {
         items = trial1.items;
       } else {
-        // 2) 대안: 캠페인에서 recruit만 가져와 클라이언트에서 필터/정렬
         const { ok, items: all } = await getJson("/campaigns?type=recruit&limit=50");
         if (ok) {
-          const today = new Date();
-          const todayYMD = toYMD(today);
+          const todayYMD = toYMD(new Date());
           items = (all || [])
-            .filter(it => it?.recruit?.date)                      // 날짜가 있는 것
-            .filter(it => String(it.recruit.date) >= todayYMD)    // 오늘 이후
-            .sort((a, b) => String(a.recruit.date).localeCompare(String(b.recruit.date)))
+            .filter(it => it?.recruit?.date)
+            .filter(it => String(it.recruit.date) >= todayYMD)
+            .sort((a,b) => String(a.recruit.date).localeCompare(String(b.recruit.date)))
             .slice(0, 5);
         }
       }
@@ -76,7 +72,7 @@
       }
 
       box.innerHTML = items.map((it) => {
-        const r = it.recruit || it; // 전용 API면 평면 구조일 수 있음
+        const r = it.recruit || it;
         const date = r.date || it.date;
         const time = r.timeStart || r.time || it.time;
         return `
@@ -132,30 +128,35 @@
   }
 
   /* ----------------------------------------------------
-     3) 라이브 상품: 2열 그리드 (#productGrid)
+     3) 라이브 상품: 2열 그리드 (#productGrid) 최대 10개
   -----------------------------------------------------*/
   async function loadProductGrid() {
     const grid = $("#productGrid");
     if (!grid) return;
 
     try {
-      const { ok, items } = await getJson("/campaigns?type=product&limit=8");
+      const { ok, items } = await getJson("/campaigns?type=product&limit=10");
       if (!ok || !items.length) {
         grid.innerHTML = `<div class="lv-empty">등록된 상품 캠페인이 없습니다</div>`;
         return;
       }
 
-      grid.innerHTML = items.map((it) => `
-        <a class="lv-card"
-           href="/alpa/blank/blank.html?p=product&id=${encodeURIComponent(it.id || it._id || "")}"
-           style="display:inline-block; width:calc(50% - 8px); vertical-align:top; margin:4px;">
-          <img class="lv-thumb"
-               src="${pickThumb(it, "card")}"
-               onerror="this.onerror=null;this.src='${pickThumb({}, "card")}'" />
-          <div class="lv-title">${it.title || "무제"}</div>
-          <div class="lv-meta">${it.brand || "브랜드 미정"}</div>
-        </a>
-      `).join("");
+      grid.innerHTML = items.map((it) => {
+        const price = it?.sale?.price ?? it?.products?.[0]?.price ?? null;
+        return `
+          <a class="lv-g-card" href="/alpa/blank/blank.html?p=product&id=${encodeURIComponent(it.id || it._id || "")}">
+            <img class="lv-g-thumb"
+                 src="${pickThumb(it, "square")}"
+                 alt="${(it.title || '상품')}"
+                 onerror="this.onerror=null;this.src='https://picsum.photos/seed/${encodeURIComponent('p'+(it._id||''))}/640/640'"/>
+            <div class="lv-g-body">
+              <div class="lv-g-brand">${it.brand || "브랜드 미정"}</div>
+              <div class="lv-g-title">${it.title || "상품명 미정"}</div>
+              <div class="lv-g-price">${price!=null ? n2(price)+'원' : ''}</div>
+            </div>
+          </a>
+        `;
+      }).join("");
     } catch (e) {
       console.debug("[productGrid] error", e);
       grid.innerHTML = `<div class="lv-empty">상품 로딩 실패</div>`;
