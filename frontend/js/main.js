@@ -1,4 +1,4 @@
-// /alpa/frontend/js/main.js
+// // /alpa/frontend/js/main.js
 (function () {
   const { API_BASE } = window.LIVEE_CONFIG || {};
   const $ = (s) => document.querySelector(s);
@@ -46,39 +46,54 @@
     return new Date(y, m - 1, d, hh, mm, 0, 0);
   }
 
-// 오늘의 라이브 라인업
-async function loadSchedule() {
-  const box = $("#schedule");
-  if (!box) return;
+  /* ---------------------------------------
+     1) 오늘의 라이브 라인업 (#schedule)
+     - 컴팩트 리스트형 (썸네일 40) + 시간 "예정" + 브랜드
+  ----------------------------------------*/
+  async function loadSchedule() {
+    const box = $("#schedule");
+    if (!box) return;
 
-  try {
-    // 서버에서 오늘 날짜 + 시간 순으로 정렬해 줌
-    const { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=5");
-    if (!ok || !items.length) {
-      box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
-      return;
-    }
+    try {
+      // 서버에서 오늘 기준 + 시간순 정렬
+      const { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=6");
+      if (!ok || !items.length) {
+        box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
+        return;
+      }
 
-    box.innerHTML = items.map((it) => {
-      const r = it.recruit || it;
-      const date = r.date;
-      const time = r.timeStart || r.time;
-      return `
-        <div class="lv-s-item">
-          <img class="lv-s-thumb" src="${pickThumb(it, "avatar")}"
-               onerror="this.onerror=null;this.src='${pickThumb({}, "avatar")}'" />
-          <div class="lv-s-body">
-            <div class="lv-s-title">${it.title || r.title || "무제"}</div>
-            <div class="lv-s-meta">${date ? new Date(date).toLocaleDateString("ko-KR") : ""}${time ? " · " + time : ""}</div>
-          </div>
+      box.innerHTML = `
+        <div class="lv-mini">
+          ${items.map((it) => {
+            const r = it.recruit || {};
+            const brand = it.brand || r.brand || "브랜드 미정";
+            const time  = r.timeStart || r.time || "";
+            const timeHtml = time ? `<span class="lv-mini-time">${time} 예정</span>` : "";
+            const dot      = time ? `<span class="lv-mini-dot">·</span>` : "";
+            return `
+              <div class="lv-mini-item">
+                <img class="lv-mini-thumb"
+                     src="${pickThumb(it, "avatar")}"
+                     alt=""
+                     onerror="this.onerror=null;this.src='${pickThumb({}, "avatar")}'" />
+                <div class="lv-mini-body">
+                  <div class="lv-mini-title">${it.title || r.title || "무제"}</div>
+                  <div class="lv-mini-sub">
+                    ${timeHtml}
+                    ${dot}
+                    <span class="lv-mini-brand">${brand}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")}
         </div>
       `;
-    }).join("");
-  } catch (e) {
-    console.debug("[schedule] error", e);
-    box.innerHTML = `<div class="lv-empty">일정 로딩 실패</div>`;
+    } catch (e) {
+      console.debug("[schedule] error", e);
+      box.innerHTML = `<div class="lv-empty">일정 로딩 실패</div>`;
+    }
   }
-}
 
   /* -------------------------------------------
      2) 추천 공고: 브랜드/제목/썸네일/D‑day/출연료/지원자
