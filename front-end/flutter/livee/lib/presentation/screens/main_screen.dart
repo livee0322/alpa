@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
@@ -21,41 +22,47 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _scheduleFuture = Provider.of<CampaignUseCase>(context, listen: false).getAllCampaigns(type: 'recruit', limit: 50);
+    // Provider 설정 후 데이터 로딩
+    final campaignUseCase = Provider.of<CampaignUseCase>(context, listen: false);
+    _scheduleFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 50);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CommonHeader(),
-            const CommonBanner(),
-            const CommonTopTabBar(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(
-                    title: '오늘의 라이브 라인업',
-                    onTap: () {
-                      GoRouter.of(context).go('/schedule');
-                    },
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CommonHeader(isLoggedIn: authProvider.isLoggedIn),
+                const CommonBanner(),
+                const CommonTopTabBar(),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader(
+                        title: '오늘의 라이브 라인업',
+                        onTap: () {
+                          GoRouter.of(context).go('/schedule');
+                        },
+                      ),
+                      _buildScheduleSection(),
+                      // TODO: '라이브 상품' 섹션 추가
+                      // TODO: '추천 공고' 섹션 추가
+                      // TODO: '인기 쇼호스트' 섹션 추가
+                    ],
                   ),
-                  _buildScheduleSection(),
-                  // TODO: '라이브 상품' 섹션 추가
-                  // TODO: '추천 공고' 섹션 추가
-                  // TODO: '인기 쇼호스트' 섹션 추가
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: const CommonBottomNavBar(),
+          ),
+          bottomNavigationBar: const CommonBottomNavBar(),
+        );
+      },
     );
   }
 

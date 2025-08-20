@@ -10,19 +10,27 @@ import 'package:livee/presentation/routes/app_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  final authRepository = AuthRepository();
+  final authUseCase = AuthUseCase(authRepository);
+  final campaignRepository = CampaignRepository();
+  final campaignUseCase = CampaignUseCase(campaignRepository);
   runApp(
     MultiProvider(
       providers: [
         // Auth Providers
-        Provider(create: (_) => AuthRepository()),
-        Provider(
-          create: (context) => AuthUseCase(
-            context.read<AuthRepository>(),
-          ),
-        ),
+        Provider.value(value: authRepository),
+        Provider.value(value: authUseCase),
         ChangeNotifierProvider(
-          create: (context) => AuthProvider(
-            context.read<AuthUseCase>(),
+          create: (context) => AuthProvider(authUseCase),
+        ),
+        // Campaign Providers
+        Provider.value(value: campaignRepository),
+        Provider.value(value: campaignUseCase),
+        ChangeNotifierProvider(
+          create: (context) => CampaignFormProvider(
+            campaignUseCase,
+            campaignRepository,
+            ApiClient(),
           ),
         ),
         // Campaign Providers

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
@@ -35,7 +36,11 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const CommonHeader(),
+            Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                return CommonHeader(isLoggedIn: authProvider.isLoggedIn); // 추가
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(

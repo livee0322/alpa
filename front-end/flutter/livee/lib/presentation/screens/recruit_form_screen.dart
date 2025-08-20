@@ -2,7 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:provider/provider.dart';
 
 class RecruitFormScreen extends StatefulWidget {
@@ -127,43 +129,53 @@ class _RecruitFormScreenState extends State<RecruitFormScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildImageUploader(),
-              const SizedBox(height: 16),
-              _buildTextField(_titleController, '제목', '예) 잘 먹는 쇼호스트 찾습니다', required: true),
-              _buildTextField(_brandController, '브랜드', '예) ALPA'),
-              _buildTextField(_dateController, '촬영일', '', required: true),
-              _buildTextField(_timeController, '촬영시간', '예) 14:00'),
-              _buildTextField(_locationController, '촬영 장소', '예) 서울 강남구 ○○스튜디오'),
-              _buildTextField(_payController, '출연료', '예) 30만원'),
-              CheckboxListTile(
-                title: const Text('협의 가능'),
-                value: _payNegotiable,
-                onChanged: (bool? newValue) {
-                  setState(() {
-                    _payNegotiable = newValue ?? false;
-                  });
-                },
+        child: Column(
+          children: [
+            Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                return CommonHeader(isLoggedIn: authProvider.isLoggedIn);
+              },
+            ),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _buildImageUploader(),
+                  const SizedBox(height: 16),
+                  _buildTextField(_titleController, '제목', '예) 잘 먹는 쇼호스트 찾습니다', required: true),
+                  _buildTextField(_brandController, '브랜드', '예) ALPA'),
+                  _buildTextField(_dateController, '촬영일', '', required: true),
+                  _buildTextField(_timeController, '촬영시간', '예) 14:00'),
+                  _buildTextField(_locationController, '촬영 장소', '예) 서울 강남구 ○○스튜디오'),
+                  _buildTextField(_payController, '출연료', '예) 30만원'),
+                  CheckboxListTile(
+                    title: const Text('협의 가능'),
+                    value: _payNegotiable,
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        _payNegotiable = newValue ?? false;
+                      });
+                    },
+                  ),
+                  _buildTextField(_categoryController, '상품군', '예) 뷰티/패션/가전'),
+                  _buildTextField(_descController, '요구사항/우대사항', '방송 내용, 요구 스킬, 우대사항 등을 상세히 적어주세요.', maxLines: 7),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate()) {
+                              // TODO: 폼 데이터 전송 로직 구현
+                            }
+                          },
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : Text(widget.recruitId == null ? '등록하기' : '수정 완료'),
+                  ),
+                ],
               ),
-              _buildTextField(_categoryController, '상품군', '예) 뷰티/패션/가전'),
-              _buildTextField(_descController, '요구사항/우대사항', '방송 내용, 요구 스킬, 우대사항 등을 상세히 적어주세요.', maxLines: 7),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          // TODO: 폼 데이터 전송 로직 구현
-                        }
-                      },
-                child:
-                    _isLoading ? const CircularProgressIndicator() : Text(widget.recruitId == null ? '등록하기' : '수정 완료'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: const CommonBottomNavBar(),

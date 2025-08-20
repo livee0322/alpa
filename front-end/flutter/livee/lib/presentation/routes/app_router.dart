@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:livee/domain/repositories/auth_repository.dart';
+import 'package:livee/domain/usecases/auth_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaigns_screen.dart';
@@ -64,4 +66,7 @@ final GoRouter router = GoRouter(
 
     return null;
   },
+
+  // authProvider의 상태 변경을 감지하여 리디렉션을 재실행하도록 설정
+  refreshListenable: AuthProvider(AuthUseCase(AuthRepository())),
 );
