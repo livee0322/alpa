@@ -2,119 +2,83 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <title>공고 상세 - Livee</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>캠페인 상세</title>
 
-  <!-- 공통 메인 스타일 -->
-  <link href="/alpa/frontend/css/main.css?v=1.79jobs" rel="stylesheet" />
+  <!-- 공통 스타일 -->
+  <link rel="stylesheet" href="/alpa/frontend/css/main.css" />
   <!-- 상세 전용 스타일 -->
-  <link href="/alpa/frontend/css/campaign-detail.css?v=20250821a" rel="stylesheet" />
-
-  <!-- Pretendard Variable (옵션) -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Pretendard:wdth,wght@100..125,400..900&display=swap"
-    rel="stylesheet">
+  <link rel="stylesheet" href="/alpa/frontend/css/campaign.css?v=1" />
 </head>
-
-<body data-page="recruit-detail">
-  <!-- 배너 -->
+<body data-page="campaign-detail">
+  <!-- 상단 스택 -->
   <div id="banner-container" class="lv-banner">
-    <div class="lv-banner-in">현재 클로즈 베타 테스트 중입니다. 피드백을 환영합니다! 🚀</div>
+    <div class="lv-banner-in">현재 클로즈 베타 테스트 중입니다. 피드백 환영! 🚀</div>
   </div>
-
-  <!-- 헤더(디자인 정책상 숨김: main.css에서 높이 0 처리) -->
-  <header id="header-container" class="lv-header"></header>
-
-  <!-- 상단 텍스트 탭 -->
   <nav id="top-tab-container" class="lv-top"></nav>
 
-  <main class="rd-wrap lv-main" aria-live="polite">
-    <p id="rdNotice" class="rd-notice" hidden></p>
-
-    <!-- 히어로 -->
-    <section id="rdHero" class="rd-hero" hidden>
-      <img id="rdThumb" class="rd-hero-thumb" alt="" />
-      <div class="rd-hero-head">
-        <div class="rd-brand" id="rdBrand">브랜드</div>
-        <h1 class="rd-title" id="rdTitle">제목</h1>
-        <div class="rd-dday" id="rdDday" hidden></div>
-      </div>
-
-      <ul class="rd-brief" id="rdBrief">
-        <!-- JS 렌더: 아이콘 + 텍스트 4종 -->
-      </ul>
-
-      <div class="rd-hero-actions">
-        <button id="rdShare" class="rd-icon-btn" aria-label="공유">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- 탭 -->
-    <div id="rdTabs" class="rd-tabs" hidden>
-      <a href="#desc" class="active">상세요강</a>
-      <a href="#applicants">지원자현황</a>
-      <a href="#brand">브랜드정보</a>
-      <a href="#related">추천공고</a>
+  <main class="cd-wrap">
+    <!-- 썸네일 -->
+    <div class="cd-cover">
+      <img id="cdThumb" alt="캠페인 썸네일" />
     </div>
 
-    <!-- 상세요강 -->
-    <section id="desc" class="rd-section" hidden>
-      <h2 class="rd-h2">상세요강</h2>
+    <!-- 브랜드 / 제목 -->
+    <div class="cd-brand" id="cdBrand">브랜드 미정</div>
+    <h1 class="cd-title" id="cdTitle">제목</h1>
 
-      <div id="rdOutline" class="rd-outline"></div>
-
-      <div id="rdDesc" class="rd-desc">
-        <div class="rd-empty">상세요강이 준비중입니다.</div>
+    <!-- 메타 영역 -->
+    <section id="cdMeta" class="cd-meta" hidden>
+      <div class="cd-item" id="cdItemDate" hidden>
+        <div class="cd-ico">📅</div>
+        <div class="cd-txt"><b>촬영일</b><span id="mDate">-</span></div>
+      </div>
+      <div class="cd-item" id="cdItemTime" hidden>
+        <div class="cd-ico">⏰</div>
+        <div class="cd-txt"><b>시간</b><span id="mTime">-</span></div>
+      </div>
+      <div class="cd-item" id="cdItemLoc" hidden>
+        <div class="cd-ico">📍</div>
+        <div class="cd-txt"><b>장소</b><span id="mLoc">-</span></div>
+      </div>
+      <div class="cd-item" id="cdItemPay" hidden>
+        <div class="cd-ico">💸</div>
+        <div class="cd-txt"><b>출연료/가격</b><span id="mPay">-</span></div>
+      </div>
+      <div class="cd-item" id="cdItemDeadline" hidden>
+        <div class="cd-ico">⏳</div>
+        <div class="cd-txt"><b>모집 마감</b><span id="mDeadline">-</span></div>
+      </div>
+      <div class="cd-item" id="cdItemCat" hidden>
+        <div class="cd-ico">🏷️</div>
+        <div class="cd-txt"><b>카테고리</b><span id="mCat">-</span></div>
       </div>
     </section>
 
-    <!-- 지원자현황 (요약) -->
-    <section id="applicants" class="rd-section" hidden>
-      <h2 class="rd-h2">지원자현황</h2>
-      <div id="rdApplicants"></div>
+    <!-- (옵션) 상품 구성: product 타입일 때 노출 -->
+    <section id="cdProducts" class="cd-products" hidden>
+      <h2 class="cd-h2">구성 상품</h2>
+      <div id="cdProdList" class="cd-prod-list"></div>
     </section>
 
-    <!-- 브랜드 -->
-    <section id="brand" class="rd-section" hidden>
-      <h2 class="rd-h2">브랜드 정보</h2>
-      <div id="rdBrandInfo" class="rd-brand-info">
-        <div class="rd-empty">브랜드 정보가 준비중입니다.</div>
-      </div>
-    </section>
-
-    <!-- 추천 공고 -->
-    <section id="related" class="rd-section" hidden>
-      <h2 class="rd-h2">추천 공고</h2>
-      <div id="rdRelated" class="lv-jobs"></div>
-    </section>
-
-    <!-- 하단 CTA -->
-    <div id="rdCTA" class="rd-cta" hidden>
-      <div class="rd-cta-left">
-        <span id="rdPayLabel">출연료</span>
-      </div>
-      <div class="rd-cta-right">
-        <button id="rdApplicantsBtn" class="rd-btn-outlined">지원자 현황</button>
-        <button id="rdApplyBtn" class="rd-btn-primary">지원하기</button>
-      </div>
-    </div>
+    <!-- 상세 설명 -->
+    <article class="cd-desc" id="cdDesc">상세 설명이 없습니다.</article>
   </main>
 
-  <!-- 하단 탭 -->
-  <nav id="bottom-tab-container" class="lv-bottom"></nav>
+  <!-- 하단 고정 버튼 -->
+  <div class="cd-bottom">
+    <div class="cd-act">
+      <div id="cdPayText" class="cd-pay"></div>
+      <button id="cdPrimaryBtn" class="cd-btn" type="button">지원자 현황</button>
+    </div>
+  </div>
 
-  <!-- 공통 모듈 & 설정 -->
-  <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/stack-size.js?v=1"></script>
-  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
+  <!-- 공통 모듈 -->
+  <script src="/alpa/frontend/js/modules/top-tab.js"></script>
+  <script src="/alpa/frontend/js/modules/bottom-tab.js"></script>
+  <script src="/alpa/frontend/js/config.js"></script>
 
-  <!-- 상세 스크립트 -->
-  <script src="/alpa/frontend/js/campaign-detail.js?v=20250821a"></script>
+  <!-- 상세 전용 스크립트 -->
+  <script src="/alpa/frontend/js/campaign.js?v=1"></script>
 </body>
 </html>
