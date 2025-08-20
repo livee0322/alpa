@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:provider/provider.dart';
 
 class CampaignsScreen extends StatefulWidget {
@@ -32,7 +34,7 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // TODO: 새 캠페인 등록 페이지로 이동
+              GoRouter.of(context).go('/campaign-form');
             },
             icon: const Icon(Icons.add),
           ),
@@ -73,18 +75,13 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                               children: [
                                 Text(
                                   campaign.title ?? '제목 없음',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
                                   '유형: ${campaign.type}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
+                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -94,15 +91,11 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                               IconButton(
                                 icon: const Icon(Icons.edit, size: 20),
                                 onPressed: () {
-                                  // TODO: 수정 페이지로 이동
+                                  GoRouter.of(context).go('/campaign-form', extra: campaign.id);
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  size: 20,
-                                  color: Colors.red,
-                                ),
+                                icon: const Icon(Icons.delete, size: 20, color: Colors.red),
                                 onPressed: () async {
                                   final confirm = await showDialog(
                                     context: context,
@@ -121,11 +114,9 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                       ],
                                     ),
                                   );
-
                                   if (confirm == true) {
                                     try {
-                                      await Provider.of<CampaignUseCase>(context, listen: false)
-                                          .deleteCampaign(campaign.id!);
+                                      await Provider.of<CampaignUseCase>(context, listen: false).deleteCampaign(campaign.id!);
                                       setState(() {
                                         _loadCampaigns();
                                       });
