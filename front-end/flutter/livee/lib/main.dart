@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
+import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
+        bottomNavigationBar: CommonBottomNavBar(),
       ),
     );
   }
