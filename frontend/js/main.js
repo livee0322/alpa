@@ -46,71 +46,39 @@
     return new Date(y, m - 1, d, hh, mm, 0, 0);
   }
 
-  /* ---------------------------------------
-     1) 오늘의 라이브 라인업 (#schedule)
-     - 모집 캠페인의 날짜/시작시간 기준
-     - 현재 시각 이후의 일정 5개 노출
-  ----------------------------------------*/
-  async function loadSchedule() {
-    const box = $("#schedule");
-    if (!box) return;
+// 오늘의 라이브 라인업
+async function loadSchedule() {
+  const box = $("#schedule");
+  if (!box) return;
 
-    try {
-      // 서버 전용 스케줄 API가 있어도, 모집 데이터 기반으로 일관 처리
-      const { ok, items: all } = await getJson("/campaigns?type=recruit&limit=100");
-      if (!ok) throw new Error("failed");
-
-      const now = new Date();
-      const todayYMD = toYMD(now);
-
-      // 이벤트 시작시각 계산 (date + timeStart, 없으면 time, 그것도 없으면 00:00)
-      const events = (all || [])
-        .map((it) => {
-          const r = it.recruit || {};
-          const start =
-            makeDateTime(r.date, r.timeStart) ||
-            makeDateTime(r.date, r.time) ||
-            makeDateTime(r.date, "00:00");
-          return start ? { it, r, start } : null;
-        })
-        .filter(Boolean);
-
-      // 1) 오늘이며 현재 시각 이후 → 우선
-      const todayUpcoming = events
-        .filter(ev => toYMD(ev.start) === todayYMD && ev.start >= now)
-        .sort((a,b) => a.start - b.start);
-
-      // 2) 그 다음은 오늘 이후 전체
-      const future = events
-        .filter(ev => toYMD(ev.start) > todayYMD)
-        .sort((a,b) => a.start - b.start);
-
-      const picked = [...todayUpcoming, ...future].slice(0, 5);
-
-      if (!picked.length) {
-        box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
-        return;
-      }
-
-      box.innerHTML = picked.map(({ it, r, start }) => {
-        const date = r.date || it.date;
-        const time = r.timeStart || r.time || it.time || "";
-        return `
-          <div class="lv-s-item">
-            <img class="lv-s-thumb" src="${pickThumb(it, "avatar")}"
-                 onerror="this.onerror=null;this.src='${pickThumb({}, "avatar")}'" />
-            <div class="lv-s-body">
-              <div class="lv-s-title">${it.title || r.title || "무제"}</div>
-              <div class="lv-s-meta">${date ? fmtDate(date) : ""}${time ? " · " + fmtTime(time) : ""}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    } catch (e) {
-      console.debug("[schedule] error", e);
-      box.innerHTML = `<div class="lv-empty">일정 로딩 실패</div>`;
+  try {
+    // 서버에서 오늘 날짜 + 시간 순으로 정렬해 줌
+    const { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=5");
+    if (!ok || !items.length) {
+      box.innerHTML = `<div class="lv-empty">예정된 일정이 없습니다.</div>`;
+      return;
     }
+
+    box.innerHTML = items.map((it) => {
+      const r = it.recruit || it;
+      const date = r.date;
+      const time = r.timeStart || r.time;
+      return `
+        <div class="lv-s-item">
+          <img class="lv-s-thumb" src="${pickThumb(it, "avatar")}"
+               onerror="this.onerror=null;this.src='${pickThumb({}, "avatar")}'" />
+          <div class="lv-s-body">
+            <div class="lv-s-title">${it.title || r.title || "무제"}</div>
+            <div class="lv-s-meta">${date ? new Date(date).toLocaleDateString("ko-KR") : ""}${time ? " · " + time : ""}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (e) {
+    console.debug("[schedule] error", e);
+    box.innerHTML = `<div class="lv-empty">일정 로딩 실패</div>`;
   }
+}
 
   /* -------------------------------------------
      2) 추천 공고: 브랜드/제목/썸네일/D‑day/출연료/지원자
