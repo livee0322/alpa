@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/recruit_list_card.dart';
 import 'package:provider/provider.dart';
 
 class RecruitListScreen extends StatefulWidget {
@@ -89,39 +90,19 @@ class _RecruitListScreenState extends State<RecruitListScreen> {
 
   // 필터링된 공고 목록을 ListView로 빌드하는 위젯
   Widget _buildRecruitList(RecruitListProvider provider) {
-    // MainScreen의 RecruitSection 카드 UI를 재사용/참고하여 구현
-    // 여기서는 간단하게 ListTile로 대체합니다. (추후 카드 위젯으로 교체 가능)
-    return ListView.builder(
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 2열 그리드
+        crossAxisSpacing: 14, // 가로 간격
+        mainAxisSpacing: 14, // 세로 간격
+        childAspectRatio: 0.65, // 카드 비율 (가로/세로)
+      ),
       itemCount: provider.filteredRecruits.length,
       itemBuilder: (context, index) {
         final campaign = provider.filteredRecruits[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: ListTile(
-            leading: campaign.coverImageUrl != null
-                ? Image.network(
-                    campaign.coverImageUrl!,
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.cover,
-                  )
-                : Container(
-                    width: 56,
-                    height: 56,
-                    color: Colors.grey[200],
-                  ),
-            title: Text(
-              campaign.title ?? '제목 없음',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(campaign.brand ?? '브랜드 미정'),
-            onTap: () {
-              // TODO: 상세 페이지로 이동
-            },
-          ),
-        );
+        // ListTile 대신 새로 만든 RecruitListCard 위젯을 사용
+        return RecruitListCard(campaign: campaign);
       },
     );
   }
