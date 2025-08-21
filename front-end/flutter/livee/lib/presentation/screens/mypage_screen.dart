@@ -91,9 +91,7 @@ class MypageScreen extends StatelessWidget {
                     _buildMyPageItem(
                       title: '받은 제안',
                       subtitle: '브랜드로부터 온 컨택',
-                      onTap: () {
-                        // TODO: 받은 제안 페이지 라우트 구현
-                      },
+                      onTap: () => GoRouter.of(context).go('/received-offers'),
                     ),
                   ],
                 ],

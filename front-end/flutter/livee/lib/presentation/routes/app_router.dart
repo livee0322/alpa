@@ -8,6 +8,7 @@ import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
 import 'package:livee/presentation/screens/mypage_screen.dart';
 import 'package:livee/presentation/screens/portfolio_edit_screen.dart';
+import 'package:livee/presentation/screens/received_offers_screen.dart';
 import 'package:livee/presentation/screens/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/signup_screen.dart';
 
@@ -63,6 +64,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/bookmarked-recruits',
         builder: (context, state) => const BookmarkedRecruitsScreen(),
+      ),
+      GoRoute(
+        path: '/received-offers',
+        builder: (context, state) => const ReceivedOffersScreen(),
       ),
     ],
     redirect: (context, state) {
