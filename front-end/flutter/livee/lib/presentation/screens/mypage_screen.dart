@@ -8,10 +8,53 @@ import 'package:provider/provider.dart';
 class MypageScreen extends StatelessWidget {
   const MypageScreen({super.key});
 
+  // 접근 제한 팝업을 표시
+  Future<void> _showAccessDeniedDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('접근 불가'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('“쇼호스트” 유형 가입자만 사용 가능한 기능입니다.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('닫기'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('내 정보 변경'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).go('/account-edit');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final role = authProvider.role;
+
+    // 쇼호스트 메뉴를 위한 공통 onTap
+    void handleShowhostMenuTap(String path) {
+      if (role == 'showhost') {
+        GoRouter.of(context).go(path);
+      } else {
+        _showAccessDeniedDialog(context);
+      }
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -68,32 +111,29 @@ class MypageScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                   ],
-                  if (role == 'showhost') ...[
-                    const Text(
-                      '쇼호스트',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  const Text(
+                    '쇼호스트',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(height: 10),
-                    _buildMyPageItem(
-                      title: '내 포트폴리오',
-                      subtitle: '작성/수정',
-                      onTap: () => GoRouter.of(context).go('/portfolio-edit'),
-                    ),
-                    _buildMyPageItem(
-                      title: '내가 찜한 공고',
-                      subtitle: '저장한 공고 보기',
-                      onTap: () =>
-                          GoRouter.of(context).go('/bookmarked-recruits'),
-                    ),
-                    _buildMyPageItem(
-                      title: '받은 제안',
-                      subtitle: '브랜드로부터 온 컨택',
-                      onTap: () => GoRouter.of(context).go('/received-offers'),
-                    ),
-                  ],
+                  ),
+                  const SizedBox(height: 10),
+                  _buildMyPageItem(
+                    title: '내 포트폴리오',
+                    subtitle: '작성/수정',
+                    onTap: () => handleShowhostMenuTap('/portfolio-edit'),
+                  ),
+                  _buildMyPageItem(
+                    title: '내가 찜한 공고',
+                    subtitle: '저장한 공고 보기',
+                    onTap: () => handleShowhostMenuTap('/bookmarked-recruits'),
+                  ),
+                  _buildMyPageItem(
+                    title: '받은 제안',
+                    subtitle: '브랜드로부터 온 컨택',
+                    onTap: () => handleShowhostMenuTap('/received-offers'),
+                  ),
                 ],
               ),
             ),

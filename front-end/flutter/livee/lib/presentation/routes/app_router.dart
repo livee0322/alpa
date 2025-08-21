@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/account_edit_screen.dart';
 import 'package:livee/presentation/screens/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
@@ -68,6 +69,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/received-offers',
         builder: (context, state) => const ReceivedOffersScreen(),
+      ),
+      GoRoute(
+        path: '/account-edit',
+        builder: (context, state) => const AccountEditScreen(),
       ),
     ],
     redirect: (context, state) {
