@@ -216,9 +216,25 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                 : () async {
                     try {
                       await provider.addProductFromUrl(provider.productUrlController.text);
-                      // TODO: 성공 메시지 보여주기
+                      // 성공 메시지
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('상품을 성공적으로 불러왔습니다.'),
+                          ),
+                        );
+                      }
                     } catch (e) {
-                      // TODO: 에러 메시지 보여주기
+                      // 에러 메시지
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('상품을 불러오지 못했습니다: $e'),
+                          ),
+                        );
+                      }
+                    } finally {
+                      provider.productUrlController.clear();
                     }
                   },
             child: const Text('불러오기'),

@@ -112,12 +112,11 @@ class CampaignFormProvider with ChangeNotifier {
     try {
       final response = await _apiClient.get('/scrape/product?url=${Uri.encodeComponent(url)}');
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['data'] ?? jsonDecode(response.body);
+        final data = jsonDecode(utf8.decode(response.bodyBytes))['data'] ?? jsonDecode(utf8.decode(response.bodyBytes));
         _products.add(Product.fromJson(data));
-        productUrlController.clear();
         notifyListeners();
       } else {
-        throw Exception('Failed to scrape product');
+        throw Exception('상품 정보를 가져오지 못했습니다.');
       }
     } catch (e) {
       debugPrint('Error scraping product: $e');
