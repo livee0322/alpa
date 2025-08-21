@@ -4,6 +4,7 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/campaign_form/widget/campaign_type_selector.dart';
 import 'package:livee/presentation/screens/campaign_form/widget/form_section_container.dart';
 import 'package:livee/presentation/screens/campaign_form/widget/image_picker_section.dart';
+import 'package:livee/presentation/screens/campaign_form/widget/product_form_section.dart';
 import 'package:livee/presentation/screens/campaign_form/widget/recruit_form_section.dart';
 import 'package:provider/provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
@@ -108,12 +109,8 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                         if (provider.campaignType == 'product')
                           FormSectionContainer(
                             title: '상품 캠페인',
-                            children: const [
-                              Center(
-                                child: Text(
-                                  '상품 캠페인 폼 (구현 예정)',
-                                ),
-                              ),
+                            children: [
+                              ProductFormSection(provider: provider),
                             ],
                           ),
 
