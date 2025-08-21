@@ -80,9 +80,7 @@ class MypageScreen extends StatelessWidget {
                     _buildMyPageItem(
                       title: '내 포트폴리오',
                       subtitle: '작성/수정',
-                      onTap: () {
-                        // TODO: 내 포트폴리오 페이지 라우트 구현
-                      },
+                      onTap: () => GoRouter.of(context).go('/portfolio-edit'),
                     ),
                     _buildMyPageItem(
                       title: '내가 찜한 공고',
