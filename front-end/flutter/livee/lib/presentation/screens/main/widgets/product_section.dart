@@ -38,7 +38,7 @@ class ProductSection extends StatelessWidget {
             crossAxisCount: 2, // 2열
             crossAxisSpacing: 12, // 아이템 간 가로 간격
             mainAxisSpacing: 12, // 아이템 간 세로 간격
-            childAspectRatio: 0.75, // 아이템의 가로세로 비율
+            childAspectRatio: 0.72, // 아이템의 가로세로 비율
           ),
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -47,10 +47,12 @@ class ProductSection extends StatelessWidget {
 
             // 웹 버전의 .lv-g-card 스타일을 참고한 카드 위젯
             return InkWell(
-              onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+              onTap: () =>
+                  GoRouter.of(context).push('/campaign/${campaign.id}'),
               child: Card(
                 elevation: 2,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 clipBehavior: Clip.antiAlias, // 이미지 radius 적용
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,10 +61,12 @@ class ProductSection extends StatelessWidget {
                     AspectRatio(
                       aspectRatio: 1, // 1:1 비율
                       child: Image.network(
-                        campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/300/300',
+                        campaign.coverImageUrl ??
+                            'https://picsum.photos/seed/${campaign.id}/300/300',
                         fit: BoxFit.cover,
                         // 이미지 로딩 중 에러 발생 시 대체 이미지 표시
-                        errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error)),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Center(child: Icon(Icons.error)),
                       ),
                     ),
                     // 상품 정보
@@ -74,20 +78,31 @@ class ProductSection extends StatelessWidget {
                           children: [
                             Text(
                               campaign.brand ?? '브랜드 미정',
-                              style: const TextStyle(fontSize: 12, color: Color(0xFF9AA3AF)),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF9AA3AF),
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              campaign.title ?? '상품명 미정',
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                            const SizedBox(height: 2),
+                            Flexible(
+                              child: Text(
+                                campaign.title ?? '상품명 미정',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             const Spacer(), // 남은 공간을 채워 가격을 하단에 고정
                             Text(
                               price != null ? '${price.toInt()}원' : '',
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                           ],
                         ),
