@@ -43,13 +43,15 @@ class AuthRepository {
     );
 
     final data = jsonDecode(utf8.decode(response.bodyBytes));
-    if (response.statusCode != 200 || (data is Map && data['ok'] == false)) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      // 200번대 응답 코드는 성공으로 처리
+      final user = User.fromJson(data);
+      return user;
+    } else {
+      // 200번대 외의 응답 코드는 실패로 처리
       final message = data['message'] ?? '가입 실패';
       throw Exception(message);
     }
-
-    final user = User.fromJson(data);
-    return user;
   }
 
   Future<void> logout() async {
