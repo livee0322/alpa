@@ -8,6 +8,7 @@ import 'package:livee/presentation/screens/campaigns_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
 import 'package:livee/presentation/screens/mypage_screen.dart';
+import 'package:livee/presentation/screens/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/signup_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +51,10 @@ final GoRouter router = GoRouter(
         final campaignId = state.pathParameters['campaignId']!;
         return CampaignDetailScreen(campaignId: campaignId);
       },
+    ),
+    GoRoute(
+      path: '/recruits',
+      builder: (context, state) => const RecruitListScreen(),
     ),
   ],
   redirect: (context, state) {
