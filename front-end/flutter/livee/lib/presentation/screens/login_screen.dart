@@ -1,3 +1,5 @@
+// lib/presentation/screens/login_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
@@ -18,6 +20,16 @@ class _LoginScreenState extends State<LoginScreen> {
   String _errorMessage = '';
   bool _isLoading = false;
 
+  // 선택된 역할을 저장할 상태 변수
+  String _selectedRole = 'brand'; // 기본값 'brand'
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -30,10 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text,
           _passwordController.text,
         );
-        GoRouter.of(context).go('/');
+        // 로그인 성공 시 메인 화면으로 이동
+        if (context.mounted) GoRouter.of(context).go('/');
       } catch (e) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = e
+              .toString()
+              .replaceFirst('Exception: ', ''); // "Exception: " 접두어 제거
         });
       } finally {
         setState(() {
@@ -41,6 +56,56 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
+  }
+
+  // 역할 선택 버튼 UI를 생성하는 위젯 메소드
+  Widget _buildRoleSelector() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 22),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3F5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE6E8EC)),
+      ),
+      child: Row(
+        children: [
+          _buildRoleButton('brand', '브랜드'),
+          _buildRoleButton('showhost', '쇼호스트'),
+        ],
+      ),
+    );
+  }
+
+  // 개별 역할 버튼 위젯
+  Widget _buildRoleButton(String role, String label) {
+    final isSelected = _selectedRole == role;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedRole = role;
+          });
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 46,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? const Color(0xFF111827)
+                  : const Color(0xFF374151),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -62,7 +127,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 42,
                   ),
                   const SizedBox(height: 28),
-                  // 역할 선택은 추후 구현
+
+                  // 생성한 역할 선택 위젯을 UI에 추가
+                  _buildRoleSelector(),
+
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
@@ -120,19 +188,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
                   if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style: const TextStyle(
-                        color: Color(0xFFE11D48),
-                        fontWeight: FontWeight.w700,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        _errorMessage,
+                        style: const TextStyle(
+                          color: Color(0xFFE11D48),
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  SizedBox(height: _errorMessage.isNotEmpty ? 16 : 0),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _login,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 54),
                       backgroundColor: const Color(0xFF6C63FF),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -141,7 +212,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       _isLoading ? '로그인 중...' : '로그인',
                       style: const TextStyle(
-                        color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
