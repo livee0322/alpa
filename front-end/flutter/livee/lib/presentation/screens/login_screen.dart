@@ -124,9 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Image.asset(
                     'assets/images/liveelogo.png',
-                    height: 42,
                   ),
-                  const SizedBox(height: 28),
 
                   // 생성한 역할 선택 위젯을 UI에 추가
                   _buildRoleSelector(),

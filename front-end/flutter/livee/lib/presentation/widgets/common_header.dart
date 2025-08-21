@@ -24,7 +24,6 @@ class CommonHeader extends StatelessWidget {
             onTap: () => GoRouter.of(context).go('/'),
             child: Image.asset(
               'assets/images/liveelogo.png',
-              height: 42
             ),
           ),
           isLoggedIn
