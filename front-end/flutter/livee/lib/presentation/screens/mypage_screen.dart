@@ -77,9 +77,7 @@ class MypageScreen extends StatelessWidget {
                   _buildMyPageItem(
                     title: '내 정보 변경',
                     subtitle: '이름, 프로필',
-                    onTap: () {
-                      // TODO: 내 정보 변경 페이지 라우트 구현
-                    },
+                    onTap: () => GoRouter.of(context).go('/account-edit'),
                   ),
                   _buildMyPageItem(
                     title: '로그아웃',
