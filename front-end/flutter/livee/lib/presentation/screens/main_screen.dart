@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/main/widgets/product_section.dart';
+import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
@@ -17,14 +19,22 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  // 각 섹션의 데이터를 관리할 Future 변수 추가
   late Future<List<Campaign>> _scheduleFuture;
+  late Future<List<Campaign>> _productsFuture;
+  late Future<List<Campaign>> _recruitsFuture;
 
   @override
   void initState() {
     super.initState();
-    // Provider 설정 후 데이터 로딩
+    // Provider를 사용하여 UseCase 인스턴스를 가져옴 (listen: false)
     final campaignUseCase = Provider.of<CampaignUseCase>(context, listen: false);
-    _scheduleFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 50);
+
+    // 각 섹션에 필요한 데이터를 비동기적으로 로드
+    // 기존 _scheduleFuture 외에 _productsFuture와 _recruitsFuture 로직 추가
+    _scheduleFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6);
+    _productsFuture = campaignUseCase.getAllCampaigns(type: 'product', limit: 10);
+    _recruitsFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10);
   }
 
   @override
@@ -46,14 +56,32 @@ class _MainScreenState extends State<MainScreen> {
                     children: [
                       _buildSectionHeader(
                         title: '오늘의 라이브 라인업',
-                        onTap: () {
-                          GoRouter.of(context).go('/schedule');
-                        },
+                        onTap: () => GoRouter.of(context).go('/schedule'),
                       ),
                       _buildScheduleSection(),
-                      // TODO: '라이브 상품' 섹션 추가
-                      // TODO: '추천 공고' 섹션 추가
-                      // TODO: '인기 쇼호스트' 섹션 추가
+                      // 4. "라이브 상품" 섹션 추가
+                      const SizedBox(height: 18), // 섹션 간 간격
+                      _buildSectionHeader(
+                        title: '라이브 상품',
+                        onTap: () {
+                          // TODO: 더보기 페이지 라우팅
+                        },
+                      ),
+
+                      // 상품 섹션
+                      ProductSection(productsFuture: _productsFuture),
+
+                      const SizedBox(height: 18),
+
+                      _buildSectionHeader(
+                        title: '추천 공고',
+                        onTap: () {
+                          GoRouter.of(context).go('/recruits'); // TODO: 공고 목록 페이지 라우팅
+                        },
+                      ),
+
+                      // 추천 공고 섹션
+                      RecruitSection(recruitsFuture: _recruitsFuture),
                     ],
                   ),
                 ),
