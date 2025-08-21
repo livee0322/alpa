@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/repositories/auth_repository.dart';
 import 'package:livee/domain/usecases/auth_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaigns_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
@@ -42,6 +43,13 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/campaign-form',
       builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+    ),
+    GoRoute(
+      path: '/campaign/:campaignId',
+      builder: (context, state) {
+        final campaignId = state.pathParameters['campaignId']!;
+        return CampaignDetailScreen(campaignId: campaignId);
+      },
     ),
     GoRoute(
       path: '/recruit-form',
