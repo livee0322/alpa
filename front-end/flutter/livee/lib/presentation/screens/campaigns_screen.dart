@@ -77,12 +77,18 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                               padding: const EdgeInsets.all(10.0),
                               child: Row(
                                 children: [
-                                  Container(
-                                    width: 148,
-                                    height: 84,
-                                    color: Colors.grey[300], // Placeholder
-                                    // TODO: 실제 이미지 위젯으로 대체
-                                  ),
+                                  campaign.coverImageUrl != null
+                                      ? Image.network(
+                                          campaign.coverImageUrl!,
+                                          width: 148,
+                                          height: 84,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(
+                                          width: 148,
+                                          height: 84,
+                                          color: Colors.grey[300],
+                                        ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
