@@ -5,12 +5,17 @@ import 'package:livee/presentation/screens/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaigns_screen.dart';
+import 'package:livee/presentation/screens/event_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
 import 'package:livee/presentation/screens/mypage_screen.dart';
+import 'package:livee/presentation/screens/news_screen.dart';
 import 'package:livee/presentation/screens/portfolio_edit_screen.dart';
 import 'package:livee/presentation/screens/received_offers_screen.dart';
 import 'package:livee/presentation/screens/recruit_list_screen.dart';
+import 'package:livee/presentation/screens/service_screen.dart';
+import 'package:livee/presentation/screens/shopping_live_screen.dart';
+import 'package:livee/presentation/screens/short_clips_screen.dart';
 import 'package:livee/presentation/screens/signup_screen.dart';
 
 // GoRouter 인스턴스를 생성
@@ -74,12 +79,42 @@ GoRouter createRouter(AuthProvider authProvider) {
         path: '/account-edit',
         builder: (context, state) => const AccountEditScreen(),
       ),
+      GoRoute(
+        path: '/clips',
+        builder: (context, state) => const ShortClipsScreen(),
+      ),
+      GoRoute(
+        path: '/live',
+        builder: (context, state) => const ShoppingLiveScreen(),
+      ),
+      GoRoute(
+        path: '/news',
+        builder: (context, state) => const NewsScreen(),
+      ),
+      GoRoute(
+        path: '/event',
+        builder: (context, state) => const EventScreen(),
+      ),
+      GoRoute(
+        path: '/service',
+        builder: (context, state) => const ServiceScreen(),
+      ),
     ],
     redirect: (context, state) {
       // redirect 내부에서는 listen: false로 현재 상태만 읽기
       final isLoggedIn = authProvider.isLoggedIn;
 
-      final publicRoutes = ['/login', '/signup', '/', '/recruits'];
+      final publicRoutes = [
+        '/login',
+        '/signup',
+        '/',
+        '/recruits',
+        '/clips',
+        '/live',
+        '/news',
+        '/event',
+        '/service',
+      ];
       final isGoingToPublic = publicRoutes.contains(state.uri.toString());
 
       if (!isLoggedIn && !isGoingToPublic) {
