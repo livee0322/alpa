@@ -155,7 +155,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 3.5,
+        childAspectRatio: 3.0,
       ),
       itemBuilder: (context, index) {
         final item = metaItems[index];
@@ -200,7 +200,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 3.5,
+        childAspectRatio: 3.0,
       ),
       itemBuilder: (context, index) {
         final item = metaItems[index];
