@@ -85,9 +85,8 @@ class MypageScreen extends StatelessWidget {
                     _buildMyPageItem(
                       title: '내가 찜한 공고',
                       subtitle: '저장한 공고 보기',
-                      onTap: () {
-                        // TODO: 내가 찜한 공고 페이지 라우트 구현
-                      },
+                      onTap: () =>
+                          GoRouter.of(context).go('/bookmarked-recruits'),
                     ),
                     _buildMyPageItem(
                       title: '받은 제안',
