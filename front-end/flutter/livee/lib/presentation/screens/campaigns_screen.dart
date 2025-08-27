@@ -70,90 +70,129 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                       final campaign = campaigns[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: InkWell(
-                          onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: [
-                                  campaign.coverImageUrl != null
-                                      ? Image.network(
-                                          campaign.coverImageUrl!,
-                                          width: 148,
-                                          height: 84,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Container(
-                                          width: 148,
-                                          height: 84,
-                                          color: Colors.grey[300],
-                                        ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          campaign.title ?? '제목 없음',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          '유형: ${campaign.type}',
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
+                        child: Card(
+                          clipBehavior: Clip.antiAlias,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 2,
+                          shadowColor: Colors.black12,
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit, size: 20),
-                                        onPressed: () {
-                                          GoRouter.of(context).go('/campaign-form', extra: campaign.id);
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                                        onPressed: () async {
-                                          final confirm = await showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('삭제 확인'),
-                                              content: const Text('이 캠페인을 삭제하시겠어요?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(false),
-                                                  child: const Text('취소'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(true),
-                                                  child: const Text('삭제'),
-                                                ),
-                                              ],
+                                      // 썸네일 이미지
+                                      campaign.coverImageUrl != null
+                                          ? ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Image.network(
+                                                campaign.coverImageUrl!,
+                                                width: 120,
+                                                height: 68,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : Container(
+                                              width: 120,
+                                              height: 68,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[300],
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
                                             ),
-                                          );
-                                          if (confirm == true) {
-                                            try {
-                                              await Provider.of<CampaignUseCase>(context, listen: false)
-                                                  .deleteCampaign(campaign.id!);
-                                              setState(() {
-                                                _loadCampaigns();
-                                              });
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
-                                            }
-                                          }
-                                        },
+                                      const SizedBox(width: 12),
+                                      // 캠페인 제목 및 유형
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              campaign.title ?? '제목 없음',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              '유형: ${campaign.type}',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // 수정 및 삭제 아이콘 버튼
+                                      Column(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit, size: 20),
+                                            onPressed: () =>
+                                                GoRouter.of(context).go('/campaign-form', extra: campaign.id),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                                            onPressed: () async {
+                                              final confirm = await showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: const Text('삭제 확인'),
+                                                  content: const Text('이 캠페인을 삭제하시겠어요?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(false),
+                                                      child: const Text('취소'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(true),
+                                                      child: const Text('삭제'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                              if (confirm == true) {
+                                                try {
+                                                  await Provider.of<CampaignUseCase>(context, listen: false)
+                                                      .deleteCampaign(campaign.id!);
+                                                  setState(() {
+                                                    _loadCampaigns();
+                                                  });
+                                                } catch (e) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                              // '지원자 현황 보기' 버튼을 위한 영역
+                              const Divider(height: 1),
+                              SizedBox(
+                                width: double.infinity,
+                                child: TextButton(
+                                  onPressed: () => GoRouter.of(context).go('/campaign/${campaign.id}/applicants'),
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(12),
+                                        bottomRight: Radius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text('지원자 현황 보기'),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/account_edit_screen.dart';
+import 'package:livee/presentation/screens/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
@@ -49,8 +50,7 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: '/campaign-form',
-        builder: (context, state) =>
-            CampaignFormScreen(campaignId: state.extra as String?),
+        builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
       ),
       GoRoute(
         path: '/campaign/:campaignId',
@@ -58,6 +58,15 @@ GoRouter createRouter(AuthProvider authProvider) {
           final campaignId = state.pathParameters['campaignId']!;
           return CampaignDetailScreen(campaignId: campaignId);
         },
+        routes: [
+          GoRoute(
+            path: 'applicants',
+            builder: (context, state) {
+              final campaignId = state.pathParameters['campaignId']!;
+              return ApplicantListScreen(campaignId: campaignId);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/recruits',
@@ -120,9 +129,7 @@ GoRouter createRouter(AuthProvider authProvider) {
       if (!isLoggedIn && !isGoingToPublic) {
         return '/login';
       }
-      if (isLoggedIn &&
-          (state.uri.toString() == '/login' ||
-              state.uri.toString() == '/signup')) {
+      if (isLoggedIn && (state.uri.toString() == '/login' || state.uri.toString() == '/signup')) {
         return '/';
       }
       return null;

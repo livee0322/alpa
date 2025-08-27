@@ -1,6 +1,5 @@
-// lib/presentation/screens/campaign_detail_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +25,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _campaignFuture = Provider.of<CampaignUseCase>(context, listen: false)
-        .getCampaignById(widget.campaignId);
+    _campaignFuture = Provider.of<CampaignUseCase>(context, listen: false).getCampaignById(widget.campaignId);
   }
 
   @override
@@ -89,8 +87,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Image.network(
-        campaign.coverImageUrl ??
-            'https://picsum.photos/seed/${campaign.id}/1280/720',
+        campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/1280/720',
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
@@ -128,21 +125,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   Widget _buildRecruitMetaGrid(Campaign campaign) {
     final recruit = campaign.recruit;
     final metaItems = [
-      {
-        'icon': Icons.calendar_today,
-        'label': '촬영일',
-        'value': recruit?.date?.substring(0, 10) ?? '미정'
-      },
-      {
-        'icon': Icons.schedule,
-        'label': '시간',
-        'value': '${recruit?.timeStart ?? ''} ~ ${recruit?.timeEnd ?? ''}'
-      },
-      {
-        'icon': Icons.location_on_outlined,
-        'label': '장소',
-        'value': recruit?.location ?? '미정'
-      },
+      {'icon': Icons.calendar_today, 'label': '촬영일', 'value': recruit?.date?.substring(0, 10) ?? '미정'},
+      {'icon': Icons.schedule, 'label': '시간', 'value': '${recruit?.timeStart ?? ''} ~ ${recruit?.timeEnd ?? ''}'},
+      {'icon': Icons.location_on_outlined, 'label': '장소', 'value': recruit?.location ?? '미정'},
       {'icon': Icons.payment, 'label': '출연료', 'value': recruit?.pay ?? '협의'},
       // TODO: 마감일, 카테고리 추가
     ];
@@ -174,22 +159,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
         campaign.products?.firstOrNull?.price?.toString() ??
         '미정';
     final metaItems = [
-      {
-        'icon': Icons.calendar_today,
-        'label': '라이브 날짜',
-        'value': campaign.live?.date ?? '미정'
-      },
-      {
-        'icon': Icons.schedule,
-        'label': '라이브 시간',
-        'value': campaign.live?.time ?? '미정'
-      },
+      {'icon': Icons.calendar_today, 'label': '라이브 날짜', 'value': campaign.live?.date ?? '미정'},
+      {'icon': Icons.schedule, 'label': '라이브 시간', 'value': campaign.live?.time ?? '미정'},
       {'icon': Icons.sell_outlined, 'label': '판매가', 'value': '$price원'},
-      {
-        'icon': Icons.category_outlined,
-        'label': '카테고리',
-        'value': campaign.category ?? '미정'
-      },
+      {'icon': Icons.category_outlined, 'label': '카테고리', 'value': campaign.category ?? '미정'},
     ];
 
     return GridView.builder(
@@ -233,8 +206,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: products.length,
-          itemBuilder: (context, index) =>
-              DetailProductCard(product: products[index]),
+          itemBuilder: (context, index) => DetailProductCard(product: products[index]),
         ),
         const SizedBox(height: 24),
       ],
@@ -266,8 +238,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     if (campaign.type == 'recruit') {
       priceLabel = '출연료 ${campaign.recruit?.pay ?? '협의'}';
     } else if (campaign.type == 'product') {
-      final price = campaign.products?.firstOrNull?.salePrice?.toString() ??
-          campaign.products?.firstOrNull?.price?.toString();
+      final price =
+          campaign.products?.firstOrNull?.salePrice?.toString() ?? campaign.products?.firstOrNull?.price?.toString();
       if (price != null) {
         priceLabel = '판매가 ${price}원';
       }
@@ -276,9 +248,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
       buttonLabel: '지원자 현황',
-      onButtonPressed: () {
-        // TODO: 지원자 현황 페이지로 이동
-      },
+      onButtonPressed: () => GoRouter.of(context).go('/campaign/${campaign.id}/applicants'),
     );
   }
 }
