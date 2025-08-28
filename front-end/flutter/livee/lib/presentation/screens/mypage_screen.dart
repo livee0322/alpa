@@ -123,6 +123,11 @@ class MypageScreen extends StatelessWidget {
                     onTap: () => handleShowhostMenuTap('/portfolio-edit'),
                   ),
                   _buildMyPageItem(
+                    title: '내가 지원한 공고',
+                    subtitle: '지원 현황 보기',
+                    onTap: () => handleShowhostMenuTap('/my-applications'),
+                  ),
+                  _buildMyPageItem(
                     title: '내가 찜한 공고',
                     subtitle: '저장한 공고 보기',
                     onTap: () => handleShowhostMenuTap('/bookmarked-recruits'),

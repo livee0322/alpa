@@ -9,6 +9,7 @@ import 'package:livee/presentation/screens/campaigns_screen.dart';
 import 'package:livee/presentation/screens/event_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
+import 'package:livee/presentation/screens/my_applications_screen.dart';
 import 'package:livee/presentation/screens/mypage_screen.dart';
 import 'package:livee/presentation/screens/news_screen.dart';
 import 'package:livee/presentation/screens/portfolio_edit_screen.dart';
@@ -87,6 +88,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/account-edit',
         builder: (context, state) => const AccountEditScreen(),
+      ),
+      GoRoute(
+        path: '/my-applications',
+        builder: (context, state) => const MyApplicationsScreen(),
       ),
       GoRoute(
         path: '/clips',
