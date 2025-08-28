@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 
 // 브랜드가 쇼호스트 목록을 보고 필터링할 수 있는 화면
@@ -19,9 +20,19 @@ class ShowhostListScreen extends StatelessWidget {
           Expanded(
             child: Center(
               // TODO: API 연동 후 쇼호스트 목록 구현
-              child: Text(
-                '등록된 쇼호스트가 없습니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              // 임시로 Tappable 리스트 아이템을 만듭니다.
+              child: ListView(
+                children: [
+                  ListTile(
+                    leading: const CircleAvatar(child: Text('A')),
+                    title: const Text('쇼호스트 A'),
+                    subtitle: const Text('경력 5년'),
+                    onTap: () {
+                      // --- [추가] 상세 페이지로 이동 ---
+                      GoRouter.of(context).go('/showhosts/temp_id_1');
+                    },
+                  ),
+                ],
               ),
             ),
           ),
