@@ -39,7 +39,7 @@ class CommonBottomNavBar extends StatelessWidget {
                 _buildNavItem(context, Icons.home_outlined, '홈', '/'),
                 _buildNavItem(context, Icons.calendar_today_outlined, '캠페인', '/campaigns'),
                 _buildNavItem(context, Icons.bookmark_border_outlined, '라이브러리', '/library'),
-                _buildNavItem(context, Icons.person_outline, '인플루언서', '/influencers'),
+                _buildNavItem(context, Icons.person_outline, '인플루언서', '/showhosts'),
                 _buildNavItem(context, lastIcon, lastLabel, lastPath),
               ],
             );
