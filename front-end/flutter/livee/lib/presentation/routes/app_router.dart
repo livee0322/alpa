@@ -6,6 +6,7 @@ import 'package:livee/presentation/screens/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaigns_screen.dart';
+import 'package:livee/presentation/screens/casting_request_screen.dart';
 import 'package:livee/presentation/screens/event_screen.dart';
 import 'package:livee/presentation/screens/login_screen.dart';
 import 'package:livee/presentation/screens/main_screen.dart';
@@ -107,6 +108,13 @@ GoRouter createRouter(AuthProvider authProvider) {
             },
           ),
         ],
+      ),
+      GoRoute(
+        path: '/casting-request',
+        builder: (context, state) {
+          final showhostId = state.extra as String;
+          return CastingRequestScreen(showhostId: showhostId);
+        },
       ),
       GoRoute(
         path: '/clips',

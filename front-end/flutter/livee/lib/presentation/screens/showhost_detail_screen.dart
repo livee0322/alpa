@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // 쇼호스트의 상세 프로필 정보를 보여주는 화면
 class ShowhostDetailScreen extends StatelessWidget {
@@ -26,9 +27,7 @@ class ShowhostDetailScreen extends StatelessWidget {
             _buildInfoSection(),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // TODO: 섭외 요청 화면으로 이동
-              },
+              onPressed: () => GoRouter.of(context).go('/casting-request', extra: showhostId),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
