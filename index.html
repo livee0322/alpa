@@ -6,74 +6,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- 메인 스타일 -->
-  <link href="/alpa/frontend/css/main.css?v=1.79jobs" rel="stylesheet" />
+  <link href="./frontend/css/main.css?v=1.79jobs" rel="stylesheet" />
 
-  <!-- Pretendard Variable -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Pretendard:wdth,wght@100..125,400..900&display=swap"
-    rel="stylesheet">
+  <!-- Pretendard (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css" />
 </head>
 
 <body data-page="home">
-  <!-- 배너 -->
   <div id="banner-container" class="lv-banner">
     <div class="lv-banner-in">현재 클로즈 베타 테스트 중입니다. 피드백을 환영합니다! 🚀</div>
   </div>
 
-  <!-- 헤더(디자인 정책상 숨김: CSS에서 높이 0 처리) -->
   <header id="header-container" class="lv-header"></header>
-
-  <!-- 상단 텍스트 탭 -->
   <nav id="top-tab-container" class="lv-top"></nav>
 
   <main class="lv-main">
-    <!-- 오늘의 라인업 -->
     <section class="lv-section">
       <div class="lv-section-head">
         <h2>오늘의 라이브 라인업</h2>
-        <a class="lv-more" href="/alpa/blank/blank.html?p=schedule" aria-label="라이브 일정 더보기">더보기</a>
+        <a class="lv-more" href="./blank/blank.html?p=schedule" aria-label="라이브 일정 더보기">더보기</a>
       </div>
       <div id="schedule" class="lv-schedule" aria-live="polite">
         <div class="lv-empty">예정된 일정이 없습니다.</div>
       </div>
     </section>
 
-    <!-- 라이브 상품 -->
     <section class="lv-section">
       <div class="lv-section-head">
         <h2>라이브 상품</h2>
-        <a class="lv-more" href="/alpa/blank/blank.html?p=products" aria-label="라이브 상품 더보기">더보기</a>
+        <a class="lv-more" href="./blank/blank.html?p=products" aria-label="라이브 상품 더보기">더보기</a>
       </div>
-      <!-- 2열 그리드 컨테이너 -->
       <div id="productGrid" class="lv-grid"></div>
     </section>
 
-    <!-- 추천 공고 -->
     <section class="lv-section">
       <div class="lv-section-head">
         <h2>추천 공고</h2>
-        <a class="lv-more" href="/alpa/recruits.html" aria-label="추천 공고 더보기">더보기</a>
+        <!-- 실제 파일명으로 교체: recruitlist.html or campaigns.html -->
+        <a class="lv-more" href="./recruitlist.html" aria-label="추천 공고 더보기">더보기</a>
       </div>
-      <!-- 잡플 카드 리스트 -->
       <div id="recruits" class="lv-jobs">
         <div class="lv-empty">등록된 공고가 없습니다</div>
       </div>
     </section>
   </main>
 
-  <!-- 하단 탭 -->
   <nav id="bottom-tab-container" class="lv-bottom"></nav>
 
   <!-- 공통 모듈 & 설정 -->
-  <script src="/alpa/frontend/js/modules/banner.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/top-tab.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/bottom-tab.js?v=1.0"></script>
-  <script src="/alpa/frontend/js/modules/stack-size.js?v=1"></script>
-  <script src="/alpa/frontend/js/config.js?v=1.0"></script>
+  <script src="./frontend/js/modules/banner.js?v=1.0"></script>
+  <script src="./frontend/js/modules/top-tab.js?v=1.0"></script>
+  <script src="./frontend/js/modules/bottom-tab.js?v=1.0"></script>
+  <script src="./frontend/js/modules/stack-size.js?v=1"></script>
+  <script src="./frontend/js/config.js?v=1.0"></script>
 
   <!-- 페이지 스크립트 -->
-  <script src="/alpa/frontend/js/main.js?v=20250821jobs"></script>
+  <script src="./frontend/js/main.js?v=20250821jobs"></script>
 </body>
 </html>
