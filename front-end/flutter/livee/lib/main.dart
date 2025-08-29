@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/data/core/api_client.dart';
 import 'package:livee/domain/repositories/auth_repository.dart';
 import 'package:livee/domain/repositories/campaign_repository.dart';
+import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/auth_use_case.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
+import 'package:livee/presentation/providers/showhost_list_provider.dart';
 import 'package:livee/presentation/routes/app_router.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,8 @@ void main() {
   // 3. 생성된 AuthProvider를 createRouter 함수에 전달하여 GoRouter 인스턴스를 생성
   final router = createRouter(authProvider);
 
+  final portfolioRepository = PortfolioRepository();
+
   runApp(
     MultiProvider(
       providers: [
@@ -45,10 +49,10 @@ void main() {
           ),
         ),
         ChangeNotifierProvider(
-          create: (context) => RecruitListProvider(
-            campaignUseCase,
-          ),
+          create: (context) => RecruitListProvider(campaignUseCase),
         ),
+        Provider.value(value: portfolioRepository),
+        ChangeNotifierProvider(create: (context) => ShowhostListProvider(portfolioRepository)),
       ],
       // 4. MyApp 위젯에는 생성된 router를 전달
       child: MyApp(router: router),
