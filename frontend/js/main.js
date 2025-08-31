@@ -1,11 +1,14 @@
-// /alpa/frontend/js/main.js
+// /alpa/frontend/js/main.js  (v2.5 API 호환 + 안전 폴백)
 (function () {
-  const { API_BASE } = window.LIVEE_CONFIG || {};
+  // ---- Config & helpers ----
+  const { API_BASE: _API_BASE } = (window.LIVEE_CONFIG || {});
+  const API_BASE = (_API_BASE || "/api/v1").replace(/\/$/, "");
   const $ = (s) => document.querySelector(s);
+  const DEFAULT_IMG = "default.jpg";
 
-  // ---------- fetch helper ----------
+  // 공통 fetch(JSON) — 다양한 응답 포맷을 items로 정규화
   async function getJson(path, opts = {}) {
-    const url = `${API_BASE}${path}`;
+    const url = `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
     const res = await fetch(url, opts);
     const json = await res.json().catch(() => ({}));
     const ok = res.ok && json.ok !== false;
@@ -17,29 +20,56 @@
     return { ok, items: Array.isArray(arr) ? arr : [], json, res };
   }
 
-  // ---------- utils ----------
+  // ---- utils ----
   function pickThumb(it, ratio = "card") {
-    const src = it?.thumbnailUrl || it?.imageUrl || it?.coverImageUrl || it?.thumbnail || "";
+    const src = it?.thumbnailUrl || it?.imageUrl || it?.coverImageUrl || it?.thumbnail;
     if (src) return src;
-    const seed = it?._id || it?.id || Math.random().toString(36).slice(2);
-    if (ratio === "square") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/640`;
-    if (ratio === "avatar") return `https://picsum.photos/seed/${encodeURIComponent(seed)}/96/96`;
-    return `https://picsum.photos/seed/${encodeURIComponent(seed)}/640/360`;
+    // 기본 이미지(로컬에 default.jpg 있어야 함)
+    return DEFAULT_IMG;
   }
-  const n2 = (v) => (isFinite(v) ? Number(v).toLocaleString() : "");
+  const n2 = (v) => (isFinite(v) ? Number(v).toLocaleString("ko-KR") : "");
 
   // YYYY-MM-DD → Date(로컬 00:00)
   const toDateOnly = (s) => {
     if (!s) return null;
-    const [y,m,d] = String(s).split("-").map(Number);
-    if (!y||!m||!d) return null;
-    return new Date(y, m-1, d);
+    const [y, m, d] = String(s).split("-").map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
   };
+
+  // 서버(v2.5) → 프런트(구 코드) 필드 정규화
+  function normalizeCampaign(c) {
+    const r = c?.recruit || {};
+
+    // shootTime: "HH:MM~HH:MM" → 시작만
+    const startHM = (r.shootTime || "").split("~")[0] || "";
+
+    // shootDate(Date) → YYYY-MM-DD
+    let date = "";
+    if (r.shootDate) {
+      const d = new Date(r.shootDate);
+      if (!isNaN(d)) {
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        date = `${d.getFullYear()}-${mm}-${dd}`;
+      }
+    }
+
+    return {
+      ...c,
+      brand: c.brand || r.brand || "브랜드 미정",
+      thumbnailUrl: c.thumbnailUrl || c.coverImageUrl,
+      _id: c.id || c._id,
+      recruit: {
+        ...r,
+        date,              // 기존 코드가 쓰는 필드명
+        timeStart: startHM // 기존 코드가 쓰는 필드명
+      }
+    };
+  }
 
   /* ---------------------------------------
    * 1) 오늘의 라이브 라인업 (#schedule)
-   *    - 서버가 today/sort 미지원시 클라이언트 폴백
-   *    - 항목 클릭 시 상세(/alpa/campaign.html?id=...)
    * -------------------------------------*/
   async function loadSchedule() {
     const box = $("#schedule");
@@ -49,26 +79,25 @@
     const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
     try {
-      // 1차: 서버가 정렬/필터를 지원하는 경우
-      let { ok, items } = await getJson("/campaigns?type=recruit&today=1&sort=schedule&limit=6");
+      // 서버가 today/sort 지원한다고 가정 + status=published 필터 추가
+      let { ok, items } = await getJson("/campaigns?type=recruit&status=published&today=1&sort=schedule&limit=6");
 
-      // 2차: 폴백(전체에서 오늘만 필터 + timeStart/시간 오름차순)
       if (!ok || !items.length) {
-        const fallback = await getJson("/campaigns?type=recruit&limit=50");
-        if (fallback.ok) {
-          items = (fallback.items || [])
-            .filter(it => {
-              const r = it.recruit || {};
-              const d = toDateOnly(r.date);
+        // 폴백: 전체에서 오늘자만 필터, 시작시간 오름차순
+        const fb = await getJson("/campaigns?type=recruit&status=published&limit=50");
+        if (fb.ok) {
+          items = (fb.items || [])
+            .map(normalizeCampaign)
+            .filter((it) => {
+              const d = toDateOnly(it.recruit?.date);
               return d && d.getTime() === t0.getTime();
             })
-            .sort((a,b) => {
-              const ra = a.recruit || {}, rb = b.recruit || {};
-              return String(ra.timeStart || ra.time || '').localeCompare(String(rb.timeStart || rb.time || ''));
-            })
+            .sort((a, b) => String(a.recruit?.timeStart || "").localeCompare(String(b.recruit?.timeStart || "")))
             .slice(0, 6);
           ok = true;
         }
+      } else {
+        items = items.map(normalizeCampaign);
       }
 
       if (!ok || !items.length) {
@@ -78,30 +107,30 @@
 
       box.innerHTML = `
         <div class="lv-mini">
-          ${items.map((it) => {
-            const r = it.recruit || {};
-            const id = encodeURIComponent(it.id || it._id || "");
-            const brand = it.brand || r.brand || "브랜드 미정";
-            const time  = r.timeStart || r.time || "";
-            const timeHtml = time ? `<span class="lv-mini-time">${time} 예정</span>` : "";
-            const dot      = time ? `<span class="lv-mini-dot">·</span>` : "";
-            return `
-              <a class="lv-mini-item" href="/alpa/campaign.html?id=${id}">
-                <img class="lv-mini-thumb"
-                     src="${pickThumb(it, "avatar")}"
-                     alt=""
-                     onerror="this.onerror=null;this.src='${pickThumb({}, "avatar")}'" />
-                <div class="lv-mini-body">
-                  <div class="lv-mini-title">${it.title || r.title || "무제"}</div>
-                  <div class="lv-mini-sub">
-                    ${timeHtml}
-                    ${dot}
-                    <span class="lv-mini-brand">${brand}</span>
+          ${items
+            .map((it) => {
+              const r = it.recruit || {};
+              const id = encodeURIComponent(it._id || it.id || "");
+              const time = r.timeStart || "";
+              const timeHtml = time ? `<span class="lv-mini-time">${time} 예정</span>` : "";
+              const dot = time ? `<span class="lv-mini-dot">·</span>` : "";
+              return `
+                <a class="lv-mini-item" href="/alpa/campaign.html?id=${id}">
+                  <img class="lv-mini-thumb"
+                       src="${pickThumb(it, "avatar")}"
+                       alt="" onerror="this.onerror=null;this.src='${DEFAULT_IMG}'" />
+                  <div class="lv-mini-body">
+                    <div class="lv-mini-title">${it.title || r.title || "무제"}</div>
+                    <div class="lv-mini-sub">
+                      ${timeHtml}
+                      ${dot}
+                      <span class="lv-mini-brand">${it.brand}</span>
+                    </div>
                   </div>
-                </div>
-              </a>
-            `;
-          }).join("")}
+                </a>
+              `;
+            })
+            .join("")}
         </div>
       `;
     } catch (e) {
@@ -111,57 +140,56 @@
   }
 
   /* -------------------------------------------
-   * 2) 추천 공고: 클릭 → 상세로 이동
+   * 2) 추천 공고 리스트 (#recruits)
    * -----------------------------------------*/
   async function loadRecruitList() {
     const box = $("#recruits");
     if (!box) return;
 
-    const dday = (dateStr) => {
-      const d = toDateOnly(dateStr);
+    // D-DAY: closeAt 우선, 없으면 촬영일 기준
+    const dday = (closeAt, dateStr) => {
+      const d = closeAt ? toDateOnly(String(closeAt).slice(0, 10)) : toDateOnly(dateStr);
       if (!d) return { label: "", ended: false };
       const today = new Date();
       const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const diff = Math.round((d - t0) / 86400000);
-      if (diff < 0)  return { label: "마감", ended: true };
-      if (diff === 0) return { label: "D‑DAY", ended: false };
-      return { label: `D‑${diff}`, ended: false };
+      if (diff < 0) return { label: "마감", ended: true };
+      if (diff === 0) return { label: "D-DAY", ended: false };
+      return { label: `D-${diff}`, ended: false };
     };
 
     try {
-      const { ok, items } = await getJson("/campaigns?type=recruit&limit=10");
+      const { ok, items } = await getJson("/campaigns?type=recruit&status=published&limit=10");
       if (!ok || !items.length) {
         box.innerHTML = `<div class="lv-empty">등록된 공고가 없습니다</div>`;
         return;
       }
-      box.innerHTML = items.map((it) => {
-        const r = it.recruit || {};
-        const { label, ended } = dday(r.date);
-        const pay = r.pay ? `${String(r.pay).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원` : "협의";
-        const applicants =
-          (typeof r.applicantsCount === "number" && r.applicantsCount) ??
-          (Array.isArray(r.applicants) ? r.applicants.length : 0);
-        const href = `/alpa/campaign.html?id=${encodeURIComponent(it.id || it._id || "")}`;
-        return `
-          <a class="lv-job" href="${href}">
-            <div class="lv-job-body">
-              <div class="lv-job-brand">${it.brand || r.brand || "브랜드 미정"}</div>
-              <div class="lv-job-title">${it.title || r.title || "무제"}</div>
-              <div class="lv-job-meta">
-                ${label ? `<span class="lv-job-dday ${ended ? "lv-end" : ""}">${label}</span>` : ""}
-                <span class="lv-job-sep">|</span>
-                <span>출연료 ${pay}</span>
-                <span class="lv-job-sep">|</span>
-                <span>지원자 ${applicants}명</span>
+      const list = items.map(normalizeCampaign);
+
+      box.innerHTML = list
+        .map((it) => {
+          const r = it.recruit || {};
+          const { label, ended } = dday(it.closeAt, r.date);
+          const pay = r.pay ? `${n2(Number(r.pay))}원` : r.payNegotiable ? "협의" : "미정";
+          const href = `/alpa/campaign.html?id=${encodeURIComponent(it._id || it.id || "")}`;
+          return `
+            <a class="lv-job" href="${href}">
+              <div class="lv-job-body">
+                <div class="lv-job-brand">${it.brand}</div>
+                <div class="lv-job-title">${it.title || r.title || "무제"}</div>
+                <div class="lv-job-meta">
+                  ${label ? `<span class="lv-job-dday ${ended ? "lv-end" : ""}">${label}</span>` : ""}
+                  <span class="lv-job-sep">|</span>
+                  <span>출연료 ${pay}</span>
+                </div>
               </div>
-            </div>
-            <img class="lv-job-thumb"
-                 src="${pickThumb(it, "square")}"
-                 alt=""
-                 onerror="this.onerror=null;this.src='https://picsum.photos/seed/${encodeURIComponent("recruit"+(it._id||""))}/112/112'"/>
-          </a>
-        `;
-      }).join("");
+              <img class="lv-job-thumb"
+                   src="${pickThumb(it, "square")}"
+                   alt="" onerror="this.onerror=null;this.src='${DEFAULT_IMG}'"/>
+            </a>
+          `;
+        })
+        .join("");
     } catch (e) {
       console.debug("[recruitList] error", e);
       box.innerHTML = `<div class="lv-empty">모집 로딩 실패</div>`;
@@ -169,34 +197,37 @@
   }
 
   /* ----------------------------------------------------
-   * 3) 라이브 상품: 클릭 → 상세로 이동
+   * 3) 라이브 상품 그리드 (#productGrid)
    * ---------------------------------------------------*/
   async function loadProductGrid() {
     const grid = $("#productGrid");
     if (!grid) return;
     try {
-      const { ok, items } = await getJson("/campaigns?type=product&limit=10");
+      const { ok, items } = await getJson("/campaigns?type=product&status=published&limit=10");
       if (!ok || !items.length) {
         grid.innerHTML = `<div class="lv-empty">등록된 상품 캠페인이 없습니다</div>`;
         return;
       }
-      grid.innerHTML = items.map((it) => {
-        const price = it?.sale?.price ?? it?.products?.[0]?.price ?? null;
-        const href = `/alpa/campaign.html?id=${encodeURIComponent(it.id || it._id || "")}`;
-        return `
-          <a class="lv-g-card" href="${href}">
-            <img class="lv-g-thumb"
-                 src="${pickThumb(it, "square")}"
-                 alt="${(it.title || '상품')}"
-                 onerror="this.onerror=null;this.src='https://picsum.photos/seed/${encodeURIComponent('p'+(it._id||''))}/640/640'"/>
-            <div class="lv-g-body">
-              <div class="lv-g-brand">${it.brand || "브랜드 미정"}</div>
-              <div class="lv-g-title">${it.title || "상품명 미정"}</div>
-              <div class="lv-g-price">${price!=null ? n2(price)+'원' : ''}</div>
-            </div>
-          </a>
-        `;
-      }).join("");
+      grid.innerHTML = items
+        .map((raw) => {
+          const it = normalizeCampaign(raw); // 썸네일/브랜드 정규화 재사용
+          const price = it?.sale?.price ?? it?.products?.[0]?.price ?? null;
+          const href = `/alpa/campaign.html?id=${encodeURIComponent(it._id || it.id || "")}`;
+          return `
+            <a class="lv-g-card" href="${href}">
+              <img class="lv-g-thumb"
+                   src="${pickThumb(it, "square")}"
+                   alt="${it.title || "상품"}"
+                   onerror="this.onerror=null;this.src='${DEFAULT_IMG}'"/>
+              <div class="lv-g-body">
+                <div class="lv-g-brand">${it.brand}</div>
+                <div class="lv-g-title">${it.title || "상품명 미정"}</div>
+                <div class="lv-g-price">${price != null ? n2(price) + "원" : ""}</div>
+              </div>
+            </a>
+          `;
+        })
+        .join("");
     } catch (e) {
       console.debug("[productGrid] error", e);
       grid.innerHTML = `<div class="lv-empty">상품 로딩 실패</div>`;
@@ -208,5 +239,5 @@
   loadRecruitList();
   loadProductGrid();
 
-  if (!API_BASE) console.warn("[main.js] LIVEE_CONFIG.API_BASE 미설정");
+  if (!_API_BASE) console.warn("[main.js] LIVEE_CONFIG.API_BASE 미설정 → /api/v1 사용 중");
 })();
