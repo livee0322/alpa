@@ -44,7 +44,6 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => CampaignFormProvider(
             campaignUseCase,
-            campaignRepository,
             ApiClient(),
           ),
         ),

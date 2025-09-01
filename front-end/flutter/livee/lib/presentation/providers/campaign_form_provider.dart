@@ -2,22 +2,19 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // 숫자 포맷팅을 위해 추가
+import 'package:intl/intl.dart';
 import 'package:livee/data/core/api_client.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/models/product.dart';
-import 'package:livee/domain/repositories/campaign_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 
 class CampaignFormProvider with ChangeNotifier {
   final CampaignUseCase _campaignUseCase;
-  final CampaignRepository _campaignRepository;
   final ApiClient _apiClient;
 
   // 컨트롤러 리스너를 추가, 실시간 UI 업데이트 로직 설정
   CampaignFormProvider(
     this._campaignUseCase,
-    this._campaignRepository,
     this._apiClient,
   ) {
     payWanController.addListener(_updatePayWanPreview);
@@ -31,6 +28,9 @@ class CampaignFormProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _editCampaignId;
   Campaign? _editingCampaign;
+
+  // [추가] 태그 리스트를 관리할 상태 변수
+  List<String> _tags = [];
 
   // 공통 필드
   final TextEditingController internalTitleController = TextEditingController();
@@ -57,8 +57,7 @@ class CampaignFormProvider with ChangeNotifier {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController payWanController = TextEditingController();
   bool payNegotiable = false;
-  final TextEditingController categoryRecruitController =
-      TextEditingController();
+  final TextEditingController categoryRecruitController = TextEditingController();
   final TextEditingController descRecruitController = TextEditingController();
 
   // 계산된 값을 위한 상태 변수
@@ -72,6 +71,8 @@ class CampaignFormProvider with ChangeNotifier {
   Campaign? get editingCampaign => _editingCampaign;
   String get payWanPreview => _payWanPreview;
   String get durationText => _durationText;
+  // [추가] 외부에서 태그 리스트를 안전하게 읽기 위한 Getter
+  List<String> get tags => _tags;
 
   // --- 상태 변경 메소드 ---
 
@@ -97,6 +98,20 @@ class CampaignFormProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // [추가] 태그 추가 메소드
+  void addTag(String tag) {
+    if (tag.isNotEmpty && _tags.length < 5 && !_tags.contains(tag)) {
+      _tags.add(tag);
+      notifyListeners();
+    }
+  }
+
+  // [추가] 태그 삭제 메소드
+  void removeTag(String tag) {
+    _tags.remove(tag);
+    notifyListeners();
+  }
+
   // payWanController의 값이 변경될 때마다 미리보기 텍스트 업데이트
   void _updatePayWanPreview() {
     final number = int.tryParse(payWanController.text);
@@ -116,8 +131,7 @@ class CampaignFormProvider with ChangeNotifier {
       try {
         final parts = timeText.split(':');
         if (parts.length == 2) {
-          return TimeOfDay(
-              hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+          return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
         }
       } catch (e) {
         return null;
@@ -170,8 +184,7 @@ class CampaignFormProvider with ChangeNotifier {
         timeEndController.text = recruit?.timeEnd ?? '';
         locationController.text = recruit?.location ?? '';
         // '30만원' 같은 문자열에서 숫자만 추출하여 payWanController에 설정
-        payWanController.text =
-            recruit?.pay?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
+        payWanController.text = recruit?.pay?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
         payNegotiable = recruit?.payNegotiable ?? false;
         categoryRecruitController.text = recruit?.category ?? '';
         descRecruitController.text = recruit?.description ?? '';
@@ -191,11 +204,9 @@ class CampaignFormProvider with ChangeNotifier {
   // 상품 URL로부터 정보를 가져와 목록에 추가
   Future<void> addProductFromUrl(String url) async {
     try {
-      final response = await _apiClient
-          .get('/scrape/product?url=${Uri.encodeComponent(url)}');
+      final response = await _apiClient.get('/scrape/product?url=${Uri.encodeComponent(url)}');
       if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes))['data'] ??
-            jsonDecode(utf8.decode(response.bodyBytes));
+        final data = jsonDecode(utf8.decode(response.bodyBytes))['data'] ?? jsonDecode(utf8.decode(response.bodyBytes));
         _products.add(Product.fromJson(data));
         notifyListeners();
       } else {
@@ -212,7 +223,7 @@ class CampaignFormProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 폼 데이터를 API 서버에 전송
+  // [수정] 폼 데이터를 API 서버에 전송하는 메소드
   Future<void> submitForm() async {
     setLoading(true);
     try {
@@ -220,48 +231,35 @@ class CampaignFormProvider with ChangeNotifier {
       if (_campaignType == 'product') {
         payload = {
           'type': 'product',
-          'internalTitle': internalTitleController.text.isEmpty
-              ? null
-              : internalTitleController.text,
+          'internalTitle': internalTitleController.text.isEmpty ? null : internalTitleController.text,
           'title': titleController.text,
-          'coverImageUrl':
-              imageUrlController.text.isEmpty ? null : imageUrlController.text,
+          'coverImageUrl': imageUrlController.text.isEmpty ? null : imageUrlController.text,
           'products': _products.map((p) => {/* ... */}).toList(),
           // ... (기타 상품 페이로드)
         };
       } else {
+        // 쇼호스트 모집 캠페인
         payload = {
           'type': 'recruit',
-          'title': titleRecruitController.text,
-          'internalTitle': internalTitleController.text.isEmpty
-              ? null
-              : internalTitleController.text,
-          'coverImageUrl':
-              imageUrlController.text.isEmpty ? null : imageUrlController.text,
+          'title': titleRecruitController.text, // 공고 제목
+          'internalTitle': internalTitleController.text.isEmpty ? null : internalTitleController.text,
+          'coverImageUrl': imageUrlController.text.isEmpty ? null : imageUrlController.text,
           'brand': brandController.text.isEmpty ? null : brandController.text,
+          // API 명세에 맞게 'recruit' 객체 구조 수정
           'recruit': {
             'title': titleRecruitController.text,
-            'date': dateController.text.isEmpty ? null : dateController.text,
-            'deadline': deadlineController.text.isEmpty
-                ? null
-                : deadlineController.text,
-            'timeStart': timeStartController.text.isEmpty
-                ? null
-                : timeStartController.text,
-            'timeEnd':
-                timeEndController.text.isEmpty ? null : timeEndController.text,
-            'location': locationController.text.isEmpty
-                ? null
-                : locationController.text,
-            'pay': _payWanPreview, // 계산된 미리보기 텍스트 (e.g., "30만원")
-            'payWan': int.tryParse(payWanController.text),
-            'payNegotiable': payNegotiable,
-            'category': categoryRecruitController.text.isEmpty
-                ? null
-                : categoryRecruitController.text,
-            'description': descRecruitController.text.isEmpty
-                ? null
-                : descRecruitController.text,
+            'shootDate': dateController.text.isEmpty ? null : dateController.text, // 필드명 변경: date -> shootDate
+            'applyDeadline':
+                deadlineController.text.isEmpty ? null : deadlineController.text, // 필드명 변경: deadline -> applyDeadline
+            'startAt':
+                timeStartController.text.isEmpty ? null : timeStartController.text, // 필드명 변경: timeStart -> startAt
+            'endAt': timeEndController.text.isEmpty ? null : timeEndController.text, // 필드명 변경: timeEnd -> endAt
+            'location': locationController.text.isEmpty ? null : locationController.text,
+            'fee': int.tryParse(payWanController.text), // 숫자 타입으로 전송
+            'isNegotiable': payNegotiable, // 필드명 변경: payNegotiable -> isNegotiable
+            'tags': _tags, // 태그 리스트 추가
+            'category': categoryRecruitController.text.isEmpty ? null : categoryRecruitController.text,
+            'description': descRecruitController.text.isEmpty ? null : descRecruitController.text,
           }
         };
       }
