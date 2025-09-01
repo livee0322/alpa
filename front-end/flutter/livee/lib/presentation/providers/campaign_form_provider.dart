@@ -271,7 +271,22 @@ class CampaignFormProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Form submission failed: $e');
-      rethrow;
+      // 서버 에러 코드를 확인하는 로직
+      try {
+        // Repository에서 전달된 Exception 메시지(JSON 문자열)를 파싱
+        final errorJson = jsonDecode(e.toString().replaceFirst('Exception: ', ''));
+        // "COVER_IMAGE_REQUIRED" 코드인지 확인
+        if (errorJson['code'] == 'COVER_IMAGE_REQUIRED') {
+          // 사용자에게 보여줄 메시지로 새로운 Exception을 발생시킴
+          throw Exception('커버 이미지를 등록해주세요.');
+        } else {
+          // 그 외 서버 에러는 서버가 보내준 메시지를 사용
+          throw Exception(errorJson['message'] ?? '알 수 없는 서버 오류가 발생했습니다.');
+        }
+      } catch (parseError) {
+        // JSON 파싱에 실패하면 원래 에러를 그대로 전달
+        rethrow;
+      }
     } finally {
       setLoading(false);
     }

@@ -45,15 +45,17 @@ class CampaignRepository {
 
   Future<void> createCampaign(Map<String, dynamic> data) async {
     final response = await _apiClient.post('/campaigns', body: data);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to create campaign');
+    // 200번대 응답이 아닐 경우, 서버 응답 전문을 Exception으로 전달
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 
   Future<void> updateCampaign(String id, Map<String, dynamic> data) async {
     final response = await _apiClient.put('/campaigns/$id', body: data);
+    // 200번대 응답이 아닐 경우, 서버 응답 전문을 Exception으로 전달
     if (response.statusCode != 200) {
-      throw Exception('Failed to update campaign');
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 
