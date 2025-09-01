@@ -88,7 +88,7 @@ class MypageScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-                  if (role == 'brand' || role == 'admin') ...[
+                  if (role == 'brand') ...[
                     const Text(
                       '브랜드',
                       style: TextStyle(
@@ -109,34 +109,36 @@ class MypageScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                   ],
-                  const Text(
-                    '쇼호스트',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                  if (role == 'showhost') ...[
+                    const Text(
+                      '쇼호스트',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildMyPageItem(
-                    title: '내 포트폴리오',
-                    subtitle: '작성/수정',
-                    onTap: () => handleShowhostMenuTap('/portfolio-edit'),
-                  ),
-                  _buildMyPageItem(
-                    title: '내가 지원한 공고',
-                    subtitle: '지원 현황 보기',
-                    onTap: () => handleShowhostMenuTap('/my-applications'),
-                  ),
-                  _buildMyPageItem(
-                    title: '내가 찜한 공고',
-                    subtitle: '저장한 공고 보기',
-                    onTap: () => handleShowhostMenuTap('/bookmarked-recruits'),
-                  ),
-                  _buildMyPageItem(
-                    title: '받은 제안',
-                    subtitle: '브랜드로부터 온 컨택',
-                    onTap: () => handleShowhostMenuTap('/received-offers'),
-                  ),
+                    const SizedBox(height: 10),
+                    _buildMyPageItem(
+                      title: '내 포트폴리오',
+                      subtitle: '작성/수정',
+                      onTap: () => handleShowhostMenuTap('/portfolio-edit'),
+                    ),
+                    _buildMyPageItem(
+                      title: '내가 지원한 공고',
+                      subtitle: '지원 현황 보기',
+                      onTap: () => handleShowhostMenuTap('/my-applications'),
+                    ),
+                    _buildMyPageItem(
+                      title: '내가 찜한 공고',
+                      subtitle: '저장한 공고 보기',
+                      onTap: () => handleShowhostMenuTap('/bookmarked-recruits'),
+                    ),
+                    _buildMyPageItem(
+                      title: '받은 제안',
+                      subtitle: '브랜드로부터 온 컨택',
+                      onTap: () => handleShowhostMenuTap('/received-offers'),
+                    ),
+                  ],
                 ],
               ),
             ),
