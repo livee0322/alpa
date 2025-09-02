@@ -22,6 +22,7 @@ import 'package:livee/presentation/screens/tabs/short_clips_screen.dart';
 import 'package:livee/presentation/screens/showhost/showhost_detail_screen.dart';
 import 'package:livee/presentation/screens/showhost/showhost_list_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 
 // GoRouter 인스턴스를 생성
 // AuthProvider를 인자로 받아서 refreshListenable에 연결
@@ -138,28 +139,36 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
     ],
     redirect: (context, state) {
-      // redirect 내부에서는 listen: false로 현재 상태만 읽기
       final isLoggedIn = authProvider.isLoggedIn;
+      final role = authProvider.role;
+      final location = state.uri.toString();
 
-      final publicRoutes = [
-        '/login',
-        '/signup',
-        '/',
-        '/recruits',
-        '/clips',
-        '/live',
-        '/news',
-        '/event',
-        '/service',
-      ];
-      final isGoingToPublic = publicRoutes.contains(state.uri.toString());
+      final brandOnlyRoutes = ['/campaigns', '/campaign-form', '/casting-request'];
+      final showhostOnlyRoutes = ['/portfolio-edit', '/my-applications', '/bookmarked-recruits', '/received-offers'];
+      final authRequiredRoutes = brandOnlyRoutes + showhostOnlyRoutes + ['/mypage', '/account-edit'];
 
-      if (!isLoggedIn && !isGoingToPublic) {
-        return '/login';
+      if (authRequiredRoutes.any((route) => location.startsWith(route))) {
+        if (!isLoggedIn) {
+          // showCustomToast 함수 사용
+          showCustomToast(context, '로그인이 필요한 서비스입니다.');
+          return '/';
+        }
+
+        if (brandOnlyRoutes.any((route) => location.startsWith(route)) && role != 'brand') {
+          showCustomToast(context, '브랜드 회원만 이용 가능합니다.', type: ToastType.error);
+          return '/';
+        }
+
+        if (showhostOnlyRoutes.any((route) => location.startsWith(route)) && role != 'showhost') {
+          showCustomToast(context, '쇼호스트 회원만 이용 가능합니다.', type: ToastType.error);
+          return '/';
+        }
       }
-      if (isLoggedIn && (state.uri.toString() == '/login' || state.uri.toString() == '/signup')) {
+
+      if (isLoggedIn && (location == '/login' || location == '/signup')) {
         return '/';
       }
+
       return null;
     },
   );
