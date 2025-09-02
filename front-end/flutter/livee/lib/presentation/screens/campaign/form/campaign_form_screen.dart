@@ -41,6 +41,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Consumer<CampaignFormProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
@@ -144,26 +145,25 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
         const SizedBox(width: 8),
         PrimaryActionButton(
           text: provider.editingCampaign == null ? '등록하기' : '수정 저장',
-          onPressed: provider.isLoading
-              ? null
-              : () async {
-                  if (_formKey.currentState!.validate()) {
-                    try {
-                      await provider.submitForm();
-                      if (context.mounted) {
-                        // 성공 시 캠페인 목록 화면으로 이동
-                        GoRouter.of(context).go('/campaigns');
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('저장 실패: $e')),
-                        );
-                      }
-                    }
-                  }
-                },
           isLoading: provider.isLoading,
+          isFullWidth: false,
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              try {
+                await provider.submitForm();
+                if (context.mounted) {
+                  // 성공 시 캠페인 목록 화면으로 이동
+                  GoRouter.of(context).go('/campaigns');
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('저장 실패: $e')),
+                  );
+                }
+              }
+            }
+          },
         ),
       ],
     );
