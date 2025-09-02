@@ -20,6 +20,7 @@ class RecruitListCard extends StatelessWidget {
     return InkWell(
       onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
       child: Card(
+        color: Colors.white,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

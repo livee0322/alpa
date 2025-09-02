@@ -47,6 +47,7 @@ class RecruitSection extends StatelessWidget {
             return InkWell(
               onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
               child: Card(
+                color: Colors.white,
                 elevation: 2,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Padding(
