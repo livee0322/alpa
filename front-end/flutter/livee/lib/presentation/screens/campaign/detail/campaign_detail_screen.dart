@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
-import 'package:provider/provider.dart';
+import 'package:livee/service_locator.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_product_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
@@ -25,7 +25,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _campaignFuture = Provider.of<CampaignUseCase>(context, listen: false).getCampaignById(widget.campaignId);
+    // locator를 통해 UseCase 인스턴스를 직접 가져오기
+    _campaignFuture = locator<CampaignUseCase>().getCampaignById(widget.campaignId);
   }
 
   @override

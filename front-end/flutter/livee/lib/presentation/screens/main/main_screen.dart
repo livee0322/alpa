@@ -9,6 +9,7 @@ import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
+import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,18 +28,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // Provider를 사용하여 UseCase 인스턴스를 가져옴 (listen: false)
-    final campaignUseCase =
-        Provider.of<CampaignUseCase>(context, listen: false);
+    // Provider.of 대신 locator를 통해 UseCase 인스턴스를 직접 가져오기
+    final campaignUseCase = locator<CampaignUseCase>();
 
     // 각 섹션에 필요한 데이터를 비동기적으로 로드
     // 기존 _scheduleFuture 외에 _productsFuture와 _recruitsFuture 로직 추가
-    _scheduleFuture =
-        campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6);
-    _productsFuture =
-        campaignUseCase.getAllCampaigns(type: 'product', limit: 10);
-    _recruitsFuture =
-        campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10);
+    _scheduleFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6);
+    _productsFuture = campaignUseCase.getAllCampaigns(type: 'product', limit: 10);
+    _recruitsFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10);
   }
 
   @override
@@ -80,8 +77,7 @@ class _MainScreenState extends State<MainScreen> {
                       _buildSectionHeader(
                         title: '추천 공고',
                         onTap: () {
-                          GoRouter.of(context)
-                              .go('/recruits'); // TODO: 공고 목록 페이지 라우팅
+                          GoRouter.of(context).go('/recruits'); // TODO: 공고 목록 페이지 라우팅
                         },
                       ),
 
@@ -184,14 +180,12 @@ class _MainScreenState extends State<MainScreen> {
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
                         // 캠페인의 커버 이미지를 사용하고, 없을 경우 대체 이미지를 표시
-                        campaign.coverImageUrl ??
-                            'https://picsum.photos/seed/schedule${campaign.id}/96/96',
+                        campaign.coverImageUrl ?? 'https://picsum.photos/seed/schedule${campaign.id}/96/96',
                         width: 48,
                         height: 48,
                         fit: BoxFit.cover,
                         // 이미지 로딩 실패 시 Placeholder 표시
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Placeholder(),
+                        errorBuilder: (context, error, stackTrace) => const Placeholder(),
                       ),
                     ),
                     const SizedBox(width: 12),

@@ -5,6 +5,7 @@ import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
+import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
 class CampaignsScreen extends StatefulWidget {
@@ -24,7 +25,8 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
   }
 
   void _loadCampaigns() {
-    _campaignsFuture = Provider.of<CampaignUseCase>(context, listen: false).getMyCampaigns();
+    // locator를 통해 UseCase 인스턴스를 직접 가져오기
+    _campaignsFuture = locator<CampaignUseCase>().getMyCampaigns();
   }
 
   @override
@@ -156,8 +158,8 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                               );
                                               if (confirm == true) {
                                                 try {
-                                                  await Provider.of<CampaignUseCase>(context, listen: false)
-                                                      .deleteCampaign(campaign.id!);
+                                                  // locator를 사용
+                                                  await locator<CampaignUseCase>().deleteCampaign(campaign.id!);
                                                   setState(() {
                                                     _loadCampaigns();
                                                   });
