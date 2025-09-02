@@ -28,7 +28,7 @@ import 'package:livee/presentation/screens/auth/signup_screen.dart';
 GoRouter createRouter(AuthProvider authProvider) {
   return GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: '/login',
+    initialLocation: '/',
     // refreshListenable에 외부에서 생성된 AuthProvider 인스턴스를 전달받아 사용
     refreshListenable: authProvider,
     routes: [
