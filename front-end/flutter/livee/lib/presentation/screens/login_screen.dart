@@ -46,9 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (context.mounted) GoRouter.of(context).go('/');
       } catch (e) {
         setState(() {
-          _errorMessage = e
-              .toString()
-              .replaceFirst('Exception: ', ''); // "Exception: " 접두어 제거
+          _errorMessage = e.toString().replaceFirst('Exception: ', ''); // "Exception: " 접두어 제거
         });
       } finally {
         setState(() {
@@ -97,9 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? const Color(0xFF111827)
-                  : const Color(0xFF374151),
+              color: isSelected ? const Color(0xFF111827) : const Color(0xFF374151),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -111,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
