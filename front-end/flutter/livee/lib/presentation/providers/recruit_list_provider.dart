@@ -49,27 +49,28 @@ class RecruitListProvider with ChangeNotifier {
     // 필터 로직
     switch (filterKey) {
       case 'deadline':
+        // 마감일(closeAt) 기준으로 필터링 및 정렬
         filtered.retainWhere((c) {
-          final date = c.recruit?.date != null ? DateTime.tryParse(c.recruit!.date!) : null;
+          final date = c.closeAt != null ? DateTime.tryParse(c.closeAt!) : null;
           return date != null && date.isAfter(today.subtract(const Duration(days: 1)));
         });
-        filtered.sort((a, b) => (DateTime.tryParse(a.recruit!.date!) ?? DateTime(0))
-            .compareTo(DateTime.tryParse(b.recruit!.date!) ?? DateTime(0)));
+        filtered.sort((a, b) => (DateTime.tryParse(a.closeAt!) ?? DateTime(9999))
+            .compareTo(DateTime.tryParse(b.closeAt!) ?? DateTime(9999)));
         break;
       case 'mukbang':
-        filtered.retainWhere((c) => '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
-            .toLowerCase()
-            .contains(RegExp(r'먹방|food|mukbang')));
+        // 제목, 설명, 카테고리에 '먹방' 관련 키워드가 있는지 확인
+        filtered.retainWhere(
+            (c) => '${c.title} ${c.descriptionHTML} ${c.category}'.toLowerCase().contains(RegExp(r'먹방|food|mukbang')));
         break;
       case 'beauty':
-        filtered.retainWhere((c) => '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
-            .toLowerCase()
-            .contains(RegExp(r'뷰티|beauty|메이크업|코스메틱')));
+        filtered.retainWhere((c) =>
+            '${c.title} ${c.descriptionHTML} ${c.category}'.toLowerCase().contains(RegExp(r'뷰티|beauty|메이크업|코스메틱')));
         break;
       case 'pay':
+        // 출연료(fee) 기준으로 내림차순 정렬
         filtered.sort((a, b) {
-          final payA = _extractPay(a.recruit?.pay);
-          final payB = _extractPay(b.recruit?.pay);
+          final payA = a.fee ?? 0;
+          final payB = b.fee ?? 0;
           return payB.compareTo(payA);
         });
         break;
@@ -77,16 +78,5 @@ class RecruitListProvider with ChangeNotifier {
 
     _filteredRecruits = filtered;
     notifyListeners();
-  }
-
-  // '30만원' 같은 문자열에서 숫자 값 추출
-  int _extractPay(String? payString) {
-    if (payString == null) return 0;
-    var numString = payString.replaceAll(RegExp(r'[^0-9]'), '');
-    var pay = int.tryParse(numString) ?? 0;
-    if (payString.contains('만원')) {
-      pay *= 10000;
-    }
-    return pay;
   }
 }

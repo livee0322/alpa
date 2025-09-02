@@ -124,13 +124,24 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
 
   // '쇼호스트 모집' 메타 정보를 GridView로 표시
   Widget _buildRecruitMetaGrid(Campaign campaign) {
+    // recruit 객체에서 location 정보만 가져옴
     final recruit = campaign.recruit;
+
+    // fee를 "30만원" 형태의 문자열로 변환
+    String feeText = '협의';
+    if (campaign.fee != null && campaign.fee! > 0) {
+      feeText = '${(campaign.fee! / 10000).round()}만원';
+    } else if (campaign.feeNegotiable == true) {
+      feeText = '협의';
+    }
+
     final metaItems = [
-      {'icon': Icons.calendar_today, 'label': '촬영일', 'value': recruit?.date?.substring(0, 10) ?? '미정'},
-      {'icon': Icons.schedule, 'label': '시간', 'value': '${recruit?.timeStart ?? ''} ~ ${recruit?.timeEnd ?? ''}'},
+      // liveTime을 촬영일로 사용
+      {'icon': Icons.calendar_today, 'label': '촬영일', 'value': campaign.liveTime?.substring(0, 10) ?? '미정'},
+      // liveTime을 시간으로 사용 (종료 시간이 없으므로 시작 시간만 표시)
+      {'icon': Icons.schedule, 'label': '시간', 'value': campaign.liveTime ?? '미정'},
       {'icon': Icons.location_on_outlined, 'label': '장소', 'value': recruit?.location ?? '미정'},
-      {'icon': Icons.payment, 'label': '출연료', 'value': recruit?.pay ?? '협의'},
-      // TODO: 마감일, 카테고리 추가
+      {'icon': Icons.payment, 'label': '출연료', 'value': feeText},
     ];
 
     return GridView.builder(
@@ -159,9 +170,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     final price = campaign.products?.firstOrNull?.salePrice?.toString() ??
         campaign.products?.firstOrNull?.price?.toString() ??
         '미정';
+    // [수정] campaign.live 객체 대신 campaign.liveTime 필드를 직접 사용
     final metaItems = [
-      {'icon': Icons.calendar_today, 'label': '라이브 날짜', 'value': campaign.live?.date ?? '미정'},
-      {'icon': Icons.schedule, 'label': '라이브 시간', 'value': campaign.live?.time ?? '미정'},
+      {'icon': Icons.calendar_today, 'label': '라이브 날짜', 'value': campaign.liveTime?.substring(0, 10) ?? '미정'},
+      {'icon': Icons.schedule, 'label': '라이브 시간', 'value': campaign.liveTime ?? '미정'},
       {'icon': Icons.sell_outlined, 'label': '판매가', 'value': '$price원'},
       {'icon': Icons.category_outlined, 'label': '카테고리', 'value': campaign.category ?? '미정'},
     ];
@@ -237,7 +249,12 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   Widget _buildBottomBar(Campaign campaign) {
     String priceLabel = '';
     if (campaign.type == 'recruit') {
-      priceLabel = '출연료 ${campaign.recruit?.pay ?? '협의'}';
+      // fee를 "30만원" 형태의 문자열로 변환
+      if (campaign.fee != null && campaign.fee! > 0) {
+        priceLabel = '출연료 ${(campaign.fee! / 10000).round()}만원';
+      } else {
+        priceLabel = '출연료 협의';
+      }
     } else if (campaign.type == 'product') {
       final price =
           campaign.products?.firstOrNull?.salePrice?.toString() ?? campaign.products?.firstOrNull?.price?.toString();

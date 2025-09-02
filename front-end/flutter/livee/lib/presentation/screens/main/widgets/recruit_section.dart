@@ -37,10 +37,13 @@ class RecruitSection extends StatelessWidget {
           separatorBuilder: (context, index) => const SizedBox(height: 12), // 아이템 간 간격
           itemBuilder: (context, index) {
             final campaign = items[index];
-            final recruit = campaign.recruit;
-            final dDay = _calculateDday(recruit?.date);
-
-            // 웹 버전의 .lv-job 스타일을 참고한 카드 위젯
+            final dDay = _calculateDday(campaign.closeAt);
+            String feeText = '협의';
+            if (campaign.fee != null && campaign.fee! > 0) {
+              feeText = '${(campaign.fee! / 10000).round()}만원';
+            } else if (campaign.feeNegotiable == true) {
+              feeText = '협의';
+            }
             return InkWell(
               onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
               child: Card(
@@ -64,7 +67,7 @@ class RecruitSection extends StatelessWidget {
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 8),
                             Row(
                               children: [
                                 if (dDay.isNotEmpty) ...[
@@ -72,20 +75,23 @@ class RecruitSection extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFEEF2FF),
+                                      color: const Color(0xFFFEE2E2),
                                       borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       dDay,
                                       style: const TextStyle(
-                                          fontSize: 12, color: Color(0xFF4338CA), fontWeight: FontWeight.w800),
+                                        fontSize: 12,
+                                        color: Color(0xFF4338CA),
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
                                   ),
                                   _buildMetaSeparator(),
                                 ],
                                 // 출연료
                                 Text(
-                                  '출연료 ${recruit?.pay ?? '협의'}',
+                                  '출연료 $feeText',
                                   style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
                                 ),
                                 // TODO: 지원자 수는 API 응답에 추가 필요
@@ -126,10 +132,11 @@ class RecruitSection extends StatelessWidget {
     );
   }
 
-  /// D-day 계산 로직 (기존 main.js 참고)
+  /// D-day 계산 로직
   String _calculateDday(String? dateStr) {
     if (dateStr == null) return '';
     try {
+      // "YYYY-MM-DD" 형식의 문자열만 사용하도록 처리
       final date = DateTime.parse(dateStr);
       final today = DateTime.now();
       final difference = date.difference(DateTime(today.year, today.month, today.day)).inDays;

@@ -1,48 +1,55 @@
-// 임시 모델 (추후 상세 구현 예정)
-import 'package:livee/domain/models/live.dart';
 import 'package:livee/domain/models/product.dart';
 import 'package:livee/domain/models/recruit.dart';
 
 class Campaign {
   final String? id;
   final String? title;
+  final String? thumbnailUrl;
   final String? coverImageUrl;
   final String? type;
   final List<Product>? products;
   final Recruit? recruit;
   final String? brand;
   final String? category;
-  final String? date;
+  final num? fee;
+  final bool? feeNegotiable;
+  final String? liveTime;
+  final String? closeAt;
   final String? descriptionHTML;
-  final Live? live;
 
   Campaign({
     this.id,
     this.title,
+    this.thumbnailUrl,
     this.coverImageUrl,
     this.type,
     this.products,
     this.recruit,
     this.brand,
     this.category,
-    this.date,
+    this.fee,
+    this.feeNegotiable,
+    this.liveTime,
+    this.closeAt,
     this.descriptionHTML,
-    this.live,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) {
     return Campaign(
-      id: json['_id'] as String? ?? json['id'] as String?,
+      id: json['id'] as String?,
       title: json['title'] as String?,
+      thumbnailUrl: json['thumbnailUrl'] as String?,
       coverImageUrl: json['coverImageUrl'] as String?,
       type: json['type'] as String?,
       products: (json['products'] as List<dynamic>?)?.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList(),
       recruit: json['recruit'] != null ? Recruit.fromJson(json['recruit'] as Map<String, dynamic>) : null,
       brand: json['brand'] as String?,
       category: json['category'] as String?,
-      date: json['date'] as String?,
+      fee: json['fee'] as num?,
+      feeNegotiable: json['feeNegotiable'] as bool?,
+      liveTime: json['liveTime'] as String?,
+      closeAt: json['closeAt'] as String?,
       descriptionHTML: json['descriptionHTML'] as String?,
-      live: json['live'] != null ? Live.fromJson(json['live'] as Map<String, dynamic>) : null,
     );
   }
 }

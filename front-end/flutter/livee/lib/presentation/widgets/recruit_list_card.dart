@@ -13,11 +13,9 @@ class RecruitListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recruit = campaign.recruit;
-    final when =
-        recruit?.date != null ? DateTime.tryParse(recruit!.date!) : null;
-    final dateString =
-        when != null ? '${when.year}.${when.month}.${when.day}' : '';
+    // campaign 객체에서 직접 날짜 정보를 가져오기
+    final when = campaign.liveTime != null ? DateTime.tryParse(campaign.liveTime!) : null;
+    final dateString = when != null ? '${when.year}.${when.month}.${when.day}' : '';
 
     return InkWell(
       onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
@@ -54,14 +52,12 @@ class RecruitListCard extends StatelessWidget {
                   _buildMetaInfo(dateString),
                   const SizedBox(height: 10),
                   // 카테고리 뱃지
-                  if (recruit?.category != null &&
-                      recruit!.category!.isNotEmpty)
-                    _buildCategoryBadge(recruit.category!),
+                  if (campaign.category != null && campaign.category!.isNotEmpty)
+                    _buildCategoryBadge(campaign.category!),
                   const SizedBox(height: 8),
                   // 상세 설명
                   Text(
-                    recruit?.description?.replaceAll('\n', ' ').trim() ??
-                        '설명 없음',
+                    campaign.descriptionHTML?.replaceAll('\n', ' ').trim() ?? '설명 없음',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -83,22 +79,28 @@ class RecruitListCard extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Image.network(
-        campaign.coverImageUrl ??
-            'https://picsum.photos/seed/${campaign.id}/640/360',
+        campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/640/360',
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) =>
-            Container(color: Colors.grey[200]),
+        errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200]),
       ),
     );
   }
 
   /// 메타 정보 (날짜, 브랜드 등) 위젯
   Widget _buildMetaInfo(String dateString) {
+    // [추가] fee를 "30만원" 형태의 문자열로 변환합니다.
+    String feeText = '협의';
+    if (campaign.fee != null && campaign.fee! > 0) {
+      feeText = '${(campaign.fee! / 10000).round()}만원';
+    } else if (campaign.feeNegotiable == true) {
+      feeText = '협의';
+    }
+
     return Text(
       [
         if (dateString.isNotEmpty) '📅 $dateString',
         '🏷️ ${campaign.brand ?? '브랜드 미정'}',
-        '💸 ${campaign.recruit?.pay ?? '협의'}'
+        '💸 $feeText' // [수정] 변환된 feeText를 사용합니다.
       ].join('  |  '),
       style: TextStyle(
         fontSize: 13,

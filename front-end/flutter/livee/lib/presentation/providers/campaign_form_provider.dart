@@ -174,19 +174,19 @@ class CampaignFormProvider with ChangeNotifier {
         _products = campaign.products ?? [];
         // ... (기타 상품 관련 필드 채우기 로직)
       } else if (campaign.type == 'recruit') {
-        final recruit = campaign.recruit;
-        titleRecruitController.text = recruit?.title ?? '';
-        dateController.text = recruit?.date?.substring(0, 10) ?? '';
-        // TODO: API 응답 및 Recruit 모델에 deadline 필드 추가 필요
-        // deadlineController.text = recruit.deadline?.substring(0, 10) ?? '';
-        timeStartController.text = recruit?.timeStart ?? '';
-        timeEndController.text = recruit?.timeEnd ?? '';
-        locationController.text = recruit?.location ?? '';
-        // '30만원' 같은 문자열에서 숫자만 추출하여 payWanController에 설정
-        payWanController.text = recruit?.pay?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
-        payNegotiable = recruit?.payNegotiable ?? false;
-        categoryRecruitController.text = recruit?.category ?? '';
-        descRecruitController.text = recruit?.description ?? '';
+        // campaign 객체에서 직접 데이터를 가져오도록 수정
+        titleRecruitController.text = campaign.title ?? '';
+        dateController.text = campaign.liveTime?.substring(0, 10) ?? ''; // liveTime을 촬영일로 사용
+        deadlineController.text = campaign.closeAt?.substring(0, 10) ?? ''; // closeAt을 마감일로 사용
+        timeStartController.text = campaign.liveTime ?? ''; // liveTime을 시작 시간으로 사용
+        // timeEnd는 API에 없으므로 비워둠
+        // locationController.text = recruit?.location ?? ''; // recruit 객체의 location 사용
+
+        // fee(숫자)를 payWanController(문자열)에 설정
+        payWanController.text = campaign.fee != null ? (campaign.fee! / 10000).round().toString() : '';
+        payNegotiable = campaign.feeNegotiable ?? false;
+        categoryRecruitController.text = campaign.category ?? '';
+        descRecruitController.text = campaign.descriptionHTML ?? '';
 
         // 로드 후 계산 함수를 호출하여 미리보기 UI를 업데이트
         _updateDuration();

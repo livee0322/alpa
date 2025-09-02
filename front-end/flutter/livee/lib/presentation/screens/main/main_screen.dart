@@ -193,16 +193,29 @@ class _MainScreenState extends State<MainScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 브랜드명
                           Text(
-                            campaign.title ?? '무제',
+                            campaign.brand ?? '브랜드 미정',
+                            style: const TextStyle(
+                              color: Color(0xFF6B7280),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          // 제목
+                          Text(
+                            campaign.title ?? '제목 없음',
                             style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 2),
+                          // 촬영 시간
                           Text(
-                            recruit?.date ?? '',
+                            campaign.liveTime ?? '시간 미정',
                             style: const TextStyle(
                               color: Color(0xFF6B7280),
                               fontSize: 14,
