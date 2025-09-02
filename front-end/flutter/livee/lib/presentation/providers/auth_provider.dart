@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/user.dart';
 import 'package:livee/domain/usecases/auth_use_case.dart';
+import 'package:livee/service_locator.dart';
 
 class AuthProvider with ChangeNotifier {
-  final AuthUseCase _authUseCase;
+  // locator를 통해 의존성을 직접 주입
+  final AuthUseCase _authUseCase = locator<AuthUseCase>();
 
   bool _isLoggedIn = false;
   User? _user;
   String? _role;
 
-  AuthProvider(this._authUseCase) {
+  // 생성자
+  AuthProvider() {
     _checkInitialLoginStatus();
   }
 

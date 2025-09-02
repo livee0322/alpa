@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/di_container.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/providers/campaign_form_provider.dart';
+import 'package:livee/presentation/providers/recruit_list_provider.dart';
+import 'package:livee/presentation/providers/showhost_list_provider.dart';
 import 'package:livee/presentation/routes/app_router.dart';
+import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   // 웹 주소(URL)에서 '#' 문자를 제거하여 깨끗한 경로를 사용
   usePathUrlStrategy();
 
-  // DiContainer에서 AuthProvider 인스턴스를 가져옴
-  final authProvider = DiContainer.authProvider;
+  // 앱 시작 전 서비스 로케이터 설정 실행
+  setupLocator();
+
+  // GetIt을 통해 AuthProvider 인스턴스 가져오기
+  final authProvider = locator<AuthProvider>();
 
   // 라우터를 생성
   final router = createRouter(authProvider);
 
   runApp(
     MultiProvider(
-      // DiContainer에서 전체 Provider 목록을 가져와 설정
-      providers: DiContainer.providers,
+      providers: [
+        // 각 Provider를 GetIt을 통해 생성하도록 변경
+        ChangeNotifierProvider(create: (_) => locator<AuthProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<CampaignFormProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<RecruitListProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<ShowhostListProvider>()),
+
+        // Repository나 UseCase는 이제 Provider가 직접 locator에서 가져오므로 여기서 등록할 필요 없음
+      ],
       child: MyApp(router: router),
     ),
   );

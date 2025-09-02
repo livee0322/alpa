@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
+import 'package:livee/service_locator.dart';
 
 // '쇼호스트 목록' 화면의 상태를 관리하는 Provider
 class ShowhostListProvider with ChangeNotifier {
-  final PortfolioRepository _repository;
+  // locator를 통해 의존성을 직접 주입
+  final PortfolioRepository _repository = locator<PortfolioRepository>();
 
-  ShowhostListProvider(this._repository);
+  // 생성자
+  ShowhostListProvider();
 
   bool _isLoading = false;
   List<Portfolio> _allShowhosts = [];

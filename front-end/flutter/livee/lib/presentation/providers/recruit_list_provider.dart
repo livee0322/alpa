@@ -1,11 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/service_locator.dart';
 
 class RecruitListProvider with ChangeNotifier {
-  final CampaignUseCase _campaignUseCase;
+  // locator를 통해 의존성을 직접 주입
+  final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
 
-  RecruitListProvider(this._campaignUseCase);
+  // 생성자
+  RecruitListProvider();
 
   bool _isLoading = false;
   List<Campaign> _allRecruits = [];
@@ -23,8 +26,7 @@ class RecruitListProvider with ChangeNotifier {
     notifyListeners();
     try {
       // type='recruit'인 캠페인을 100개까지 넉넉하게 불러오기
-      _allRecruits =
-          await _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 100);
+      _allRecruits = await _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 100);
       // 초기 필터('deadline')를 적용
       applyFilter(_activeFilter);
     } catch (e) {
@@ -48,27 +50,21 @@ class RecruitListProvider with ChangeNotifier {
     switch (filterKey) {
       case 'deadline':
         filtered.retainWhere((c) {
-          final date = c.recruit?.date != null
-              ? DateTime.tryParse(c.recruit!.date!)
-              : null;
-          return date != null &&
-              date.isAfter(today.subtract(const Duration(days: 1)));
+          final date = c.recruit?.date != null ? DateTime.tryParse(c.recruit!.date!) : null;
+          return date != null && date.isAfter(today.subtract(const Duration(days: 1)));
         });
-        filtered.sort((a, b) =>
-            (DateTime.tryParse(a.recruit!.date!) ?? DateTime(0))
-                .compareTo(DateTime.tryParse(b.recruit!.date!) ?? DateTime(0)));
+        filtered.sort((a, b) => (DateTime.tryParse(a.recruit!.date!) ?? DateTime(0))
+            .compareTo(DateTime.tryParse(b.recruit!.date!) ?? DateTime(0)));
         break;
       case 'mukbang':
-        filtered.retainWhere((c) =>
-            '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
-                .toLowerCase()
-                .contains(RegExp(r'먹방|food|mukbang')));
+        filtered.retainWhere((c) => '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
+            .toLowerCase()
+            .contains(RegExp(r'먹방|food|mukbang')));
         break;
       case 'beauty':
-        filtered.retainWhere((c) =>
-            '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
-                .toLowerCase()
-                .contains(RegExp(r'뷰티|beauty|메이크업|코스메틱')));
+        filtered.retainWhere((c) => '${c.title} ${c.recruit?.description} ${c.recruit?.category}'
+            .toLowerCase()
+            .contains(RegExp(r'뷰티|beauty|메이크업|코스메틱')));
         break;
       case 'pay':
         filtered.sort((a, b) {

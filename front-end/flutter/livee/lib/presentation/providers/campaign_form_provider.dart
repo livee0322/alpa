@@ -7,16 +7,15 @@ import 'package:livee/data/core/api_client.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/models/product.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/service_locator.dart';
 
 class CampaignFormProvider with ChangeNotifier {
-  final CampaignUseCase _campaignUseCase;
-  final ApiClient _apiClient;
+  // locator를 통해 의존성을 직접 주입
+  final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
+  final ApiClient _apiClient = locator<ApiClient>();
 
   // 컨트롤러 리스너를 추가, 실시간 UI 업데이트 로직 설정
-  CampaignFormProvider(
-    this._campaignUseCase,
-    this._apiClient,
-  ) {
+  CampaignFormProvider() {
     payWanController.addListener(_updatePayWanPreview);
     timeStartController.addListener(_updateDuration);
     timeEndController.addListener(_updateDuration);
