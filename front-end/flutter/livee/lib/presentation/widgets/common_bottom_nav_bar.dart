@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/widgets/login_prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
 class CommonBottomNavBar extends StatelessWidget {
@@ -64,7 +64,7 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
         final authRequiredRoutes = ['/mypage', '/library']; // 예시: 마이페이지, 라이브러리
 
         if (authRequiredRoutes.contains(path) && !isLoggedIn) {
-          showCustomToast(context, '로그인이 필요한 서비스입니다.',type: ToastType.error);
+          showLoginPromptDialog(context);
         } else {
           router.go(path);
         }
