@@ -14,7 +14,7 @@ void showCustomToast(BuildContext context, String message, {ToastType type = Toa
   overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
       // 화면 하단 중앙에 위치
-      bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+      bottom: MediaQuery.of(context).viewInsets.bottom + 100,
       left: 24,
       right: 24,
       child: CustomToastWidget(

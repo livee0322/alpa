@@ -138,37 +138,16 @@ GoRouter createRouter(AuthProvider authProvider) {
         builder: (context, state) => const ServiceScreen(),
       ),
     ],
-    redirect: (context, state) {
+    redirect: (context, GoRouterState state) {
       final isLoggedIn = authProvider.isLoggedIn;
-      final role = authProvider.role;
       final location = state.uri.toString();
 
-      final brandOnlyRoutes = ['/campaigns', '/campaign-form', '/casting-request'];
-      final showhostOnlyRoutes = ['/portfolio-edit', '/my-applications', '/bookmarked-recruits', '/received-offers'];
-      final authRequiredRoutes = brandOnlyRoutes + showhostOnlyRoutes + ['/mypage', '/account-edit'];
-
-      if (authRequiredRoutes.any((route) => location.startsWith(route))) {
-        if (!isLoggedIn) {
-          // showCustomToast 함수 사용
-          showCustomToast(context, '로그인이 필요한 서비스입니다.');
-          return '/';
-        }
-
-        if (brandOnlyRoutes.any((route) => location.startsWith(route)) && role != 'brand') {
-          showCustomToast(context, '브랜드 회원만 이용 가능합니다.', type: ToastType.error);
-          return '/';
-        }
-
-        if (showhostOnlyRoutes.any((route) => location.startsWith(route)) && role != 'showhost') {
-          showCustomToast(context, '쇼호스트 회원만 이용 가능합니다.', type: ToastType.error);
-          return '/';
-        }
-      }
-
+      // 로그인한 사용자가 로그인/회원가입 페이지로 가려고 하면 메인으로 리디렉션
       if (isLoggedIn && (location == '/login' || location == '/signup')) {
         return '/';
       }
 
+      // 그 외의 경우는 모두 허용 (접근 제어는 UI 단에서 처리)
       return null;
     },
   );
