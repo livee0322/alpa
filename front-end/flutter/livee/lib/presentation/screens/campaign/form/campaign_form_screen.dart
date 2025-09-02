@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/screens/campaign_form/widget/campaign_type_selector.dart';
-import 'package:livee/presentation/screens/campaign_form/widget/form_section_container.dart';
-import 'package:livee/presentation/screens/campaign_form/widget/image_picker_section.dart';
-import 'package:livee/presentation/screens/campaign_form/widget/product_form_section.dart';
-import 'package:livee/presentation/screens/campaign_form/widget/recruit_form_section.dart';
+import 'package:livee/presentation/screens/campaign/form/widgets/campaign_type_selector.dart';
+import 'package:livee/presentation/screens/campaign/form/widgets/form_section_container.dart';
+import 'package:livee/presentation/screens/campaign/form/widgets/image_picker_section.dart';
+import 'package:livee/presentation/screens/campaign/form/widgets/product_form_section.dart';
+import 'package:livee/presentation/screens/campaign/form/widgets/recruit_form_section.dart';
 import 'package:provider/provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';

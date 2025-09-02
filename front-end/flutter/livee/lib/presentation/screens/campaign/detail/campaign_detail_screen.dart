@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:provider/provider.dart';
-import 'campaign_detail/widgets/detail_meta_card.dart';
-import 'campaign_detail/widgets/detail_product_card.dart';
-import 'campaign_detail/widgets/detail_sticky_bottom_bar.dart';
+import 'widgets/detail_meta_card.dart';
+import 'widgets/detail_product_card.dart';
+import 'widgets/detail_sticky_bottom_bar.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
   final String campaignId;
