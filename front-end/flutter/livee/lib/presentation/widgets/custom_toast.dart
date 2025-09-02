@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 // 토스트 메시지의 유형 (성공, 실패/에러)
-enum ToastType { success, error }
+enum ToastType { success, error, info }
 
 // 커스텀 토스트 메시지를 화면에 표시하는 함수
-void showCustomToast(BuildContext context, String message, {ToastType type = ToastType.error}) {
+void showCustomToast(BuildContext context, String message, {ToastType type = ToastType.info}) {
   // OverlayState를 찾음
   final overlay = Overlay.of(context);
   // Overlay에 삽입될 OverlayEntry 생성
@@ -85,13 +85,22 @@ class _CustomToastWidgetState extends State<CustomToastWidget> with SingleTicker
     IconData iconData;
 
     switch (widget.type) {
+      // 성공
       case ToastType.success:
         backgroundColor = const Color(0xFF2E7D32); // 진한 초록색
         iconData = Icons.check_circle_outline;
         break;
+
+      // 실패
       case ToastType.error:
         backgroundColor = const Color(0xFFC62828); // 진한 붉은색
         iconData = Icons.error_outline;
+        break;
+
+      // 준비
+      case ToastType.info:
+        backgroundColor = const Color(0xFFFFA000); // 주황/노란색 계열
+        iconData = Icons.info_outline;
         break;
     }
 

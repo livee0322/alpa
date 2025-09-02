@@ -43,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         return Scaffold(
+          backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

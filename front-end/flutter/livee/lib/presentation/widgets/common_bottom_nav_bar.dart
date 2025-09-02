@@ -64,7 +64,7 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
         final authRequiredRoutes = ['/mypage', '/library']; // 예시: 마이페이지, 라이브러리
 
         if (authRequiredRoutes.contains(path) && !isLoggedIn) {
-          showCustomToast(context, '로그인이 필요한 서비스입니다.');
+          showCustomToast(context, '로그인이 필요한 서비스입니다.',type: ToastType.error);
         } else {
           router.go(path);
         }
