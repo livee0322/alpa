@@ -1,8 +1,7 @@
-// lib/presentation/screens/login_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -193,24 +192,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _login,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 54),
-                      backgroundColor: const Color(0xFF6C63FF),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      disabledBackgroundColor: const Color(0xFFD8DBE2),
-                    ),
-                    child: Text(
-                      _isLoading ? '로그인 중...' : '로그인',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                  PrimaryActionButton(
+                    text: _isLoading ? '로그인 중...' : '로그인',
+                    onPressed: _login,
+                    isLoading: _isLoading,
                   ),
                   const SizedBox(height: 26),
                   Row(

@@ -6,6 +6,7 @@ import 'package:livee/presentation/screens/campaign/form/widgets/form_section_co
 import 'package:livee/presentation/screens/campaign/form/widgets/image_picker_section.dart';
 import 'package:livee/presentation/screens/campaign/form/widgets/product_form_section.dart';
 import 'package:livee/presentation/screens/campaign/form/widgets/recruit_form_section.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:provider/provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
@@ -32,9 +33,8 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
     // 수정 모드일 경우 기존 데이터 로드
     if (widget.campaignId != null) {
       // 위젯 트리가 빌드된 후 Provider에 접근하기 위해 사용
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          Provider.of<CampaignFormProvider>(context, listen: false)
-              .loadCampaignForEdit(widget.campaignId!));
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => Provider.of<CampaignFormProvider>(context, listen: false).loadCampaignForEdit(widget.campaignId!));
     }
   }
 
@@ -48,8 +48,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
               children: [
                 // 공통 헤더
                 Consumer<AuthProvider>(
-                  builder: (context, authProvider, child) =>
-                      CommonHeader(isLoggedIn: authProvider.isLoggedIn),
+                  builder: (context, authProvider, child) => CommonHeader(isLoggedIn: authProvider.isLoggedIn),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -62,9 +61,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: Text(
-                            provider.editingCampaign == null
-                                ? '캠페인 등록'
-                                : '캠페인 수정',
+                            provider.editingCampaign == null ? '캠페인 등록' : '캠페인 수정',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -79,8 +76,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                               decoration: const InputDecoration(
                                 labelText: '캠페인 제목',
                                 hintText: '예) 9월 2주차 뷰티 런칭',
-                                helperText:
-                                    '본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.',
+                                helperText: '본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(12),
@@ -142,12 +138,12 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
-          onPressed:
-              provider.isLoading ? null : () => GoRouter.of(context).pop(),
+          onPressed: provider.isLoading ? null : () => GoRouter.of(context).pop(),
           child: const Text('취소'),
         ),
         const SizedBox(width: 8),
-        ElevatedButton(
+        PrimaryActionButton(
+          text: provider.editingCampaign == null ? '등록하기' : '수정 저장',
           onPressed: provider.isLoading
               ? null
               : () async {
@@ -167,16 +163,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                     }
                   }
                 },
-          child: provider.isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(provider.editingCampaign == null ? '등록하기' : '수정 저장'),
+          isLoading: provider.isLoading,
         ),
       ],
     );

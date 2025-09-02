@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
+import 'package:livee/presentation/widgets/buttons/standard_button.dart';
 
 // 상품 URL을 입력하고 불러오기 기능을 담당하는 위젯
 class ProductUrlInputSection extends StatelessWidget {
@@ -41,13 +42,11 @@ class ProductUrlInputSection extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             // '불러오기' 버튼
-            SizedBox(
+            StandardButton(
+              text: '불러오기',
+              onPressed: () => _addProduct(context),
+              isLoading: provider.isLoading,
               height: 60, // TextFormField 높이에 맞춤
-              child: ElevatedButton(
-                onPressed:
-                    provider.isLoading ? null : () => _addProduct(context),
-                child: const Text('불러오기'),
-              ),
             ),
           ],
         ),
@@ -65,13 +64,11 @@ class ProductUrlInputSection extends StatelessWidget {
       await provider.addProductFromUrl(url);
       provider.productUrlController.clear();
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('상품을 추가했습니다.')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('상품을 추가했습니다.')));
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('상품 불러오기 실패: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('상품 불러오기 실패: $e')));
       }
     } finally {
       provider.setLoading(false);

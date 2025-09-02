@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 
 // 캠페인 상세 화면 하단에 고정되는 액션 버튼 바
 class DetailStickyBottomBar extends StatelessWidget {
@@ -51,21 +52,11 @@ class DetailStickyBottomBar extends StatelessWidget {
             ),
           ),
           // 메인 액션 버튼
-          ElevatedButton(
-            onPressed: onButtonPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C63FF),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              minimumSize: const Size(148, 48),
-            ),
-            child: Text(
-              buttonLabel,
-              style: const TextStyle(
-                fontWeight: FontWeight.w800,
-              ),
+          SizedBox(
+            width: 148,
+            child: PrimaryActionButton(
+              text: buttonLabel,
+              onPressed: onButtonPressed,
             ),
           ),
         ],

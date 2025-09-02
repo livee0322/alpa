@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/custom_cropper_dialog.dart';
 
@@ -174,22 +175,12 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             label: '유튜브/영상 링크',
           ),
           const SizedBox(height: 32),
-          ElevatedButton(
+          PrimaryActionButton(
+            text: '저장하기',
             onPressed: () {
-              //
+              // 저장 로직
             },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: _isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text('저장하기'),
+            isLoading: _isLoading,
           ),
         ],
       ),

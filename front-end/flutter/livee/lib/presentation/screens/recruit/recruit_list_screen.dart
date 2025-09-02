@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
+import 'package:livee/presentation/widgets/buttons/secondary_chip_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/recruit_list_card.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +17,8 @@ class _RecruitListScreenState extends State<RecruitListScreen> {
   void initState() {
     super.initState();
     // 화면이 처음 빌드될 때 공고 데이터를 불러오기
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        Provider.of<RecruitListProvider>(context, listen: false)
-            .fetchRecruits());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => Provider.of<RecruitListProvider>(context, listen: false).fetchRecruits());
   }
 
   @override
@@ -65,22 +65,10 @@ class _RecruitListScreenState extends State<RecruitListScreen> {
           final isSelected = provider.activeFilter == entry.key;
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: ElevatedButton(
+            child: SecondaryChipButton(
+              text: entry.value,
+              isSelected: isSelected,
               onPressed: () => provider.applyFilter(entry.key),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isSelected ? const Color(0xFF6C63FF) : Colors.white,
-                foregroundColor: isSelected ? Colors.white : Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                  side: BorderSide(
-                    color: isSelected
-                        ? const Color(0xFF6C63FF)
-                        : Colors.grey[300]!,
-                  ),
-                ),
-              ),
-              child: Text(entry.value),
             ),
           );
         }).toList(),

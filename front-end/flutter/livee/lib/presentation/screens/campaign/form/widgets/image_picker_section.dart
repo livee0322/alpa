@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
+import 'package:livee/presentation/widgets/buttons/standard_button.dart';
 
 // 대표 썸네일 이미지 선택 및 업로드를 담당하는 위젯
 class ImagePickerSection extends StatelessWidget {
@@ -41,15 +42,10 @@ class ImagePickerSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         // 이미지 선택 및 업로드 버튼
-        ElevatedButton(
-          onPressed:
-              provider.isLoading ? null : () => _pickAndUploadImage(context),
-          child: provider.isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('이미지 선택 및 업로드'),
+        StandardButton(
+          text: '이미지 선택 및 업로드',
+          onPressed: () => _pickAndUploadImage(context),
+          isLoading: provider.isLoading,
         ),
       ],
     );
@@ -61,14 +57,12 @@ class ImagePickerSection extends StatelessWidget {
     if (result != null && result.files.single.bytes != null) {
       provider.setLoading(true);
       try {
-        final url = await CloudinaryUploader().uploadImage(
-            result.files.single.bytes!,
-            fileName: result.files.single.name);
+        final url =
+            await CloudinaryUploader().uploadImage(result.files.single.bytes!, fileName: result.files.single.name);
         provider.imageUrlController.text = url;
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
         }
       } finally {
         provider.setLoading(false);

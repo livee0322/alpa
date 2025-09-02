@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 
 // 쇼호스트의 상세 프로필 정보를 보여주는 화면
 class ShowhostDetailScreen extends StatelessWidget {
@@ -26,12 +27,9 @@ class ShowhostDetailScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildInfoSection(),
             const SizedBox(height: 30),
-            ElevatedButton(
+            PrimaryActionButton(
+              text: '섭외 요청하기',
               onPressed: () => GoRouter.of(context).go('/casting-request', extra: showhostId),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: const Text('섭외 요청하기'),
             ),
           ],
         ),

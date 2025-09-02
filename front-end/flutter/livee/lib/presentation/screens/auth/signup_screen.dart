@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -180,24 +181,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                   SizedBox(height: _errorMessage.isNotEmpty ? 16 : 0),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _signup,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 54),
-                      backgroundColor: const Color(0xFF5B5EE6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      disabledBackgroundColor: const Color(0xFFE5E7EB),
-                    ),
-                    child: Text(
-                      _isLoading ? '가입 중...' : '가입하기',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+                  PrimaryActionButton(
+                    text: '가입하기',
+                    onPressed: _signup,
+                    isLoading: _isLoading,
                   ),
                   const SizedBox(height: 16),
                   Row(

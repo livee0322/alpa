@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 
 /// 브랜드가 쇼호스트에게 섭외를 요청하는 폼 화면
 class CastingRequestScreen extends StatefulWidget {
@@ -65,19 +66,16 @@ class _CastingRequestScreenState extends State<CastingRequestScreen> {
                 validator: (value) => (value?.isEmpty ?? true) ? '메시지를 입력해주세요.' : null,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              PrimaryActionButton(
+                text: '섭외 요청하기',
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // TODO: API 연동하여 섭외 요청 전송
+                    // TODO: API 연동
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('섭외 요청이 전송되었습니다.')),
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text('섭외 요청하기'),
               ),
             ],
           ),
