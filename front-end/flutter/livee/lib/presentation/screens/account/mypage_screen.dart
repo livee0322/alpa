@@ -51,15 +51,6 @@ class MypageScreen extends StatelessWidget {
     final role = authProvider.role;
     final isLoggedIn = authProvider.isLoggedIn;
 
-    // 쇼호스트 메뉴를 위한 공통 onTap
-    void handleShowhostMenuTap(String path) {
-      if (role == 'showhost') {
-        GoRouter.of(context).go(path);
-      } else {
-        _showAccessDeniedDialog(context);
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
