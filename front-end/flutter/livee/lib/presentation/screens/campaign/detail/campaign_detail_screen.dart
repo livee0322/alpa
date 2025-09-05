@@ -33,7 +33,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('캠페인 상세'),
+        title: const Text('상세 공고'),
       ),
       body: FutureBuilder<Campaign>(
         future: _campaignFuture,
@@ -45,7 +45,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             return Center(child: Text('에러: ${snapshot.error}'));
           }
           if (!snapshot.hasData) {
-            return const Center(child: Text('캠페인 정보를 찾을 수 없습니다.'));
+            return const Center(child: Text('공고 정보를 찾을 수 없습니다.'));
           }
 
           final campaign = snapshot.data!;

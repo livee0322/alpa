@@ -26,7 +26,7 @@ class ProductFormSection extends StatelessWidget {
               child: _buildTextField(
                 controller: provider.titleController,
                 label: '공개 제목',
-                hint: '상품 캠페인 제목',
+                hint: '상품 공고 제목',
                 isRequired: true,
               ),
             ),

@@ -62,7 +62,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: Text(
-                            provider.editingCampaign == null ? '캠페인 등록' : '캠페인 수정',
+                            provider.editingCampaign == null ? '공고 등록' : '공고 수정',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -70,12 +70,12 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                           ),
                         ),
                         FormSectionContainer(
-                          title: '캠페인 제목 (내부용)',
+                          title: '공고 제목',
                           children: [
                             TextFormField(
                               controller: provider.internalTitleController,
                               decoration: const InputDecoration(
-                                labelText: '캠페인 제목',
+                                labelText: '공고 제목',
                                 hintText: '예) 9월 2주차 뷰티 런칭',
                                 helperText: '본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.',
                                 border: OutlineInputBorder(
@@ -96,7 +96,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                         ),
 
                         FormSectionContainer(
-                          title: '캠페인 유형',
+                          title: '공고 유형',
                           children: [
                             CampaignTypeSelector(provider: provider),
                           ],
@@ -105,7 +105,7 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
                         // 선택된 유형에 따라 다른 폼 섹션을 보여줌
                         if (provider.campaignType == 'product')
                           FormSectionContainer(
-                            title: '상품 캠페인',
+                            title: '상품 공고',
                             children: [
                               ProductFormSection(provider: provider),
                             ],

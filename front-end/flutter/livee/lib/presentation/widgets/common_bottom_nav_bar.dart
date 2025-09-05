@@ -33,7 +33,7 @@ class CommonBottomNavBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildNavItem(context, authProvider, CupertinoIcons.home, '홈', '/'),
-                    _buildNavItem(context, authProvider, CupertinoIcons.archivebox, '모집캠페인', '/recruits'),
+                    _buildNavItem(context, authProvider, CupertinoIcons.archivebox, '모집공고', '/recruits'),
                     _buildNavItem(context, authProvider, CupertinoIcons.bookmark, '라이브러리', '/library'),
                     _buildNavItem(context, authProvider, CupertinoIcons.person, '인플루언서', '/showhosts'),
                     _buildNavItem(context, authProvider, CupertinoIcons.settings, '마이페이지', '/mypage'),

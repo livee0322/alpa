@@ -14,7 +14,7 @@ class CampaignTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _buildTypeButton('product', '상품 캠페인', provider),
+        _buildTypeButton('product', '상품 공고', provider),
         const SizedBox(width: 8),
         _buildTypeButton('recruit', '쇼호스트 모집', provider),
       ],

@@ -33,7 +33,7 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('캠페인 관리'),
+        title: const Text('공고 관리'),
         actions: [
           IconButton(
             onPressed: () => GoRouter.of(context).go('/campaign-form'),
@@ -62,7 +62,7 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                   );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
-                    child: Text('캠페인이 없습니다.'),
+                    child: Text('등록된 공고가 없습니다.'),
                   );
                 } else {
                   final campaigns = snapshot.data!;
@@ -143,7 +143,7 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                                 context: context,
                                                 builder: (context) => AlertDialog(
                                                   title: const Text('삭제 확인'),
-                                                  content: const Text('이 캠페인을 삭제하시겠어요?'),
+                                                  content: const Text('이 공고를 삭제하시겠어요?'),
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () => Navigator.of(context).pop(false),

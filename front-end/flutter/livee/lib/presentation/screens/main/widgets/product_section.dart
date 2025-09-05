@@ -26,7 +26,7 @@ class ProductSection extends StatelessWidget {
         }
         // 데이터가 없거나 비어있을 때
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('등록된 상품 캠페인이 없습니다'));
+          return const Center(child: Text('등록된 상품 공고가 없습니다'));
         }
 
         // 데이터가 있을 때 2열 그리드 뷰로 표시
