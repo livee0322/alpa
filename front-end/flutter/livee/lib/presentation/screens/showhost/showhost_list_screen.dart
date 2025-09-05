@@ -17,8 +17,9 @@ class _ShowhostListScreenState extends State<ShowhostListScreen> {
   void initState() {
     super.initState();
     // 화면이 처음 빌드될 때 데이터를 불러옵니다.
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => Provider.of<ShowhostListProvider>(context, listen: false).fetchShowhosts());
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        Provider.of<ShowhostListProvider>(context, listen: false)
+            .fetchShowhosts());
   }
 
   @override
@@ -99,11 +100,16 @@ class _ShowhostListScreenState extends State<ShowhostListScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundImage: host.profileImage != null ? NetworkImage(host.profileImage!) : null,
-              child: host.profileImage == null ? const Icon(Icons.person) : null,
+              backgroundImage: host.profileImage != null
+                  ? NetworkImage(host.profileImage!)
+                  : null,
+              child:
+                  host.profileImage == null ? const Icon(Icons.person) : null,
             ),
-            title: Text(host.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('경력: ${host.experienceYears ?? '-'}년 | 지역: ${host.region ?? '-'}'),
+            title: Text(host.name ?? '이름 없음',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(
+                '경력: ${host.experienceYears ?? '-'}년 | 지역: ${host.region ?? '-'}'),
             onTap: () => GoRouter.of(context).go('/showhosts/${host.id}'),
           ),
         );

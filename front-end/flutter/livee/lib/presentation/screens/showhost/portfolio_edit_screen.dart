@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
+import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/service_locator.dart';
 
 // 최근 라이브 링크 입력을 관리하기 위한 컨트롤러 그룹
 class RecentLiveControllers {
@@ -62,11 +64,17 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   final _tagController = TextEditingController();
   final List<String> _tags = [];
 
+  // 레포지토리 인스턴스
+  final PortfolioRepository _portfolioRepository =
+      locator<PortfolioRepository>();
+
   @override
   void initState() {
     super.initState();
     // 초기 상태로 라이브 링크 입력 필드 하나를 추가
     _addRecentLiveLink();
+    // 화면 로딩 시 기존 포트폴리오 데이터 불러오기
+    _loadMyPortfolio();
   }
 
   @override
@@ -135,6 +143,100 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  // --- [추가] 데이터 로딩 및 저장 로직 ---
+
+  Future<void> _loadMyPortfolio() async {
+    setState(() => _isLoading = true);
+    try {
+      final portfolio = await _portfolioRepository.getMyPortfolio();
+      // 불러온 데이터로 컨트롤러 및 상태 변수 채우기
+      setState(() {
+        _nicknameController.text = portfolio.nickname ?? '';
+        _oneLineIntroController.text = portfolio.oneLineIntro ?? '';
+        _detailedIntroController.text = portfolio.detailedIntro ?? '';
+        _experienceYearsController.text =
+            portfolio.experienceYears?.toString() ?? '';
+        _ageController.text = portfolio.age?.toString() ?? '';
+        _mainLinkController.text = portfolio.mainLink ?? '';
+        _publicScope = portfolio.publicScope ?? '전체공개';
+        _isReceivingOffers = portfolio.isReceivingOffers ?? true;
+        _mainThumbnailUrl = portfolio.mainThumbnailUrl;
+        _backgroundImageUrl = portfolio.backgroundImageUrl;
+        _subThumbnailUrls.addAll(portfolio.subThumbnailUrls ?? []);
+        _tags.addAll(portfolio.tags ?? []);
+
+        // 최근 라이브 링크 데이터 채우기
+        _recentLiveControllers.clear();
+        if (portfolio.recentLives != null &&
+            portfolio.recentLives!.isNotEmpty) {
+          for (var live in portfolio.recentLives!) {
+            final controllers = RecentLiveControllers();
+            controllers.titleController.text = live.title;
+            controllers.urlController.text = live.url;
+            controllers.dateController.text = live.date;
+            _recentLiveControllers.add(controllers);
+          }
+        } else {
+          _addRecentLiveLink(); // 데이터가 없으면 기본 입력창 하나 추가
+        }
+      });
+    } catch (e) {
+      // 데이터를 불러오지 못해도 에러를 띄우지 않고 빈 폼을 보여줌
+      debugPrint("포트폴리오 로딩 실패: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _savePortfolio(String status) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // 화면의 모든 데이터를 Map으로 취합
+      final Map<String, dynamic> payload = {
+        'nickname': _nicknameController.text,
+        'oneLineIntro': _oneLineIntroController.text,
+        'detailedIntro': _detailedIntroController.text,
+        'experienceYears': int.tryParse(_experienceYearsController.text),
+        'age': int.tryParse(_ageController.text),
+        'mainLink': _mainLinkController.text,
+        'publicScope': _publicScope,
+        'isReceivingOffers': _isReceivingOffers,
+        'mainThumbnailUrl': _mainThumbnailUrl,
+        'backgroundImageUrl': _backgroundImageUrl,
+        'subThumbnailUrls': _subThumbnailUrls,
+        'tags': _tags,
+        'recentLives': _recentLiveControllers
+            .map((c) => {
+                  'title': c.titleController.text,
+                  'url': c.urlController.text,
+                  'date': c.dateController.text,
+                })
+            .toList(),
+        'status': status, // 'draft' 또는 'published'
+      };
+
+      await _portfolioRepository.saveMyPortfolio(payload);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('저장 실패: $e')));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -381,11 +483,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
-          onPressed: _isLoading
-              ? null
-              : () {
-                  // TODO: 임시저장 로직
-                },
+          onPressed: _isLoading ? null : () => _savePortfolio('draft'),
           child: const Text('임시저장'),
         ),
         const SizedBox(width: 8),
@@ -393,11 +491,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
           text: '발행',
           isFullWidth: false,
           isLoading: _isLoading,
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              // TODO: 발행(저장) 로직
-            }
-          },
+          onPressed: () => _savePortfolio('published'),
         ),
       ],
     );

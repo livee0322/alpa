@@ -12,7 +12,8 @@ class PortfolioRepository {
     final response = await _apiClient.get('/portfolio/all');
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> jsonList =
+          jsonDecode(utf8.decode(response.bodyBytes));
       return jsonList.map((json) => Portfolio.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load portfolios');
@@ -24,9 +25,17 @@ class PortfolioRepository {
     final response = await _apiClient.get('/portfolios/my');
     if (response.statusCode == 200) {
       final json = jsonDecode(utf8.decode(response.bodyBytes));
-      return Portfolio.fromJson(json);
+      return Portfolio.fromJson(json['data'] ?? json);
     } else {
       throw Exception('Failed to load my portfolio');
+    }
+  }
+
+  // 내 포트폴리오 저장/수정 (PUT /portfolios/my)
+  Future<void> saveMyPortfolio(Map<String, dynamic> data) async {
+    final response = await _apiClient.put('/portfolios/my', body: data);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Failed to save portfolio: ${response.body}');
     }
   }
 
@@ -44,7 +53,8 @@ class PortfolioRepository {
   Future<List<Portfolio>> getFeaturedPortfolios() async {
     final response = await _apiClient.get('/portfolios/public/featured');
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> jsonList =
+          jsonDecode(utf8.decode(response.bodyBytes));
       return jsonList.map((json) => Portfolio.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load featured portfolios');
