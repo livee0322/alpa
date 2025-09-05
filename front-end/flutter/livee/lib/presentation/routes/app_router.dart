@@ -81,7 +81,8 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: '/portfolio-edit',
-        builder: (context, state) => const PortfolioEditScreen(),
+        builder: (context, state) =>
+            PortfolioEditScreen(portfolioId: state.extra as String?),
       ),
       GoRoute(
         path: '/my-portfolios',

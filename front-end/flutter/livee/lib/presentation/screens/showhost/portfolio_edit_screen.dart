@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
@@ -27,7 +28,11 @@ class RecentLiveControllers {
 
 // 쇼호스트가 자신의 포트폴리오를 등록/수정하는 화면
 class PortfolioEditScreen extends StatefulWidget {
-  const PortfolioEditScreen({super.key});
+  final String? portfolioId; // portfolioId를 받아 생성/수정 모드를 구분
+  const PortfolioEditScreen({
+    super.key,
+    this.portfolioId,
+  });
 
   @override
   State<PortfolioEditScreen> createState() => _PortfolioEditScreenState();
@@ -153,9 +158,17 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   // --- [추가] 데이터 로딩 및 저장 로직 ---
 
   Future<void> _loadMyPortfolio() async {
+    // '수정 모드'일 경우에만 데이터를 불러오도록 변경
+    if (widget.portfolioId == null) {
+      _addRecentLiveLink(); // '생성 모드'일 경우, 기본 입력 필드 하나만 추가
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
-      final portfolio = await _portfolioRepository.getMyPortfolio();
+      // ID를 이용해 특정 포트폴리오 정보만 가져옴
+      final portfolio =
+          await _portfolioRepository.getPortfolioById(widget.portfolioId!);
       // 불러온 데이터로 컨트롤러 및 상태 변수 채우기
       setState(() {
         _nicknameController.text = portfolio.nickname ?? '';
@@ -188,8 +201,10 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
         }
       });
     } catch (e) {
-      // 데이터를 불러오지 못해도 에러를 띄우지 않고 빈 폼을 보여줌
-      debugPrint("포트폴리오 로딩 실패: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('포트폴리오 정보를 불러오는 데 실패했습니다: $e')));
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -225,14 +240,25 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
         'status': status, // 'draft' 또는 'published'
       };
 
-      await _portfolioRepository.saveMyPortfolio(payload);
+      // 생성/수정 API를 조건부로 호출
+      if (widget.portfolioId == null) {
+        // 생성
+        await _portfolioRepository.createPortfolio(payload);
+      } else {
+        // 수정
+        await _portfolioRepository.updatePortfolio(
+            widget.portfolioId!, payload);
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
+            content:
+                Text('포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.'),
+          ),
         );
+        // 저장 성공 후 목록 화면으로 이동
+        GoRouter.of(context).go('/my-portfolios');
       }
     } catch (e) {
       if (mounted) {

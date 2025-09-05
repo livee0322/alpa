@@ -19,9 +19,45 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: 백엔드에 '내 포트폴리오 목록' API가 준비되면 해당 메소드로 교체해야 합니다.
-    // 현재는 임시로 모든 공개 포트폴리오를 불러오는 API를 사용합니다.
-    _portfoliosFuture = locator<PortfolioRepository>().getAllPublicPortfolios();
+    _loadPortfolios();
+  }
+
+  // 목록을 불러오는 함수
+  void _loadPortfolios() {
+    setState(() {
+      _portfoliosFuture = locator<PortfolioRepository>().getMyPortfolioList();
+    });
+  }
+
+  // 삭제 로직
+  Future<void> _deletePortfolio(String id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('삭제 확인'),
+        content: const Text('정말로 이 포트폴리오를 삭제하시겠습니까?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('취소')),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('삭제')),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await locator<PortfolioRepository>().deletePortfolio(id);
+        _loadPortfolios(); // 삭제 후 목록 새로고침
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+        }
+      }
+    }
   }
 
   @override
@@ -102,7 +138,8 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
                 Expanded(
                   child: Text(
                     portfolio.name ?? '무명',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -111,16 +148,21 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildActionButton(icon: Icons.open_in_new, label: '보기', onPressed: () {}),
+                _buildActionButton(
+                    icon: Icons.open_in_new, label: '보기', onPressed: () {}),
                 const SizedBox(width: 8),
-                _buildActionButton(icon: Icons.edit, label: '수정', onPressed: () {
-                  // TODO: 수정 페이지로 이동 시 portfolio.id 전달
-                  GoRouter.of(context).go('/portfolio-edit');
-                }),
+                _buildActionButton(
+                  icon: Icons.edit,
+                  label: '수정',
+                  onPressed: () => GoRouter.of(context)
+                      .go('/portfolio-edit', extra: portfolio.id),
+                ),
                 const SizedBox(width: 8),
-                _buildActionButton(icon: Icons.delete, label: '삭제', onPressed: () {
-                  // TODO: 삭제 확인 다이얼로그 및 API 연동
-                }, color: Colors.red),
+                _buildActionButton(
+                    icon: Icons.delete,
+                    label: '삭제',
+                    onPressed: () => _deletePortfolio(portfolio.id),
+                    color: Colors.red),
               ],
             )
           ],
