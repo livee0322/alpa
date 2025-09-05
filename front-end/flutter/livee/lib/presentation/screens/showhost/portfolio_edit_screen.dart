@@ -1,3 +1,6 @@
+// lib/presentation/screens/showhost/portfolio_edit_screen.dart
+
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +10,14 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/service_locator.dart';
+
+// 로컬 파일과 네트워크 URL을 구분하기 위한 헬퍼 클래스
+class PortfolioImage {
+  final Uint8List? localBytes;
+  final String? networkUrl;
+
+  PortfolioImage({this.localBytes, this.networkUrl});
+}
 
 // 최근 라이브 링크 입력을 관리하기 위한 컨트롤러 그룹
 class RecentLiveControllers {
@@ -26,9 +37,9 @@ class RecentLiveControllers {
   }
 }
 
-// 쇼호스트가 자신의 포트폴리오를 등록/수정하는 화면
 class PortfolioEditScreen extends StatefulWidget {
-  final String? portfolioId; // portfolioId를 받아 생성/수정 모드를 구분
+  final String? portfolioId;
+
   const PortfolioEditScreen({
     super.key,
     this.portfolioId,
@@ -42,44 +53,32 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  // 이미지 URL
-  String? _mainThumbnailUrl;
-  String? _backgroundImageUrl;
-  final List<String> _subThumbnailUrls = [];
+  // --- 상태 변수 ---
+  PortfolioImage? _mainThumbnailSource;
+  PortfolioImage? _backgroundImageSource;
+  final List<PortfolioImage> _subThumbnailSources = [];
 
-  // 기본 정보
   final _nicknameController = TextEditingController();
   final _oneLineIntroController = TextEditingController();
   final _detailedIntroController = TextEditingController();
-
-  // 경력 및 나이
   final _experienceYearsController = TextEditingController();
   final _ageController = TextEditingController();
-
-  // 대표 링크
   final _mainLinkController = TextEditingController();
 
-  // 공개 범위 및 제안 받기
   String _publicScope = '전체공개';
   bool _isReceivingOffers = true;
 
-  // 최근 라이브 링크 (동적 리스트)
   final List<RecentLiveControllers> _recentLiveControllers = [];
 
-  // 태그
   final _tagController = TextEditingController();
   final List<String> _tags = [];
 
-  // 레포지토리 인스턴스
   final PortfolioRepository _portfolioRepository =
       locator<PortfolioRepository>();
 
   @override
   void initState() {
     super.initState();
-    // 초기 상태로 라이브 링크 입력 필드 하나를 추가
-    _addRecentLiveLink();
-    // 화면 로딩 시 기존 포트폴리오 데이터 불러오기
     _loadMyPortfolio();
   }
 
@@ -98,7 +97,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     super.dispose();
   }
 
-  // --- 동적 필드 관리 메소드 ---
   void _addRecentLiveLink() {
     setState(() {
       _recentLiveControllers.add(RecentLiveControllers());
@@ -128,48 +126,27 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     });
   }
 
-  // 이미지 선택 및 업로드 로직 (기존 코드 재사용)
-  Future<void> _pickAndUploadImage({
-    required Function(String) onImageUploaded,
+  Future<void> _pickImage({
+    required Function(PortfolioImage) onImageSelected,
   }) async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile == null) return;
-    if (!mounted) return;
 
-    // TODO: 크롭 다이얼로그 연동 (현재는 직접 업로드)
-    setState(() => _isLoading = true);
-    try {
-      final bytes = await pickedFile.readAsBytes();
-      final newUrl = await CloudinaryUploader().uploadImage(bytes);
-      setState(() {
-        onImageUploaded(newUrl);
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
-      }
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    final bytes = await pickedFile.readAsBytes();
+    onImageSelected(PortfolioImage(localBytes: bytes));
   }
 
-  // --- [추가] 데이터 로딩 및 저장 로직 ---
-
   Future<void> _loadMyPortfolio() async {
-    // '수정 모드'일 경우에만 데이터를 불러오도록 변경
     if (widget.portfolioId == null) {
-      _addRecentLiveLink(); // '생성 모드'일 경우, 기본 입력 필드 하나만 추가
+      _addRecentLiveLink();
       return;
     }
 
     setState(() => _isLoading = true);
     try {
-      // ID를 이용해 특정 포트폴리오 정보만 가져옴
       final portfolio =
           await _portfolioRepository.getPortfolioById(widget.portfolioId!);
-      // 불러온 데이터로 컨트롤러 및 상태 변수 채우기
       setState(() {
         _nicknameController.text = portfolio.nickname ?? '';
         _oneLineIntroController.text = portfolio.oneLineIntro ?? '';
@@ -180,12 +157,23 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
         _mainLinkController.text = portfolio.mainLink ?? '';
         _publicScope = portfolio.publicScope ?? '전체공개';
         _isReceivingOffers = portfolio.isReceivingOffers ?? true;
-        _mainThumbnailUrl = portfolio.mainThumbnailUrl;
-        _backgroundImageUrl = portfolio.backgroundImageUrl;
-        _subThumbnailUrls.addAll(portfolio.subThumbnailUrls ?? []);
+
+        if (portfolio.mainThumbnailUrl != null) {
+          _mainThumbnailSource =
+              PortfolioImage(networkUrl: portfolio.mainThumbnailUrl);
+        }
+        if (portfolio.backgroundImageUrl != null) {
+          _backgroundImageSource =
+              PortfolioImage(networkUrl: portfolio.backgroundImageUrl);
+        }
+
+        _subThumbnailSources.clear();
+        _subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? [])
+            .map((url) => PortfolioImage(networkUrl: url)));
+
+        _tags.clear();
         _tags.addAll(portfolio.tags ?? []);
 
-        // 최근 라이브 링크 데이터 채우기
         _recentLiveControllers.clear();
         if (portfolio.recentLives != null &&
             portfolio.recentLives!.isNotEmpty) {
@@ -197,7 +185,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             _recentLiveControllers.add(controllers);
           }
         } else {
-          _addRecentLiveLink(); // 데이터가 없으면 기본 입력창 하나 추가
+          _addRecentLiveLink();
         }
       });
     } catch (e) {
@@ -212,11 +200,34 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
 
   Future<void> _savePortfolio(String status) async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
 
     try {
-      // 화면의 모든 데이터를 Map으로 취합
+      final uploader = CloudinaryUploader();
+
+      // --- 이미지 업로드 처리 ---
+      String? finalMainThumbUrl = _mainThumbnailSource?.networkUrl;
+      if (_mainThumbnailSource?.localBytes != null) {
+        finalMainThumbUrl =
+            await uploader.uploadImage(_mainThumbnailSource!.localBytes!);
+      }
+
+      String? finalBackgroundUrl = _backgroundImageSource?.networkUrl;
+      if (_backgroundImageSource?.localBytes != null) {
+        finalBackgroundUrl =
+            await uploader.uploadImage(_backgroundImageSource!.localBytes!);
+      }
+
+      final List<String> finalSubUrls = [];
+      for (final source in _subThumbnailSources) {
+        if (source.localBytes != null) {
+          final newUrl = await uploader.uploadImage(source.localBytes!);
+          finalSubUrls.add(newUrl);
+        } else if (source.networkUrl != null) {
+          finalSubUrls.add(source.networkUrl!);
+        }
+      }
+
       final Map<String, dynamic> payload = {
         'nickname': _nicknameController.text,
         'oneLineIntro': _oneLineIntroController.text,
@@ -226,9 +237,9 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
         'mainLink': _mainLinkController.text,
         'publicScope': _publicScope,
         'isReceivingOffers': _isReceivingOffers,
-        'mainThumbnailUrl': _mainThumbnailUrl,
-        'backgroundImageUrl': _backgroundImageUrl,
-        'subThumbnailUrls': _subThumbnailUrls,
+        'mainThumbnailUrl': finalMainThumbUrl,
+        'backgroundImageUrl': finalBackgroundUrl,
+        'subThumbnailUrls': finalSubUrls,
         'tags': _tags,
         'recentLives': _recentLiveControllers
             .map((c) => {
@@ -236,16 +247,17 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                   'url': c.urlController.text,
                   'date': c.dateController.text,
                 })
+            .where((item) =>
+                item['title']!.isNotEmpty ||
+                item['url']!.isNotEmpty ||
+                item['date']!.isNotEmpty)
             .toList(),
-        'status': status, // 'draft' 또는 'published'
+        'status': status,
       };
 
-      // 생성/수정 API를 조건부로 호출
       if (widget.portfolioId == null) {
-        // 생성
         await _portfolioRepository.createPortfolio(payload);
       } else {
-        // 수정
         await _portfolioRepository.updatePortfolio(
             widget.portfolioId!, payload);
       }
@@ -253,11 +265,9 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.'),
-          ),
+              content: Text(
+                  '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
         );
-        // 저장 성공 후 목록 화면으로 이동
         GoRouter.of(context).go('/my-portfolios');
       }
     } catch (e) {
@@ -273,12 +283,13 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
         title: const Text('포트폴리오 등록'),
         centerTitle: false,
-        backgroundColor: Colors.white,
-        elevation: 0, // 그림자 제거
+        backgroundColor: const Color(0xFFF7F8FA),
+        elevation: 0,
+        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -289,9 +300,28 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             children: [
               _buildSectionHeader('미리보기'),
               _buildImageSection(),
+              const SizedBox(height: 24),
+              _buildSectionHeader('서브 썸네일 (선택, 최대 5)'),
+              _buildSubThumbnailSection(),
               const SizedBox(height: 32),
               _buildSectionHeader('기본 정보'),
-              _buildBasicInfoSection(),
+              _buildTextField(
+                  controller: _nicknameController,
+                  label: '닉네임 *',
+                  hintText: '예: 라이브크리에이터',
+                  isRequired: true),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  controller: _oneLineIntroController,
+                  label: '한 줄 소개 *',
+                  hintText: '예: 뷰티/일상 라이브 진행자',
+                  isRequired: true),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  controller: _detailedIntroController,
+                  label: '상세 소개 (자유)',
+                  hintText: '자유롭게 소개를 작성하세요.',
+                  maxLines: 5),
               const SizedBox(height: 32),
               _buildExperienceAndAgeSection(),
               const SizedBox(height: 24),
@@ -317,8 +347,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     );
   }
 
-  // --- 각 섹션별 UI 빌드 메소드 ---
-
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
@@ -328,45 +356,37 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   }
 
   Widget _buildImageSection() {
-    // 버튼에 적용할 공통 스타일 정의
     final buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.white, // 버튼 배경색
-      foregroundColor: const Color(0xFF374151), // 아이콘 및 텍스트 색상
-      elevation: 0, // 그림자 제거
+      backgroundColor: Colors.white,
+      foregroundColor: const Color(0xFF374151),
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey.shade300), // 얇은 테두리
+        side: BorderSide(color: Colors.grey.shade300),
       ),
       padding: const EdgeInsets.symmetric(vertical: 12),
     );
+
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton.icon(
+          child: ElevatedButton.icon(
             icon: const Icon(Icons.image_outlined, size: 18),
-            label: const Text(
-              '메인 썸네일',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            onPressed: () => _pickAndUploadImage(
-                onImageUploaded: (url) => _mainThumbnailUrl = url),
+            label: const Text('메인 썸네일'),
+            onPressed: () => _pickImage(onImageSelected: (source) {
+              setState(() => _mainThumbnailSource = source);
+            }),
             style: buttonStyle,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: OutlinedButton.icon(
+          child: ElevatedButton.icon(
             icon: const Icon(Icons.panorama_outlined, size: 18),
-            label: const Text(
-              '배경 이미지',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            onPressed: () => _pickAndUploadImage(
-                onImageUploaded: (url) => _backgroundImageUrl = url),
+            label: const Text('배경 이미지'),
+            onPressed: () => _pickImage(onImageSelected: (source) {
+              setState(() => _backgroundImageSource = source);
+            }),
             style: buttonStyle,
           ),
         ),
@@ -374,29 +394,73 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     );
   }
 
-  Widget _buildBasicInfoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildTextField(
-            controller: _nicknameController,
-            label: '닉네임 *',
-            hintText: '예: 라이브크리에이터',
-            isRequired: true),
-        const SizedBox(height: 16),
-        _buildTextField(
-            controller: _oneLineIntroController,
-            label: '한 줄 소개 *',
-            hintText: '예: 뷰티/일상 라이브 진행자',
-            isRequired: true),
-        const SizedBox(height: 16),
-        _buildTextField(
-          controller: _detailedIntroController,
-          label: '상세 소개 (자유)',
-          hintText: '자유롭게 소개를 작성하세요.',
-          maxLines: 5,
-        ),
-      ],
+  Widget _buildSubThumbnailSection() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _subThumbnailSources.length +
+          (_subThumbnailSources.length < 5 ? 1 : 0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1.0,
+      ),
+      itemBuilder: (context, index) {
+        if (index == _subThumbnailSources.length &&
+            _subThumbnailSources.length < 5) {
+          return InkWell(
+            onTap: () => _pickImage(onImageSelected: (source) {
+              setState(() {
+                _subThumbnailSources.add(source);
+              });
+            }),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: const Icon(Icons.add_a_photo_outlined, color: Colors.grey),
+            ),
+          );
+        }
+
+        final imageSource = _subThumbnailSources[index];
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12.0),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (imageSource.localBytes != null)
+                Image.memory(imageSource.localBytes!, fit: BoxFit.cover)
+              else if (imageSource.networkUrl != null)
+                Image.network(imageSource.networkUrl!, fit: BoxFit.cover),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _subThumbnailSources.removeAt(index);
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child:
+                        const Icon(Icons.close, size: 14, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -432,7 +496,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
           onChanged: (value) {
             if (value != null) setState(() => _publicScope = value);
           },
-          menuOffset: const Offset(0, 55),
         ),
         CheckboxListTile(
           title: const Text('제안 받기'),
@@ -442,6 +505,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
           },
           controlAffinity: ListTileControlAffinity.leading,
           contentPadding: EdgeInsets.zero,
+          activeColor: const Color(0xFF6C63FF),
         ),
       ],
     );
@@ -451,7 +515,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ListView.builder를 사용하여 동적 필드 렌더링
         ..._recentLiveControllers.asMap().entries.map((entry) {
           int index = entry.key;
           RecentLiveControllers controller = entry.value;
@@ -459,6 +522,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
+              color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -498,7 +562,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             ),
           );
         }).toList(),
-
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -506,7 +569,10 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             label: const Text('추가'),
             onPressed: _addRecentLiveLink,
             style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                foregroundColor: const Color(0xFF374151),
+                backgroundColor: Colors.white,
+                side: BorderSide(color: Colors.grey.shade300)),
           ),
         ),
       ],
@@ -517,17 +583,14 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextField(
+        _buildTextField(
           controller: _tagController,
-          decoration: InputDecoration(
-            hintText: '엔터로 추가',
-            border: const OutlineInputBorder(),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.add_circle_outline),
-              onPressed: _addTag,
-            ),
+          hintText: '엔터로 추가',
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.add_circle_outline),
+            onPressed: _addTag,
           ),
-          onSubmitted: (_) => _addTag(),
+          onSubmitted: (_) => _addTag,
         ),
         if (_tags.isNotEmpty) const SizedBox(height: 8),
         Wrap(
@@ -538,7 +601,10 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                     label: Text(tag),
                     onDeleted: () => _removeTag(tag),
                     deleteIconColor: Colors.grey[600],
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Colors.grey.shade300)),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                   ))
               .toList(),
@@ -582,6 +648,8 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
     int maxLines = 1,
     bool isRequired = false,
     TextInputType? keyboardType,
+    Widget? suffixIcon,
+    Function(String)? onSubmitted,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,16 +663,11 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                 children: isRequired
                     ? [
                         const TextSpan(
-                          text: ' *',
-                          style: TextStyle(color: Colors.red),
-                        )
+                            text: ' *', style: TextStyle(color: Colors.red))
                       ]
                     : [],
               ),
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16.0,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
             ),
           ),
         TextFormField(
@@ -614,7 +677,6 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             hintStyle: TextStyle(color: Colors.grey[500]),
             filled: true,
             fillColor: Colors.white,
-            // [수정] 테두리 스타일
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
@@ -631,9 +693,11 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             alignLabelWithHint: maxLines > 1,
+            suffixIcon: suffixIcon,
           ),
           maxLines: maxLines,
           keyboardType: keyboardType,
+          onFieldSubmitted: onSubmitted,
           validator: (value) {
             if (isRequired && (value == null || value.isEmpty)) {
               return '필수 항목입니다.';
