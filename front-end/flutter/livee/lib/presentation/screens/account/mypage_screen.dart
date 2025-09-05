@@ -72,7 +72,8 @@ class MypageScreen extends StatelessWidget {
                       title: '내가 등록한 공고',
                       actionWidget: PrimaryActionButton(
                         text: '공고 등록하기',
-                        onPressed: () => GoRouter.of(context).go('/campaign-form'),
+                        onPressed: () =>
+                            GoRouter.of(context).go('/campaign-form'),
                         isFullWidth: false, // 전체 너비가 아닌 작은 버튼으로 설정
                       ),
                     ),
@@ -87,26 +88,36 @@ class MypageScreen extends StatelessWidget {
                       icon: CupertinoIcons.person_2,
                       title: '지원자 현황',
                       subtitle: '캠페인별 지원자/상태',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+                      onTap: () => showCustomToast(context, '준비중인 기능입니다.',
+                          type: ToastType.info),
                     ),
                     _buildMyPageItem(
                       icon: CupertinoIcons.paperplane,
                       title: '제안하기',
                       subtitle: '쇼호스트에게 직접 제안',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+                      onTap: () => showCustomToast(context, '준비중인 기능입니다.',
+                          type: ToastType.info),
                     ),
                     const SizedBox(height: 24),
                   ],
 
                   // 3. 쇼호스트 전용 메뉴 (쇼호스트 역할일 때만 보임)
                   if (role == 'showhost') ...[
-                    _buildSectionHeader(title: '쇼호스트 메뉴'),
+                    _buildSectionHeader(
+                      title: '쇼호스트 메뉴',
+                      actionWidget: PrimaryActionButton(
+                        text: '+ 등록',
+                        onPressed: () =>
+                            GoRouter.of(context).go('/portfolio-edit'),
+                        isFullWidth: false,
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     _buildMyPageItem(
                       icon: CupertinoIcons.person_badge_plus,
                       title: '내 포트폴리오',
                       subtitle: '프로필/경력/미디어 관리',
-                      onTap: () => GoRouter.of(context).go('/portfolio-edit'),
+                      onTap: () => GoRouter.of(context).go('/my-portfolios'),
                     ),
                     _buildMyPageItem(
                       icon: CupertinoIcons.doc_text,
@@ -124,7 +135,8 @@ class MypageScreen extends StatelessWidget {
                       icon: CupertinoIcons.heart,
                       title: '찜한 공고',
                       subtitle: '북마크한 공고 모아보기',
-                      onTap: () => GoRouter.of(context).go('/bookmarked-recruits'),
+                      onTap: () =>
+                          GoRouter.of(context).go('/bookmarked-recruits'),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -136,10 +148,13 @@ class MypageScreen extends StatelessWidget {
                     icon: CupertinoIcons.settings,
                     title: '알림 설정',
                     subtitle: '푸시/이메일 수신 관리',
-                    onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+                    onTap: () => showCustomToast(context, '준비중인 기능입니다.',
+                        type: ToastType.info),
                   ),
                   _buildMyPageItem(
-                    icon: isLoggedIn ? CupertinoIcons.square_arrow_left : CupertinoIcons.square_arrow_right,
+                    icon: isLoggedIn
+                        ? CupertinoIcons.square_arrow_left
+                        : CupertinoIcons.square_arrow_right,
                     title: isLoggedIn ? '로그아웃' : '로그인',
                     subtitle: '계정 전환 및 로그인',
                     onTap: () {
@@ -185,7 +200,8 @@ class MypageScreen extends StatelessWidget {
                 children: [
                   Text(
                     authProvider.user?.name ?? '로그인 필요',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(

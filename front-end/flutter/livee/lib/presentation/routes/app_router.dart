@@ -7,6 +7,7 @@ import 'package:livee/presentation/screens/campaign/detail/campaign_detail_scree
 import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
+import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
 import 'package:livee/presentation/screens/tabs/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
 import 'package:livee/presentation/screens/main/main_screen.dart';
@@ -55,7 +56,8 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: '/campaign-form',
-        builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+        builder: (context, state) =>
+            CampaignFormScreen(campaignId: state.extra as String?),
       ),
       GoRoute(
         path: '/campaign/:campaignId',
@@ -80,6 +82,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/portfolio-edit',
         builder: (context, state) => const PortfolioEditScreen(),
+      ),
+      GoRoute(
+        path: '/my-portfolios',
+        builder: (context, state) => const MyPortfolioListScreen(),
       ),
       GoRoute(
         path: '/bookmarked-recruits',
