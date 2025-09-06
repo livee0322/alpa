@@ -24,5 +24,11 @@ export class CampaignUseCase {
         return this.repository.getCampaignById(id);
     }
 
-    // TODO: getMyCampaigns 등 나머지 메서드 구현
+    public async getMyCampaigns(): Promise<Campaign[]> {
+        return this.repository.getMyCampaigns();
+    }
+
+    public async deleteCampaign(id: string): Promise<void> {
+        return this.repository.deleteCampaign(id);
+    }
 }

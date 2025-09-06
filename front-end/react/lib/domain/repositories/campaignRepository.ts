@@ -46,5 +46,23 @@ export class CampaignRepository {
         }
     }
 
-    // TODO: getMyCampaigns 등 나머지 메서드 구현
+    public async getMyCampaigns(): Promise<Campaign[]> {
+        try {
+            const response = await apiClient.get<any>('/campaigns/mine');
+            const items = response.items || [];
+            return items.map((e: any) => e as Campaign);
+        } catch (error) {
+            console.error('Failed to load my campaigns:', error);
+            throw new Error('Failed to load my campaigns');
+        }
+    }
+
+    public async deleteCampaign(id: string): Promise<void> {
+        try {
+            await apiClient.delete(`/campaigns/${id}`);
+        } catch (error) {
+            console.error(`Failed to delete campaign with id ${id}:`, error);
+            throw new Error('Failed to delete campaign');
+        }
+    }
 }
