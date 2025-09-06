@@ -265,7 +265,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
               content: Text(
                   '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
         );
-        GoRouter.of(context).go('/my-portfolios');
+        GoRouter.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
@@ -288,88 +288,103 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
         elevation: 0,
         foregroundColor: Colors.black,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildSectionHeader('미리보기'),
-              PortfolioPreviewSection(
-                mainThumbnailSource: _mainThumbnailSource,
-                backgroundImageSource: _backgroundImageSource,
-                onPickMainThumbnail: () => _pickImage(
-                  onImageSelected: (source) =>
-                      setState(() => _mainThumbnailSource = source),
-                ),
-                onPickBackgroundImage: () => _pickImage(
-                  onImageSelected: (source) =>
-                      setState(() => _backgroundImageSource = source),
-                ),
-              ),
-              const SizedBox(height: 24),
-              _buildSectionHeader('서브 썸네일 (선택, 최대 5)'),
-              PortfolioSubThumbnailSection(
-                sources: _subThumbnailSources,
-                onAddImage: () => _pickImage(
-                  onImageSelected: (source) => setState(
-                    () => _subThumbnailSources.add(source),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildSectionHeader('미리보기'),
+                  PortfolioPreviewSection(
+                    mainThumbnailSource: _mainThumbnailSource,
+                    backgroundImageSource: _backgroundImageSource,
+                    onPickMainThumbnail: () => _pickImage(
+                      onImageSelected: (source) =>
+                          setState(() => _mainThumbnailSource = source),
+                    ),
+                    onPickBackgroundImage: () => _pickImage(
+                      onImageSelected: (source) =>
+                          setState(() => _backgroundImageSource = source),
+                    ),
                   ),
-                ),
-                onRemoveImage: (index) => setState(
-                  () => _subThumbnailSources.removeAt(index),
-                ),
+                  const SizedBox(height: 24),
+                  _buildSectionHeader('서브 썸네일 (선택, 최대 5)'),
+                  PortfolioSubThumbnailSection(
+                    sources: _subThumbnailSources,
+                    onAddImage: () => _pickImage(
+                      onImageSelected: (source) => setState(
+                        () => _subThumbnailSources.add(source),
+                      ),
+                    ),
+                    onRemoveImage: (index) => setState(
+                      () => _subThumbnailSources.removeAt(index),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  _buildSectionHeader('기본 정보'),
+                  PortfolioBasicInfoSection(
+                    nicknameController: _nicknameController,
+                    oneLineIntroController: _oneLineIntroController,
+                    detailedIntroController: _detailedIntroController,
+                  ),
+                  const SizedBox(height: 32),
+                  PortfolioExperienceSection(
+                    experienceYearsController: _experienceYearsController,
+                    ageController: _ageController,
+                  ),
+                  const SizedBox(height: 24),
+                  CustomTextFormField(
+                    controller: _mainLinkController,
+                    label: '대표 링크',
+                    hintText: 'https://...',
+                  ),
+                  const SizedBox(height: 32),
+                  PortfolioScopeSection(
+                    publicScope: _publicScope,
+                    isReceivingOffers: _isReceivingOffers,
+                    onScopeChanged: (value) {
+                      if (value != null) setState(() => _publicScope = value);
+                    },
+                    onOfferChanged: (value) => setState(
+                      () => _isReceivingOffers = value ?? true,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  _buildSectionHeader('최근 라이브 링크'),
+                  PortfolioRecentLiveSection(
+                    controllers: _recentLiveControllers,
+                    onAdd: _addRecentLiveLink,
+                    onRemove: _removeRecentLiveLink,
+                  ),
+                  const SizedBox(height: 32),
+                  _buildSectionHeader('태그'),
+                  PortfolioTagsSection(
+                    tagController: _tagController,
+                    tags: _tags,
+                    onAddTag: _addTag,
+                    onRemoveTag: _removeTag,
+                  ),
+                  const SizedBox(height: 40),
+                  _buildActionButtons(),
+                ],
               ),
-              const SizedBox(height: 32),
-              _buildSectionHeader('기본 정보'),
-              PortfolioBasicInfoSection(
-                nicknameController: _nicknameController,
-                oneLineIntroController: _oneLineIntroController,
-                detailedIntroController: _detailedIntroController,
-              ),
-              const SizedBox(height: 32),
-              PortfolioExperienceSection(
-                experienceYearsController: _experienceYearsController,
-                ageController: _ageController,
-              ),
-              const SizedBox(height: 24),
-              CustomTextFormField(
-                controller: _mainLinkController,
-                label: '대표 링크',
-                hintText: 'https://...',
-              ),
-              const SizedBox(height: 32),
-              PortfolioScopeSection(
-                publicScope: _publicScope,
-                isReceivingOffers: _isReceivingOffers,
-                onScopeChanged: (value) {
-                  if (value != null) setState(() => _publicScope = value);
-                },
-                onOfferChanged: (value) => setState(
-                  () => _isReceivingOffers = value ?? true,
-                ),
-              ),
-              const SizedBox(height: 32),
-              _buildSectionHeader('최근 라이브 링크'),
-              PortfolioRecentLiveSection(
-                controllers: _recentLiveControllers,
-                onAdd: _addRecentLiveLink,
-                onRemove: _removeRecentLiveLink,
-              ),
-              const SizedBox(height: 32),
-              _buildSectionHeader('태그'),
-              PortfolioTagsSection(
-                tagController: _tagController,
-                tags: _tags,
-                onAddTag: _addTag,
-                onRemoveTag: _removeTag,
-              ),
-              const SizedBox(height: 40),
-              _buildActionButtons(),
-            ],
+            ),
           ),
-        ),
+          // _isLoading이 true일 때 로딩 오버레이 표시
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.7),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+        ],
       ),
       bottomNavigationBar: const CommonBottomNavBar(),
     );
