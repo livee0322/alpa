@@ -2,6 +2,22 @@ import { apiClient } from '../../apiClient';
 import { Campaign } from '../models/campaign';
 
 export class CampaignRepository {
+    public async createCampaign(data: any): Promise<void> {
+        try {
+            await apiClient.post('/campaigns', data);
+        } catch (e: any) {
+            throw new Error(e.response?.data?.message || 'Failed to create campaign');
+        }
+    }
+
+    public async updateCampaign(id: string, data: any): Promise<void> {
+        try {
+            await apiClient.put(`/campaigns/${id}`, data);
+        } catch (e: any) {
+            throw new Error(e.response?.data?.message || 'Failed to update campaign');
+        }
+    }
+
     public async getAllCampaigns(type?: string, limit?: number): Promise<Campaign[]> {
         const params = new URLSearchParams();
         if (type) params.append('type', type);
