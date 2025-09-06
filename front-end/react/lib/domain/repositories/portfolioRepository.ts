@@ -42,4 +42,31 @@ export class PortfolioRepository {
             throw new Error('Failed to delete portfolio');
         }
     }
+
+    public async createPortfolio(data: any): Promise<void> {
+        try {
+            await apiClient.post('/portfolios', data);
+        } catch (e: any) {
+            throw new Error(e.response?.data?.message || 'Failed to create portfolio');
+        }
+    }
+
+    public async updatePortfolio(id: string, data: any): Promise<void> {
+        try {
+            await apiClient.put(`/portfolios/${id}`, data);
+        } catch (e: any) {
+            throw new Error(e.response?.data?.message || 'Failed to update portfolio');
+        }
+    }
+
+    public async getMyPortfolio(): Promise<Portfolio> {
+        try {
+            const response = await apiClient.get<any>('/portfolios/my');
+            const data = response.data || response;
+            return data as Portfolio;
+        } catch (e) {
+            console.error('Failed to load my portfolio:', e);
+            throw new Error('Failed to load my portfolio');
+        }
+    }
 }

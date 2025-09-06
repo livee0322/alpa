@@ -23,4 +23,16 @@ export class PortfolioUseCase {
     public async deletePortfolio(id: string): Promise<void> {
         return this.repository.deletePortfolio(id);
     }
+
+    public async createPortfolio(data: any): Promise<void> {
+        return this.repository.createPortfolio(data);
+    }
+
+    public async updatePortfolio(id: string, data: any): Promise<void> {
+        return this.repository.updatePortfolio(id, data);
+    }
+
+    public async getMyPortfolio(): Promise<Portfolio> {
+        return this.repository.getMyPortfolio();
+    }
 }
