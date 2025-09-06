@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuthStore } from '../../lib/stores/authStore';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
     const [nickname, setNickname] = useState('');
@@ -10,10 +12,24 @@ export default function SignupPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState('brand');
+    const signup = useAuthStore((state) => state.signup);
+    const router = useRouter();
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: 회원가입 로직 구현
+        setIsLoading(true);
+        setErrorMessage('');
+        try {
+            // Zustand 스토어의 signup 함수 호출
+            await signup(nickname, email, password, selectedRole);
+            // 회원가입 성공 시 로그인 페이지로 이동
+            alert('회원가입이 완료되었습니다. 로그인 해주세요.');
+            router.push('/login');
+        } catch (e: any) {
+            setErrorMessage(e.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const buildRoleButton = (role: string, label: string) => {
@@ -22,8 +38,8 @@ export default function SignupPage() {
             <div
                 onClick={() => setSelectedRole(role)}
                 className={`flex-1 flex justify-center items-center h-12 rounded-full font-bold transition-colors cursor-pointer ${isSelected
-                        ? 'bg-gray-900 text-white border border-gray-900'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    ? 'bg-gray-900 text-white border border-gray-900'
+                    : 'bg-gray-50 text-gray-700 border border-gray-200'
                     }`}
             >
                 {label}

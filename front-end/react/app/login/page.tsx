@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuthStore } from '../../lib/stores/authStore';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -7,10 +8,22 @@ export default function LoginPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState('brand');
+    const login = useAuthStore((state) => state.login);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: 로그인 로직 구현
+        setIsLoading(true);
+        setErrorMessage('');
+        try {
+            // Zustand 스토어의 login 함수 호출
+            await login(email, password);
+            // 로그인 성공 시 메인 화면으로 리디렉션
+            window.location.href = '/';
+        } catch (e: any) {
+            setErrorMessage(e.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const buildRoleButton = (role: string, label: string) => {
