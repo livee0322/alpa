@@ -298,10 +298,11 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildSectionHeader('미리보기'),
+                  // _buildSectionHeader('미리보기'),
                   PortfolioPreviewSection(
                     mainThumbnailSource: _mainThumbnailSource,
                     backgroundImageSource: _backgroundImageSource,
+                    nicknameController: _nicknameController,
                     onPickMainThumbnail: () => _pickImage(
                       onImageSelected: (source) =>
                           setState(() => _mainThumbnailSource = source),
@@ -311,7 +312,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                           setState(() => _backgroundImageSource = source),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 96),
                   _buildSectionHeader('서브 썸네일 (선택, 최대 5)'),
                   PortfolioSubThumbnailSection(
                     sources: _subThumbnailSources,

@@ -4,6 +4,7 @@ import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart'
 class PortfolioPreviewSection extends StatelessWidget {
   final PortfolioImage? mainThumbnailSource;
   final PortfolioImage? backgroundImageSource;
+  final TextEditingController nicknameController;
   final VoidCallback onPickMainThumbnail;
   final VoidCallback onPickBackgroundImage;
 
@@ -11,104 +12,104 @@ class PortfolioPreviewSection extends StatelessWidget {
     super.key,
     required this.mainThumbnailSource,
     required this.backgroundImageSource,
+    required this.nicknameController,
     required this.onPickMainThumbnail,
     required this.onPickBackgroundImage,
   });
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.white,
-      foregroundColor: const Color(0xFF374151),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey.shade300),
+    return SizedBox(
+      height: 280,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topLeft,
+        children: [
+          // 배경 이미지 영역
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: InkWell(
+              onTap: onPickBackgroundImage,
+              borderRadius: BorderRadius.circular(12),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  // 이미지가 없을 때의 배경색 변경
+                  color: Colors.grey[200],
+                  child: backgroundImageSource == null
+                      ? _buildPlaceholder(Icons.add_photo_alternate_outlined)
+                      : (backgroundImageSource!.localBytes != null
+                          ? Image.memory(
+                              backgroundImageSource!.localBytes!,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              backgroundImageSource!.networkUrl!,
+                              fit: BoxFit.cover,
+                            )),
+                ),
+              ),
+            ),
+          ),
+          // 메인 썸네일 및 닉네임 영역
+          Positioned(
+            left: 16,
+            top: 160,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: onPickMainThumbnail,
+                  borderRadius: BorderRadius.circular(40),
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: const Color(0xFFF7F8FA),
+                    child: CircleAvatar(
+                      radius: 52,
+                      backgroundColor: Colors.white,
+                      backgroundImage: mainThumbnailSource?.networkUrl != null
+                          ? NetworkImage(mainThumbnailSource!.networkUrl!)
+                          : (mainThumbnailSource?.localBytes != null
+                              ? MemoryImage(mainThumbnailSource!.localBytes!)
+                              : null) as ImageProvider?,
+                      child: mainThumbnailSource == null
+                          ? _buildPlaceholder(
+                              Icons.add_a_photo_outlined,
+                              size: 28,
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 닉네임 텍스트 필드의 값을 실시간으로 보여줌
+                Column(
+                  children: [
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: nicknameController,
+                      builder: (context, value, child) {
+                        return Text(
+                          value.text.isNotEmpty ? value.text : '닉네임',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 28),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12),
-    );
-
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  _buildImagePreview(
-                    source: mainThumbnailSource,
-                    placeholderIcon: Icons.person_outline,
-                    height: 120,
-                    shape: BoxShape.circle,
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.image_outlined, size: 18),
-                      label: const Text('메인 썸네일'),
-                      onPressed: onPickMainThumbnail,
-                      style: buttonStyle,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                children: [
-                  _buildImagePreview(
-                    source: backgroundImageSource,
-                    placeholderIcon: Icons.landscape_outlined,
-                    height: 120,
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.panorama_outlined, size: 18),
-                      label: const Text('배경 이미지'),
-                      onPressed: onPickBackgroundImage,
-                      style: buttonStyle,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
-  Widget _buildImagePreview({
-    required PortfolioImage? source,
-    required IconData placeholderIcon,
-    required double height,
-    BoxShape shape = BoxShape.rectangle,
-  }) {
-    return Container(
-      height: height,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: shape,
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius:
-            shape == BoxShape.rectangle ? BorderRadius.circular(12) : null,
-      ),
-      child: ClipRRect(
-        borderRadius: shape == BoxShape.rectangle
-            ? BorderRadius.circular(11)
-            : BorderRadius.circular(height / 2),
-        child: source == null
-            ? Icon(placeholderIcon, color: Colors.grey, size: 48)
-            : (source.localBytes != null
-                ? Image.memory(source.localBytes!, fit: BoxFit.cover)
-                : Image.network(source.networkUrl!, fit: BoxFit.cover)),
-      ),
+  Widget _buildPlaceholder(IconData icon, {double size = 32}) {
+    return Center(
+      child: Icon(icon, size: size, color: Colors.grey.shade400),
     );
   }
 }

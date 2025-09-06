@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 
@@ -26,16 +27,19 @@ class PortfolioSubThumbnailSection extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         if (index == sources.length && sources.length < 5) {
-          return InkWell(
-            onTap: onAddImage,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+          // 점선 테두리 적용
+          return DottedBorder(
+            color: Colors.grey.shade400,
+            strokeWidth: 1.5,
+            dashPattern: const [6, 4],
+            borderType: BorderType.RRect,
+            radius: const Radius.circular(12),
+            child: InkWell(
+              onTap: onAddImage,
+              borderRadius: BorderRadius.circular(12),
+              child: const Center(
+                child: Icon(Icons.add_a_photo_outlined, color: Colors.grey),
               ),
-              child: const Icon(Icons.add_a_photo_outlined, color: Colors.grey),
             ),
           );
         }
