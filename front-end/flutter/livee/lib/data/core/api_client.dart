@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:livee/data/core/session_storage_service.dart';
 
 class ApiClient {
   static const String _apiBase = 'https://main-server-ekgr.onrender.com/api/v1';
@@ -11,8 +11,7 @@ class ApiClient {
   ApiClient._internal();
 
   Future<Map<String, String>> _getAuthHeaders() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('liveeToken');
+    final token = SessionStorageService.read('liveeToken');
     final headers = <String, String>{
       'Content-Type': 'application/json',
     };
