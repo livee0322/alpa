@@ -23,5 +23,23 @@ export class PortfolioRepository {
         }
     }
 
-    // TODO: getMyPortfolioList 등 나머지 메서드 구현
+    public async getMyPortfolioList(): Promise<Portfolio[]> {
+        try {
+            const response = await apiClient.get<any>('/portfolios/my/list');
+            const items = response.items || response.data?.items || response;
+            return items.map((item: any) => item as Portfolio);
+        } catch (e) {
+            console.error('Failed to load my portfolio list:', e);
+            throw new Error('Failed to load my portfolio list');
+        }
+    }
+
+    public async deletePortfolio(id: string): Promise<void> {
+        try {
+            await apiClient.delete(`/portfolios/${id}`);
+        } catch (e) {
+            console.error(`Failed to delete portfolio with id ${id}:`, e);
+            throw new Error('Failed to delete portfolio');
+        }
+    }
 }
