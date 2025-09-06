@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
+import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/service_locator.dart';
 
 class MyPortfolioListScreen extends StatefulWidget {
@@ -12,7 +13,10 @@ class MyPortfolioListScreen extends StatefulWidget {
 }
 
 class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
-  late Future<List<Portfolio>> _portfoliosFuture;
+  // List와 로딩 상태를 직접 관리
+  bool _isLoading = true;
+  List<Portfolio> _portfolios = [];
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -20,10 +24,26 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
     _loadPortfolios();
   }
 
-  void _loadPortfolios() {
+  Future<void> _loadPortfolios() async {
     setState(() {
-      _portfoliosFuture = locator<PortfolioRepository>().getMyPortfolioList();
+      _isLoading = true;
+      _errorMessage = null;
     });
+    try {
+      final portfolios =
+          await locator<PortfolioRepository>().getMyPortfolioList();
+      setState(() {
+        _portfolios = portfolios;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _deletePortfolio(String id) async {
@@ -58,90 +78,88 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 1,
-        shadowColor: Colors.black12,
-        title: const Text('내 포트폴리오'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('등록'),
-              onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+    return LoadingOverlay(
+      isLoading: _isLoading,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F8FA),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 1,
+          shadowColor: Colors.black12,
+          title: const Text('내 포트폴리오'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('등록'),
+                onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C63FF),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // [추가] 섹션 헤더
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('내 포트폴리오',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ActionChip(
-                  avatar: const Icon(Icons.people_alt_outlined, size: 16),
-                  label: const Text('전체 보기'),
-                  onPressed: () {
-                    // TODO: 전체 공개 포트폴리오 목록 보기
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  backgroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                )
-              ],
+          ],
+        ),
+        body: Column(
+          children: [
+            // [추가] 섹션 헤더
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('내 포트폴리오',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ActionChip(
+                    avatar: const Icon(Icons.people_alt_outlined, size: 16),
+                    label: const Text('전체 보기'),
+                    onPressed: () {
+                      // TODO: 전체 공개 포트폴리오 목록 보기
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    side: BorderSide(color: Colors.grey.shade300),
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  )
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Portfolio>>(
-              future: _portfoliosFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('오류: ${snapshot.error}'));
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('등록된 포트폴리오가 없습니다.'));
-                }
-
-                final portfolios = snapshot.data!;
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  itemCount: portfolios.length,
-                  itemBuilder: (context, index) {
-                    final portfolio = portfolios[index];
-                    return _buildPortfolioCard(portfolio);
-                  },
-                );
-              },
+            Expanded(
+              child: _buildBody(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // [수정] 카드 UI를 디자인 시안에 맞춰 전면 개편
+  // body UI를 빌드하는 헬퍼 메소드
+  Widget _buildBody() {
+    if (_errorMessage != null) {
+      return Center(child: Text('오류: $_errorMessage'));
+    }
+    if (_portfolios.isEmpty) {
+      return const Center(child: Text('등록된 포트폴리오가 없습니다.'));
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: _portfolios.length,
+      itemBuilder: (context, index) {
+        final portfolio = _portfolios[index];
+        return _buildPortfolioCard(portfolio);
+      },
+    );
+  }
+
+  // 카드 UI를 디자인 시안에 맞춰 전면 개편
   Widget _buildPortfolioCard(Portfolio portfolio) {
     return Card(
       color: Colors.white,
