@@ -8,6 +8,7 @@ import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.da
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
+import 'package:livee/presentation/screens/showhost/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/tabs/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
 import 'package:livee/presentation/screens/main/main_screen.dart';
@@ -23,7 +24,6 @@ import 'package:livee/presentation/screens/tabs/short_clips_screen.dart';
 import 'package:livee/presentation/screens/showhost/showhost_detail_screen.dart';
 import 'package:livee/presentation/screens/showhost/showhost_list_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
 
 // GoRouter 인스턴스를 생성
 // AuthProvider를 인자로 받아서 refreshListenable에 연결
@@ -78,6 +78,13 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/recruits',
         builder: (context, state) => const RecruitListScreen(),
+      ),
+      GoRoute(
+        path: '/portfolios/:id',
+        builder: (context, state) {
+          final portfolioId = state.pathParameters['id']!;
+          return PortfolioDetailScreen(portfolioId: portfolioId);
+        },
       ),
       GoRoute(
         path: '/portfolio-edit',

@@ -222,7 +222,11 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildActionButton(
-                        icon: Icons.open_in_new, label: '보기', onPressed: () {}),
+                      icon: Icons.open_in_new,
+                      label: '보기',
+                      onPressed: () => GoRouter.of(context)
+                          .go('/portfolios/${portfolio.id}'),
+                    ),
                     const SizedBox(width: 8),
                     _buildActionButton(
                         icon: Icons.edit,
