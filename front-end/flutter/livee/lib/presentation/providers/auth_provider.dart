@@ -31,9 +31,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String email, String password, String role) async {
     try {
-      final loggedInUser = await _authUseCase.login(email, password);
+      final loggedInUser = await _authUseCase.login(email, password, role);
       _user = loggedInUser;
       _role = loggedInUser.role;
       _isLoggedIn = true;

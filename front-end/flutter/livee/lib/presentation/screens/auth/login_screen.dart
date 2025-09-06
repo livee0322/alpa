@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Provider.of<AuthProvider>(context, listen: false).login(
           _emailController.text,
           _passwordController.text,
+          _selectedRole,
         );
         // 로그인 성공 시 메인 화면으로 이동
         if (context.mounted) GoRouter.of(context).go('/');

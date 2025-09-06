@@ -7,12 +7,13 @@ import 'package:livee/domain/models/user.dart';
 class AuthRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<User> login(String email, String password) async {
+  Future<User> login(String email, String password, String role) async {
     final response = await _apiClient.post(
       '/users/login',
       body: {
         'email': email,
         'password': password,
+        'role': role,
       },
     );
 

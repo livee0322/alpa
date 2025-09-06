@@ -6,11 +6,12 @@ class AuthUseCase {
 
   AuthUseCase(this._repository);
 
-  Future<User> login(String email, String password) async {
-    return _repository.login(email, password);
+  Future<User> login(String email, String password, String role) async {
+    return _repository.login(email, password, role);
   }
 
-  Future<User> signup(String name, String email, String password, String role) async {
+  Future<User> signup(
+      String name, String email, String password, String role) async {
     return _repository.signup(name, email, password, role);
   }
 
