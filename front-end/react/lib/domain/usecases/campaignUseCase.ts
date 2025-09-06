@@ -12,5 +12,9 @@ export class CampaignUseCase {
         return this.repository.getAllCampaigns(type, limit);
     }
 
-    // TODO: getMyCampaigns, getCampaignById 등 나머지 메서드 구현
+    public async getCampaignById(id: string): Promise<Campaign> {
+        return this.repository.getCampaignById(id);
+    }
+
+    // TODO: getMyCampaigns 등 나머지 메서드 구현
 }

@@ -18,5 +18,17 @@ export class CampaignRepository {
         }
     }
 
-    // TODO: getMyCampaigns, getCampaignById 등 나머지 메서드 구현
+    public async getCampaignById(id: string): Promise<Campaign> {
+        try {
+            const response = await apiClient.get<any>(`/campaigns/${id}`);
+            // API 응답 구조에 따라 데이터 파싱
+            const data = response.data || response;
+            return data as Campaign;
+        } catch (error) {
+            console.error(`Failed to load campaign with ID ${id}:`, error);
+            throw new Error('Failed to load campaign details');
+        }
+    }
+
+    // TODO: getMyCampaigns 등 나머지 메서드 구현
 }
