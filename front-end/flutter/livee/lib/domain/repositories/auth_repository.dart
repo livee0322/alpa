@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:livee/data/core/api_client.dart';
+import 'package:livee/data/core/session_storage_service.dart';
 import 'package:livee/domain/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   final ApiClient _apiClient = ApiClient();
@@ -21,9 +21,8 @@ class AuthRepository {
       final user = User.fromJson(json);
 
       if (user.token != null && user.role != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('liveeToken', user.token!);
-        await prefs.setString('liveeRole', user.role!);
+        SessionStorageService.write('liveeToken', user.token!);
+        SessionStorageService.write('liveeRole', user.role!);
       }
       return user;
     } else {
@@ -31,7 +30,8 @@ class AuthRepository {
     }
   }
 
-  Future<User> signup(String name, String email, String password, String role) async {
+  Future<User> signup(
+      String name, String email, String password, String role) async {
     final response = await _apiClient.post(
       '/users/signup',
       body: {
@@ -55,18 +55,15 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('liveeToken');
-    await prefs.remove('liveeRole');
+    SessionStorageService.delete('liveeToken');
+    SessionStorageService.delete('liveeRole');
   }
 
   Future<String?> getAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('liveeToken');
+    return SessionStorageService.read('liveeToken');
   }
 
   Future<String?> getUserRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('liveeRole');
+    return SessionStorageService.read('liveeRole');
   }
 }
