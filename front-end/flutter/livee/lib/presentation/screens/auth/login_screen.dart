@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _errorMessage = '';
   bool _isLoading = false;
 
   // 선택된 역할을 저장할 상태 변수
@@ -31,10 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = '';
-      });
+      setState(() => _isLoading = true);
 
       try {
         await Provider.of<AuthProvider>(context, listen: false).login(
@@ -44,9 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
         // 로그인 성공 시 메인 화면으로 이동
         if (context.mounted) GoRouter.of(context).go('/');
       } catch (e) {
-        setState(() {
-          _errorMessage = e.toString().replaceFirst('Exception: ', ''); // "Exception: " 접두어 제거
-        });
+        if (context.mounted) {
+          showCustomToast(
+            context,
+            e.toString().replaceFirst('Exception: ', ''),
+            type: ToastType.error,
+          );
+        }
       } finally {
         setState(() {
           _isLoading = false;
@@ -94,7 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? const Color(0xFF111827) : const Color(0xFF374151),
+              color: isSelected
+                  ? const Color(0xFF111827)
+                  : const Color(0xFF374151),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -181,22 +184,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-                  if (_errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        _errorMessage,
-                        style: const TextStyle(
-                          color: Color(0xFFE11D48),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
+
                   PrimaryActionButton(
                     text: _isLoading ? '로그인 중...' : '로그인',
                     onPressed: _login,
                     isLoading: _isLoading,
                   ),
+
                   const SizedBox(height: 26),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

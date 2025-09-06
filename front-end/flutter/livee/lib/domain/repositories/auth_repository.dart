@@ -26,7 +26,11 @@ class AuthRepository {
       }
       return user;
     } else {
-      throw Exception('Failed to login: ${response.reasonPhrase}');
+      // [수정] 서버에서 보내주는 실제 에러 메시지를 파싱하여 Exception으로 전달
+      // final errorJson = jsonDecode(utf8.decode(response.bodyBytes));
+      // final message = errorJson['message'] ?? '로그인에 실패했습니다.';
+      final message = '로그인에 실패했습니다.';
+      throw Exception(message);
     }
   }
 
