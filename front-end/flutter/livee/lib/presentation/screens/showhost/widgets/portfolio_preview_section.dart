@@ -36,7 +36,7 @@ class PortfolioPreviewSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   // 이미지가 없을 때의 배경색 변경
-                  color: Colors.grey[200],
+                  color: const Color(0xFFE3F2FD),
                   child: backgroundImageSource == null
                       ? _buildPlaceholder(Icons.add_photo_alternate_outlined)
                       : (backgroundImageSource!.localBytes != null
@@ -91,8 +91,7 @@ class PortfolioPreviewSection extends StatelessWidget {
                       builder: (context, value, child) {
                         return Text(
                           value.text.isNotEmpty ? value.text : '닉네임',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         );
                       },
                     ),
