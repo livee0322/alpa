@@ -171,78 +171,89 @@ class _MainScreenState extends State<MainScreen> {
 
     final items = _schedules;
     return Column(
-      children: items.map((campaign) {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: const Color(0xFFF1F3F5),
+      children: items.map(
+        (campaign) {
+          // 마감일 및 출연료 텍스트를 가공하는 로직
+          final closeDate = campaign.closeAt?.substring(0, 10) ?? '미정';
+          String feeText = '미정';
+          if (campaign.fee != null && campaign.fee! > 0) {
+            feeText = '${(campaign.fee! / 10000).round()}만원';
+          } else if (campaign.feeNegotiable == true) {
+            feeText = '협의';
+          }
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: const Color(0xFFF1F3F5),
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.06),
+                  offset: Offset(0, 2),
+                  blurRadius: 8,
+                ),
+              ],
             ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: const [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.06),
-                offset: Offset(0, 2),
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  // 캠페인의 커버 이미지를 사용하고, 없을 경우 대체 이미지를 표시
-                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/schedule${campaign.id}/96/96',
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.cover,
-                  // 이미지 로딩 실패 시 Placeholder 표시
-                  errorBuilder: (context, error, stackTrace) => const Placeholder(),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    // 캠페인의 커버 이미지를 사용하고, 없을 경우 대체 이미지를 표시
+                    campaign.coverImageUrl ?? 'https://picsum.photos/seed/schedule${campaign.id}/96/96',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    // 이미지 로딩 실패 시 Placeholder 표시
+                    errorBuilder: (context, error, stackTrace) => const Placeholder(),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 브랜드명
-                    Text(
-                      campaign.brand ?? '브랜드 미정',
-                      style: const TextStyle(
-                        color: Color(0xFF6B7280),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 브랜드명
+                      Text(
+                        campaign.brand ?? '브랜드',
+                        style: const TextStyle(
+                          color: Color(0xFF111111),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    // 제목
-                    Text(
-                      campaign.title ?? '제목 없음',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                      const SizedBox(height: 2),
+                      // 제목
+                      Text(
+                        campaign.title ?? '제목 없음',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    // 촬영 시간
-                    Text(
-                      campaign.liveTime ?? '시간 미정',
-                      style: const TextStyle(
-                        color: Color(0xFF6B7280),
-                        fontSize: 14,
+                      const SizedBox(height: 2),
+                      // 촬영 시간
+                      Text(
+                        '마감 $closeDate · 출연료 $feeText',
+                        style: const TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+              ],
+            ),
+          );
+        },
+      ).toList(),
     );
   }
 }
