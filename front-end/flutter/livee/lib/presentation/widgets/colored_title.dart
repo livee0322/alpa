@@ -18,6 +18,7 @@ class ColoredTitle extends StatelessWidget {
     final purpleSpan = TextSpan(
       text: purpleText,
       style: const TextStyle(
+        fontFamily: 'SUIT',
         fontSize: 16,
         color: Color(0xFF8B5CF6),
         fontWeight: FontWeight.w900,
@@ -27,6 +28,7 @@ class ColoredTitle extends StatelessWidget {
     return RichText(
       text: TextSpan(
         style: const TextStyle(
+          fontFamily: 'SUIT',
           fontSize: 16,
           fontWeight: FontWeight.w900,
           color: Colors.black,
