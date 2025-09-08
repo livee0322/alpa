@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
+import 'package:livee/domain/models/news_article.dart';
 import 'package:livee/domain/models/portfolio.dart';
+import 'package:livee/domain/repositories/news_repository.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/main/widgets/consultation_section.dart';
 import 'package:livee/presentation/screens/main/widgets/featured_showhost_section.dart';
+import 'package:livee/presentation/screens/main/widgets/news_section.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
@@ -28,6 +31,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Campaign> _schedules = [];
   List<Campaign> _recruits = [];
   List<Portfolio> _featuredShowhosts = [];
+  // List<NewsArticle> _newsArticles = [];
   String? _errorMessage;
 
   @override
@@ -41,18 +45,20 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _isLoading = true);
     try {
       final campaignUseCase = locator<CampaignUseCase>();
-      // [추가] 포트폴리오 리포지토리 인스턴스 가져오기
       final portfolioRepository = locator<PortfolioRepository>();
+      // final newsRepository = NewsRepository();
       // 여러 API를 동시에 호출하여 성능 향상
       final results = await Future.wait([
         campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6),
         campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
         portfolioRepository.getPublicPortfolios(limit: 5),
+        // newsRepository.getLiveCommerceNews(limit: 3),
       ]);
       setState(() {
         _schedules = results[0] as List<Campaign>;
         _recruits = results[1] as List<Campaign>;
         _featuredShowhosts = results[2] as List<Portfolio>;
+        // _newsArticles = results[3] as List<NewsArticle>;
       });
     } catch (e) {
       setState(() {
@@ -118,7 +124,20 @@ class _MainScreenState extends State<MainScreen> {
           onTap: () => GoRouter.of(context).go('/schedule'),
         ),
         RecruitSection(recruits: _recruits),
+
+        // 라이비 뉴스 섹션
         const SizedBox(height: 18),
+        _buildSectionHeader(
+          blackTitle: '라이비 ',
+          purpleTitle: '뉴스',
+          onTap: () {
+            // TODO: 뉴스 전체 목록 페이지로 이동
+          },
+        ),
+        // NewsSection(articles: _newsArticles),
+        NewsSection(),
+        const SizedBox(height: 18),
+
         _buildSectionHeader(
           blackTitle: '는 어떠세요?',
           purpleTitle: '이런 쇼호스트',
