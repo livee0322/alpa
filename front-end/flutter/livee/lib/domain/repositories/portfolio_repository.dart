@@ -59,8 +59,7 @@ class PortfolioRepository {
     final response = await _apiClient.get('/portfolio/all');
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList =
-          jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> jsonList = jsonDecode(utf8.decode(response.bodyBytes));
       return jsonList.map((json) => Portfolio.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load portfolios');
@@ -86,15 +85,17 @@ class PortfolioRepository {
     }
   }
 
-  // 추천 쇼호스트 목록 조회 (GET /portfolios/public/featured)
-  Future<List<Portfolio>> getFeaturedPortfolios() async {
-    final response = await _apiClient.get('/portfolios/public/featured');
+  // 공개된 포트폴리오 목록 조회 (limit 지원)
+  Future<List<Portfolio>> getPublicPortfolios({int? limit}) async {
+    final path = '/portfolios${limit != null ? '?limit=$limit' : ''}';
+    final response = await _apiClient.get(path);
+
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList =
-          jsonDecode(utf8.decode(response.bodyBytes));
+      final json = jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> jsonList = json['items'] ?? json['data'] ?? json;
       return jsonList.map((json) => Portfolio.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load featured portfolios');
+      throw Exception('Failed to load public portfolios');
     }
   }
 }
