@@ -4,6 +4,7 @@ import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
+import 'package:livee/presentation/widgets/colored_title.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
@@ -72,7 +73,6 @@ class _MainScreenState extends State<MainScreen> {
                   return CommonHeader(isLoggedIn: authProvider.isLoggedIn);
                 },
               ),
-              const CommonBanner(),
               const CommonTopTabBar(),
               // 로딩이 끝난 후 본문 내용 표시
               if (!_isLoading)
@@ -97,34 +97,38 @@ class _MainScreenState extends State<MainScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(
-          title: '오늘의 라이브',
+          blackTitle: '쇼핑 라이브 공고',
+          purpleTitle: '지금 뜨는 ',
+          purpleFirst: true,
           onTap: () => GoRouter.of(context).go('/schedule'),
         ),
         _buildScheduleSection(),
         const SizedBox(height: 18),
         _buildSectionHeader(
-          title: '추천 공고',
-          onTap: () {
-            GoRouter.of(context).go('/recruits');
-          },
+          blackTitle: '브랜드 ',
+          purpleTitle: 'pick',
+          onTap: () => GoRouter.of(context).go('/schedule'),
         ),
         RecruitSection(recruits: _recruits), // 수정: recruitsFuture -> recruits
       ],
     );
   }
 
-  Widget _buildSectionHeader({required String title, VoidCallback? onTap}) {
+  Widget _buildSectionHeader({
+    required String blackTitle,
+    required String purpleTitle,
+    bool purpleFirst = false,
+    VoidCallback? onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 22,
-            ),
+          ColoredTitle(
+            blackText: blackTitle,
+            purpleText: purpleTitle,
+            purpleFirst: purpleFirst,
           ),
           if (onTap != null)
             InkWell(
