@@ -41,15 +41,6 @@ class CommonHeader extends StatelessWidget {
                 icon: const Icon(Icons.search),
                 onPressed: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
               ),
-              // 로그인 상태일 때만 로그아웃 버튼을 표시
-              if (isLoggedIn)
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    Provider.of<AuthProvider>(context, listen: false).logout();
-                    GoRouter.of(context).go('/login');
-                  },
-                ),
             ],
           ),
         ],

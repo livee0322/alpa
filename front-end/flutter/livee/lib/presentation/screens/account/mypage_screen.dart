@@ -5,8 +5,10 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class MypageScreen extends StatelessWidget {
   const MypageScreen({super.key});
@@ -72,8 +74,7 @@ class MypageScreen extends StatelessWidget {
                       title: '내가 등록한 공고',
                       actionWidget: PrimaryActionButton(
                         text: '공고 등록하기',
-                        onPressed: () =>
-                            GoRouter.of(context).go('/campaign-form'),
+                        onPressed: () => GoRouter.of(context).go('/campaign-form'),
                         isFullWidth: false, // 전체 너비가 아닌 작은 버튼으로 설정
                       ),
                     ),
@@ -88,15 +89,13 @@ class MypageScreen extends StatelessWidget {
                       icon: CupertinoIcons.person_2,
                       title: '지원자 현황',
                       subtitle: '캠페인별 지원자/상태',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.',
-                          type: ToastType.info),
+                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
                     ),
                     _buildMyPageItem(
                       icon: CupertinoIcons.paperplane,
                       title: '제안하기',
                       subtitle: '쇼호스트에게 직접 제안',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.',
-                          type: ToastType.info),
+                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -107,8 +106,7 @@ class MypageScreen extends StatelessWidget {
                       title: '쇼호스트 메뉴',
                       actionWidget: PrimaryActionButton(
                         text: '+ 등록',
-                        onPressed: () =>
-                            GoRouter.of(context).go('/portfolio-edit'),
+                        onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
                         isFullWidth: false,
                       ),
                     ),
@@ -135,8 +133,7 @@ class MypageScreen extends StatelessWidget {
                       icon: CupertinoIcons.heart,
                       title: '찜한 공고',
                       subtitle: '북마크한 공고 모아보기',
-                      onTap: () =>
-                          GoRouter.of(context).go('/bookmarked-recruits'),
+                      onTap: () => GoRouter.of(context).go('/bookmarked-recruits'),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -148,20 +145,34 @@ class MypageScreen extends StatelessWidget {
                     icon: CupertinoIcons.settings,
                     title: '알림 설정',
                     subtitle: '푸시/이메일 수신 관리',
-                    onTap: () => showCustomToast(context, '준비중인 기능입니다.',
-                        type: ToastType.info),
+                    onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
                   ),
                   _buildMyPageItem(
-                    icon: isLoggedIn
-                        ? CupertinoIcons.square_arrow_left
-                        : CupertinoIcons.square_arrow_right,
+                    icon: isLoggedIn ? CupertinoIcons.square_arrow_left : CupertinoIcons.square_arrow_right,
                     title: isLoggedIn ? '로그아웃' : '로그인',
                     subtitle: '계정 전환 및 로그인',
-                    onTap: () {
+                    onTap: () async {
                       if (isLoggedIn) {
-                        authProvider.logout();
+                        // 공통 다이얼로그 호출
+                        final confirm = await showCommonPromptDialog(
+                          context: context,
+                          title: '로그아웃',
+                          content: '정말로 로그아웃 하시겠습니까?',
+                          confirmText: '로그아웃',
+                        );
+                        if (confirm == true) {
+                          // 로그아웃 로직 실행
+                          await authProvider.logout();
+                          if (context.mounted) {
+                            // 토스트 메시지 표시
+                            showCustomToast(context, '로그아웃 되었습니다.');
+                            // 물리적 뒤로가기 실행
+                            html.window.history.go(-1);
+                          }
+                        }
+                      } else {
+                        GoRouter.of(context).go('/login');
                       }
-                      GoRouter.of(context).go('/login');
                     },
                   ),
                 ],
@@ -200,8 +211,7 @@ class MypageScreen extends StatelessWidget {
                 children: [
                   Text(
                     authProvider.user?.name ?? '로그인 필요',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(

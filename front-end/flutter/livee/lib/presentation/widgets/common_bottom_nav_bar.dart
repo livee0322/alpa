@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/login_prompt_dialog.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
 class CommonBottomNavBar extends StatelessWidget {
@@ -57,16 +57,25 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
   return Expanded(
     child: InkWell(
       // onTap 로직에 접근 제어 기능을 추가
-      onTap: () {
+      onTap: () async {
         final isLoggedIn = authProvider.isLoggedIn;
 
         // 로그인이 필요한 페이지 목록
         final authRequiredRoutes = ['/mypage', '/library']; // 예시: 마이페이지, 라이브러리
 
         if (authRequiredRoutes.contains(path) && !isLoggedIn) {
-          showLoginPromptDialog(context);
+          // [수정] showLoginPromptDialog 대신 공통 다이얼로그 직접 호출
+          final result = await showCommonPromptDialog(
+            context: context,
+            title: '로그인이 필요합니다',
+            content: '회원 전용 서비스입니다.\n로그인 하시겠습니까?',
+            confirmText: '로그인',
+          );
+          if (result == true && context.mounted) {
+            GoRouter.of(context).go('/login');
+          }
         } else {
-          router.go(path);
+          GoRouter.of(context).go(path);
         }
       },
       borderRadius: BorderRadius.circular(8),

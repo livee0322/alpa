@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/login_prompt_dialog.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
@@ -54,12 +54,21 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   }
 
   // '지원하기' 버튼 클릭 시 실행될 메소드
-  void _handleApply(BuildContext context) {
+  void _handleApply(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     if (!authProvider.isLoggedIn) {
       // 비회원일 경우: 로그인 유도 팝업
-      showLoginPromptDialog(context);
+
+      final result = await showCommonPromptDialog(
+        context: context,
+        title: '로그인이 필요합니다',
+        content: '회원 전용 서비스입니다.\n로그인 하시겠습니까?',
+        confirmText: '로그인',
+      );
+      if (result == true && context.mounted) {
+        GoRouter.of(context).go('/login');
+      }
     } else if (authProvider.role == 'showhost') {
       // 쇼호스트일 경우: 성공 토스트 및 홈으로 이동
       // TODO: 실제 지원 API 연동 필요
