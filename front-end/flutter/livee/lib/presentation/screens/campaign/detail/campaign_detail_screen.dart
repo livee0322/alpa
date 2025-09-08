@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/widgets/login_prompt_dialog.dart';
 import 'package:livee/service_locator.dart';
+import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_product_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
@@ -49,8 +53,26 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     }
   }
 
+  // '지원하기' 버튼 클릭 시 실행될 메소드
+  void _handleApply(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (!authProvider.isLoggedIn) {
+      // 비회원일 경우: 로그인 유도 팝업
+      showLoginPromptDialog(context);
+    } else if (authProvider.role == 'showhost') {
+      // 쇼호스트일 경우: 성공 토스트 및 홈으로 이동
+      // TODO: 실제 지원 API 연동 필요
+      showCustomToast(context, '성공적으로 지원되었습니다.', type: ToastType.success);
+      // history를 모두 지우고 홈으로 이동
+      GoRouter.of(context).go('/');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // AuthProvider를 가져와서 사용자 역할 확인
+    final authProvider = Provider.of<AuthProvider>(context);
     return LoadingOverlay(
       isLoading: _isLoading,
       child: Scaffold(
@@ -62,13 +84,13 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           backgroundColor: Color(0xFFF6F7F9),
           title: const Text('공고 상세'),
         ),
-        body: _buildBody(),
+        body: _buildBody(authProvider),
       ),
     );
   }
 
   // 화면 본문을 빌드하는 헬퍼 메소드
-  Widget _buildBody() {
+  Widget _buildBody(AuthProvider authProvider) {
     if (_errorMessage != null) {
       return Center(child: Text('에러: $_errorMessage'));
     }
@@ -98,7 +120,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(campaign),
+      bottomNavigationBar: _buildBottomBar(campaign, authProvider),
     );
   }
 
@@ -264,8 +286,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     );
   }
 
-  /// 하단 고정 바를 빌드
-  Widget _buildBottomBar(Campaign campaign) {
+  // 하단 고정 바를 빌드
+  Widget _buildBottomBar(Campaign campaign, AuthProvider authProvider) {
     String priceLabel = '';
     if (campaign.type == 'recruit') {
       // fee를 "30만원" 형태의 문자열로 변환
@@ -282,10 +304,14 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       }
     }
 
+    // 사용자 역할에 따라 버튼 라벨과 기능을 분기
+    bool isBrand = authProvider.role == 'brand';
+
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
-      buttonLabel: '지원자 현황',
-      onButtonPressed: () => GoRouter.of(context).go('/campaign/${campaign.id}/applicants'),
+      buttonLabel: isBrand ? '지원자 현황' : '지원하기',
+      onButtonPressed: () =>
+          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : _handleApply(context),
     );
   }
 }
