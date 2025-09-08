@@ -61,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
     return LoadingOverlay(
       isLoading: _isLoading,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF6F7F9),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

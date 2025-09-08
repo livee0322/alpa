@@ -1,11 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/service_locator.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_product_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
+import 'package:universal_html/html.dart' as html;
 
 class CampaignDetailScreen extends StatefulWidget {
   final String campaignId;
@@ -20,66 +23,82 @@ class CampaignDetailScreen extends StatefulWidget {
 }
 
 class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
-  late Future<Campaign> _campaignFuture;
+  // 로딩 상태와 데이터를 직접 관리
+  bool _isLoading = true;
+  Campaign? _campaign;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    // locator를 통해 UseCase 인스턴스를 직접 가져오기
-    _campaignFuture = locator<CampaignUseCase>().getCampaignById(widget.campaignId);
+    _loadCampaign();
+  }
+
+  // 데이터를 불러오고 상태를 관리하는 메소드
+  Future<void> _loadCampaign() async {
+    setState(() => _isLoading = true);
+    try {
+      final campaign = await locator<CampaignUseCase>().getCampaignById(widget.campaignId);
+      setState(() => _campaign = campaign);
+    } catch (e) {
+      setState(() => _errorMessage = e.toString());
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('상세 공고'),
+    return LoadingOverlay(
+      isLoading: _isLoading,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(CupertinoIcons.back),
+            onPressed: () => html.window.history.go(-1),
+          ),
+          backgroundColor: Color(0xFFF6F7F9),
+          title: const Text('공고 상세'),
+        ),
+        body: _buildBody(),
       ),
-      body: FutureBuilder<Campaign>(
-        future: _campaignFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('에러: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: Text('공고 정보를 찾을 수 없습니다.'));
-          }
+    );
+  }
 
-          final campaign = snapshot.data!;
-          // Scaffold를 반환하여 bottomNavigationBar를 동적으로 설정
-          return Scaffold(
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(14, 16, 14, 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 썸네일
-                  _buildThumbnail(campaign),
-                  const SizedBox(height: 16),
-                  // 브랜드 / 제목
-                  _buildTitleSection(campaign),
-                  const SizedBox(height: 16),
-                  // 메타 정보 (타입에 따라 분기)
-                  if (campaign.type == 'recruit')
-                    _buildRecruitMetaGrid(campaign)
-                  else if (campaign.type == 'product')
-                    _buildProductMetaGrid(campaign),
-                  const SizedBox(height: 24),
-                  // 상품 목록 (상품 캠페인일 경우)
-                  if (campaign.type == 'product') _buildProductList(campaign),
-                  // 상세 설명
-                  _buildDescription(campaign),
-                ],
-              ),
-            ),
-            // 하단 고정 버튼 바
-            bottomNavigationBar: _buildBottomBar(campaign),
-          );
-        },
+  // 화면 본문을 빌드하는 헬퍼 메소드
+  Widget _buildBody() {
+    if (_errorMessage != null) {
+      return Center(child: Text('에러: $_errorMessage'));
+    }
+    if (_campaign == null) {
+      return const Center(child: Text('공고 정보를 찾을 수 없습니다.'));
+    }
+
+    final campaign = _campaign!;
+    return Scaffold(
+      backgroundColor: Color(0xFFF6F7F9),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(14, 16, 14, 100),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildThumbnail(campaign),
+            const SizedBox(height: 16),
+            _buildTitleSection(campaign),
+            const SizedBox(height: 16),
+            if (campaign.type == 'recruit')
+              _buildRecruitMetaGrid(campaign)
+            else if (campaign.type == 'product')
+              _buildProductMetaGrid(campaign),
+            const SizedBox(height: 24),
+            if (campaign.type == 'product') _buildProductList(campaign),
+            _buildDescription(campaign),
+          ],
+        ),
       ),
+      bottomNavigationBar: _buildBottomBar(campaign),
     );
   }
 
