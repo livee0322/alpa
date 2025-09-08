@@ -47,6 +47,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Livee',
+      theme: ThemeData(
+        fontFamily: 'SUIT',
+        scaffoldBackgroundColor: Colors.white,
+      ),
       // 전달받은 router 인스턴스를 routerConfig에 설정
       routerConfig: router,
     );
