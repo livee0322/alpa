@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/screens/main/widgets/product_section.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
 import 'package:livee/presentation/widgets/common_banner.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
+import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
@@ -20,79 +20,96 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // 각 섹션의 데이터를 관리할 Future 변수 추가
-  late Future<List<Campaign>> _scheduleFuture;
-  late Future<List<Campaign>> _productsFuture;
-  late Future<List<Campaign>> _recruitsFuture;
+  bool _isLoading = true;
+  List<Campaign> _schedules = [];
+  List<Campaign> _recruits = [];
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    // Provider.of 대신 locator를 통해 UseCase 인스턴스를 직접 가져오기
-    final campaignUseCase = locator<CampaignUseCase>();
+    _loadData();
+  }
 
-    // 각 섹션에 필요한 데이터를 비동기적으로 로드
-    // 기존 _scheduleFuture 외에 _productsFuture와 _recruitsFuture 로직 추가
-    _scheduleFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6);
-    _productsFuture = campaignUseCase.getAllCampaigns(type: 'product', limit: 10);
-    _recruitsFuture = campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10);
+  // 페이지에 필요한 모든 데이터를 한 번에 불러오는 메소드
+  Future<void> _loadData() async {
+    setState(() => _isLoading = true);
+    try {
+      final campaignUseCase = locator<CampaignUseCase>();
+      // 여러 API를 동시에 호출하여 성능 향상
+      final results = await Future.wait([
+        campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6),
+        campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
+      ]);
+      setState(() {
+        _schedules = results[0];
+        _recruits = results[1];
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CommonHeader(isLoggedIn: authProvider.isLoggedIn),
-                const CommonBanner(),
-                const CommonTopTabBar(),
+    return LoadingOverlay(
+      isLoading: _isLoading,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // CommonHeader는 Consumer 외부로 이동하여 불필요한 재빌드 방지
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return CommonHeader(isLoggedIn: authProvider.isLoggedIn);
+                },
+              ),
+              const CommonBanner(),
+              const CommonTopTabBar(),
+              // 로딩이 끝난 후 본문 내용 표시
+              if (!_isLoading)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(
-                        title: '오늘의 라이브 라인업',
-                        onTap: () => GoRouter.of(context).go('/schedule'),
-                      ),
-                      _buildScheduleSection(),
-                      // 4. "라이브 상품" 섹션 추가
-                      const SizedBox(height: 18), // 섹션 간 간격
-                      _buildSectionHeader(
-                        title: '라이브 상품',
-                        onTap: () {
-                          // TODO: 더보기 페이지 라우팅
-                        },
-                      ),
-
-                      // 상품 섹션
-                      ProductSection(productsFuture: _productsFuture),
-
-                      const SizedBox(height: 18),
-
-                      _buildSectionHeader(
-                        title: '추천 공고',
-                        onTap: () {
-                          GoRouter.of(context).go('/recruits'); // TODO: 공고 목록 페이지 라우팅
-                        },
-                      ),
-
-                      // 추천 공고 섹션
-                      RecruitSection(recruitsFuture: _recruitsFuture),
-                    ],
-                  ),
+                  child: _buildBody(),
                 ),
-              ],
-            ),
+            ],
           ),
-          bottomNavigationBar: const CommonBottomNavBar(),
-        );
-      },
+        ),
+        bottomNavigationBar: const CommonBottomNavBar(),
+      ),
+    );
+  }
+
+  // 화면 본문을 빌드하는 헬퍼 메소드
+  Widget _buildBody() {
+    if (_errorMessage != null) {
+      return Center(child: Text("데이터를 불러오는 데 실패했습니다: $_errorMessage"));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader(
+          title: '오늘의 라이브',
+          onTap: () => GoRouter.of(context).go('/schedule'),
+        ),
+        _buildScheduleSection(),
+        const SizedBox(height: 18),
+        _buildSectionHeader(
+          title: '추천 공고',
+          onTap: () {
+            GoRouter.of(context).go('/recruits');
+          },
+        ),
+        RecruitSection(recruits: _recruits), // 수정: recruitsFuture -> recruits
+      ],
     );
   }
 
@@ -126,112 +143,102 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildScheduleSection() {
-    return FutureBuilder<List<Campaign>>(
-      future: _scheduleFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('일정 로딩 실패'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: const Color(0xFFE5E7EB),
-                style: BorderStyle.solid,
-              ),
-              borderRadius: BorderRadius.circular(12),
+    if (_schedules.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color(0xFFE5E7EB),
+            style: BorderStyle.solid,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: Text(
+            '예정된 일정이 없습니다.',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF9AA3AF),
             ),
-            child: const Center(
-              child: Text(
-                '예정된 일정이 없습니다.',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF9AA3AF),
+          ),
+        ),
+      );
+    }
+
+    final items = _schedules;
+    return Column(
+      children: items.map((campaign) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: const Color(0xFFF1F3F5),
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.06),
+                offset: Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  // 캠페인의 커버 이미지를 사용하고, 없을 경우 대체 이미지를 표시
+                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/schedule${campaign.id}/96/96',
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  // 이미지 로딩 실패 시 Placeholder 표시
+                  errorBuilder: (context, error, stackTrace) => const Placeholder(),
                 ),
               ),
-            ),
-          );
-        } else {
-          final items = snapshot.data!;
-          return Column(
-            children: items.map((campaign) {
-              final recruit = campaign.recruit;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: const Color(0xFFF1F3F5),
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.06),
-                      offset: Offset(0, 2),
-                      blurRadius: 8,
-                    ),
-                  ],
-                ),
-                child: Row(
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        // 캠페인의 커버 이미지를 사용하고, 없을 경우 대체 이미지를 표시
-                        campaign.coverImageUrl ?? 'https://picsum.photos/seed/schedule${campaign.id}/96/96',
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        // 이미지 로딩 실패 시 Placeholder 표시
-                        errorBuilder: (context, error, stackTrace) => const Placeholder(),
+                    // 브랜드명
+                    Text(
+                      campaign.brand ?? '브랜드 미정',
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 브랜드명
-                          Text(
-                            campaign.brand ?? '브랜드 미정',
-                            style: const TextStyle(
-                              color: Color(0xFF6B7280),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          // 제목
-                          Text(
-                            campaign.title ?? '제목 없음',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          // 촬영 시간
-                          Text(
-                            campaign.liveTime ?? '시간 미정',
-                            style: const TextStyle(
-                              color: Color(0xFF6B7280),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                    const SizedBox(height: 2),
+                    // 제목
+                    Text(
+                      campaign.title ?? '제목 없음',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    // 촬영 시간
+                    Text(
+                      campaign.liveTime ?? '시간 미정',
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 14,
                       ),
                     ),
                   ],
                 ),
-              );
-            }).toList(),
-          );
-        }
-      },
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

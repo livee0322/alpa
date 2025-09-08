@@ -4,122 +4,108 @@ import 'package:livee/domain/models/campaign.dart';
 
 class RecruitSection extends StatelessWidget {
   // 부모 위젯(MainScreen)으로부터 Future 데이터를 전달받음
-  final Future<List<Campaign>> recruitsFuture;
+  final List<Campaign> recruits;
 
   const RecruitSection({
     super.key,
-    required this.recruitsFuture,
+    required this.recruits,
   });
 
   @override
   Widget build(BuildContext context) {
-    // FutureBuilder를 사용하여 비동기 데이터를 UI로 변환
-    return FutureBuilder<List<Campaign>>(
-      future: recruitsFuture,
-      builder: (context, snapshot) {
-        // 로딩, 에러, 데이터 없음 처리
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('모집 공고 로딩 실패'));
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('등록된 공고가 없습니다'));
-        }
+    if (recruits.isEmpty) {
+      return const Center(child: Text('등록된 공고가 없습니다'));
+    }
 
-        // 데이터가 있을 때 리스트 뷰로 표시
-        final items = snapshot.data!;
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 12), // 아이템 간 간격
-          itemBuilder: (context, index) {
-            final campaign = items[index];
-            final dDay = _calculateDday(campaign.closeAt);
-            String feeText = '협의';
-            if (campaign.fee != null && campaign.fee! > 0) {
-              feeText = '${(campaign.fee! / 10000).round()}만원';
-            } else if (campaign.feeNegotiable == true) {
-              feeText = '협의';
-            }
-            return InkWell(
-              onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
-              child: Card(
-                color: Colors.white,
-                elevation: 2,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    final items = recruits;
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: items.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final campaign = items[index];
+        final dDay = _calculateDday(campaign.closeAt);
+        String feeText = '협의';
+        if (campaign.fee != null && campaign.fee! > 0) {
+          feeText = '${(campaign.fee! / 10000).round()}만원';
+        } else if (campaign.feeNegotiable == true) {
+          feeText = '협의';
+        }
+        return InkWell(
+          onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+          child: Card(
+            color: Colors.white,
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          campaign.brand ?? '브랜드 미정',
+                          style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          campaign.title ?? '제목 없음',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
                           children: [
+                            if (dDay.isNotEmpty) ...[
+                              // D-day 뱃지
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEE2E2),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  dDay,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF4338CA),
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                              _buildMetaSeparator(),
+                            ],
+                            // 출연료
                             Text(
-                              campaign.brand ?? '브랜드 미정',
+                              '출연료 $feeText',
                               style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              campaign.title ?? '제목 없음',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                if (dDay.isNotEmpty) ...[
-                                  // D-day 뱃지
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFEE2E2),
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Text(
-                                      dDay,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF4338CA),
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                  _buildMetaSeparator(),
-                                ],
-                                // 출연료
-                                Text(
-                                  '출연료 $feeText',
-                                  style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
-                                ),
-                                // TODO: 지원자 수는 API 응답에 추가 필요
-                              ],
-                            ),
+                            // TODO: 지원자 수는 API 응답에 추가 필요
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      // 썸네일 이미지
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          campaign.coverImageUrl ?? 'https://picsum.photos/seed/recruit${campaign.id}/112/112',
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const SizedBox(width: 56, height: 56, child: Icon(Icons.error)),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  // 썸네일 이미지
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      campaign.coverImageUrl ?? 'https://picsum.photos/seed/recruit${campaign.id}/112/112',
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox(width: 56, height: 56, child: Icon(Icons.error)),
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );
