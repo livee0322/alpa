@@ -5,6 +5,7 @@ import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/main/widgets/consultation_section.dart';
 import 'package:livee/presentation/screens/main/widgets/featured_showhost_section.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
@@ -127,6 +128,11 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
         FeaturedShowhostSection(showhosts: _featuredShowhosts),
+
+        const SizedBox(height: 18),
+
+        // 무료 상담 섹션
+        const ConsultationSection(),
       ],
     );
   }
