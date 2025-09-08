@@ -5,6 +5,7 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,8 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
           _passwordController.text,
           _selectedRole,
         );
-        // 로그인 성공 시 메인 화면으로 이동
-        if (context.mounted) GoRouter.of(context).go('/');
+        // 로그인 성공 시 홈으로 이동 대신, 물리적인 뒤로가기 실행
+        if (context.mounted) html.window.history.go(-1);
       } catch (e) {
         if (context.mounted) {
           showCustomToast(
@@ -50,9 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -80,11 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final isSelected = _selectedRole == role;
     return Expanded(
       child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedRole = role;
-          });
-        },
+        onTap: () => setState(() => _selectedRole = role),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           height: 46,
@@ -96,9 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? const Color(0xFF111827)
-                  : const Color(0xFF374151),
+              color: isSelected ? const Color(0xFF111827) : const Color(0xFF374151),
               fontWeight: FontWeight.w700,
             ),
           ),

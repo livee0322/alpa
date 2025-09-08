@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,17 +19,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nicknameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _errorMessage = '';
   bool _isLoading = false;
   String _selectedRole = 'brand';
 
   Future<void> _signup() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = '';
-      });
-
+      setState(() => _isLoading = true);
       try {
         await Provider.of<AuthProvider>(context, listen: false).signup(
           _nicknameController.text,
@@ -35,18 +32,25 @@ class _SignupScreenState extends State<SignupScreen> {
           _passwordController.text,
           _selectedRole,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('회원가입이 완료되었습니다. 로그인 해주세요.')),
-        );
-        GoRouter.of(context).go('/login');
+        if (mounted) {
+          showCustomToast(
+            context,
+            '회원가입이 완료되었습니다.',
+            type: ToastType.success,
+          );
+          // 로그인 페이지로 이동 대신, 물리적인 뒤로가기 실행
+          html.window.history.go(-1);
+        }
       } catch (e) {
-        setState(() {
-          _errorMessage = e.toString();
-        });
+        if (mounted) {
+          showCustomToast(
+            context,
+            e.toString().replaceFirst('Exception: ', ''),
+            type: ToastType.error,
+          );
+        }
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -172,15 +176,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style: const TextStyle(
-                        color: Color(0xFFEF4444),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  SizedBox(height: _errorMessage.isNotEmpty ? 16 : 0),
                   PrimaryActionButton(
                     text: '가입하기',
                     onPressed: _signup,
