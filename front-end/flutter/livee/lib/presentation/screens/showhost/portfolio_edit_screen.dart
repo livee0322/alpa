@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
 import 'package:livee/presentation/screens/showhost/widgets/portfolio_basic_info_section.dart';
 import 'package:livee/presentation/screens/showhost/widgets/portfolio_experience_section.dart';
 import 'package:livee/presentation/screens/showhost/widgets/portfolio_preview_section.dart';
@@ -15,24 +16,6 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 import 'package:livee/service_locator.dart';
-
-// 최근 라이브 링크 입력을 관리하기 위한 컨트롤러 그룹
-class RecentLiveControllers {
-  final TextEditingController titleController;
-  final TextEditingController urlController;
-  final TextEditingController dateController;
-
-  RecentLiveControllers()
-      : titleController = TextEditingController(),
-        urlController = TextEditingController(),
-        dateController = TextEditingController();
-
-  void dispose() {
-    titleController.dispose();
-    urlController.dispose();
-    dateController.dispose();
-  }
-}
 
 class PortfolioEditScreen extends StatefulWidget {
   final String? portfolioId;
@@ -70,8 +53,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   final _tagController = TextEditingController();
   final List<String> _tags = [];
 
-  final PortfolioRepository _portfolioRepository =
-      locator<PortfolioRepository>();
+  final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
 
   @override
   void initState() {
@@ -126,8 +108,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   Future<void> _pickImage({
     required Function(PortfolioImage) onImageSelected,
   }) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile == null) return;
 
     final bytes = await pickedFile.readAsBytes();
@@ -142,38 +123,32 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final portfolio =
-          await _portfolioRepository.getPortfolioById(widget.portfolioId!);
+      final portfolio = await _portfolioRepository.getPortfolioById(widget.portfolioId!);
       setState(() {
         _nicknameController.text = portfolio.nickname ?? '';
         _oneLineIntroController.text = portfolio.oneLineIntro ?? '';
         _detailedIntroController.text = portfolio.detailedIntro ?? '';
-        _experienceYearsController.text =
-            portfolio.experienceYears?.toString() ?? '';
+        _experienceYearsController.text = portfolio.experienceYears?.toString() ?? '';
         _ageController.text = portfolio.age?.toString() ?? '';
         _mainLinkController.text = portfolio.mainLink ?? '';
         _publicScope = portfolio.publicScope ?? '전체공개';
         _isReceivingOffers = portfolio.isReceivingOffers ?? true;
 
         if (portfolio.mainThumbnailUrl != null) {
-          _mainThumbnailSource =
-              PortfolioImage(networkUrl: portfolio.mainThumbnailUrl);
+          _mainThumbnailSource = PortfolioImage(networkUrl: portfolio.mainThumbnailUrl);
         }
         if (portfolio.backgroundImageUrl != null) {
-          _backgroundImageSource =
-              PortfolioImage(networkUrl: portfolio.backgroundImageUrl);
+          _backgroundImageSource = PortfolioImage(networkUrl: portfolio.backgroundImageUrl);
         }
 
         _subThumbnailSources.clear();
-        _subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? [])
-            .map((url) => PortfolioImage(networkUrl: url)));
+        _subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? []).map((url) => PortfolioImage(networkUrl: url)));
 
         _tags.clear();
         _tags.addAll(portfolio.tags ?? []);
 
         _recentLiveControllers.clear();
-        if (portfolio.recentLives != null &&
-            portfolio.recentLives!.isNotEmpty) {
+        if (portfolio.recentLives != null && portfolio.recentLives!.isNotEmpty) {
           for (var live in portfolio.recentLives!) {
             final controllers = RecentLiveControllers();
             controllers.titleController.text = live.title;
@@ -187,8 +162,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('포트폴리오 정보를 불러오는 데 실패했습니다: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('포트폴리오 정보를 불러오는 데 실패했습니다: $e')));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -205,14 +179,12 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       // --- 이미지 업로드 처리 ---
       String? finalMainThumbUrl = _mainThumbnailSource?.networkUrl;
       if (_mainThumbnailSource?.localBytes != null) {
-        finalMainThumbUrl =
-            await uploader.uploadImage(_mainThumbnailSource!.localBytes!);
+        finalMainThumbUrl = await uploader.uploadImage(_mainThumbnailSource!.localBytes!);
       }
 
       String? finalBackgroundUrl = _backgroundImageSource?.networkUrl;
       if (_backgroundImageSource?.localBytes != null) {
-        finalBackgroundUrl =
-            await uploader.uploadImage(_backgroundImageSource!.localBytes!);
+        finalBackgroundUrl = await uploader.uploadImage(_backgroundImageSource!.localBytes!);
       }
 
       final List<String> finalSubUrls = [];
@@ -244,10 +216,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                   'url': c.urlController.text,
                   'date': c.dateController.text,
                 })
-            .where((item) =>
-                item['title']!.isNotEmpty ||
-                item['url']!.isNotEmpty ||
-                item['date']!.isNotEmpty)
+            .where((item) => item['title']!.isNotEmpty || item['url']!.isNotEmpty || item['date']!.isNotEmpty)
             .toList(),
         'status': status,
       };
@@ -255,22 +224,18 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       if (widget.portfolioId == null) {
         await _portfolioRepository.createPortfolio(payload);
       } else {
-        await _portfolioRepository.updatePortfolio(
-            widget.portfolioId!, payload);
+        await _portfolioRepository.updatePortfolio(widget.portfolioId!, payload);
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
+          SnackBar(content: Text('포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.')),
         );
         GoRouter.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('저장 실패: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('저장 실패: $e')));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -291,8 +256,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -304,12 +268,10 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                     backgroundImageSource: _backgroundImageSource,
                     nicknameController: _nicknameController,
                     onPickMainThumbnail: () => _pickImage(
-                      onImageSelected: (source) =>
-                          setState(() => _mainThumbnailSource = source),
+                      onImageSelected: (source) => setState(() => _mainThumbnailSource = source),
                     ),
                     onPickBackgroundImage: () => _pickImage(
-                      onImageSelected: (source) =>
-                          setState(() => _backgroundImageSource = source),
+                      onImageSelected: (source) => setState(() => _backgroundImageSource = source),
                     ),
                   ),
                   const SizedBox(height: 96),
@@ -394,8 +356,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 
