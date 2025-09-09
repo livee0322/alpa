@@ -51,7 +51,7 @@ class CampaignDetailViewModel with ChangeNotifier {
       final campaignData = await _campaignUseCase.getCampaignById(campaignId);
       _campaign = campaignData;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = '공고 정보를 불러오거나 볼 수 있는 권한이 없습니다.';
     } finally {
       _setLoading(false);
     }

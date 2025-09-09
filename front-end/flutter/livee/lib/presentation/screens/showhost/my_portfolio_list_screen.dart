@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/service_locator.dart';
+import 'package:universal_html/html.dart' as html;
 
+// 쇼호스트가 등록한 자신의 포트폴리오 목록을 보여주는 화면 위젯
 class MyPortfolioListScreen extends StatefulWidget {
   const MyPortfolioListScreen({super.key});
 
@@ -30,8 +33,7 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
       _errorMessage = null;
     });
     try {
-      final portfolios =
-          await locator<PortfolioRepository>().getMyPortfolioList();
+      final portfolios = await locator<PortfolioRepository>().getMyPortfolioList();
       setState(() {
         _portfolios = portfolios;
       });
@@ -53,12 +55,8 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
         title: const Text('삭제 확인'),
         content: const Text('정말로 이 포트폴리오를 삭제하시겠습니까?'),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('취소')),
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('삭제')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('취소')),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('삭제')),
         ],
       ),
     );
@@ -69,8 +67,7 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
         _loadPortfolios();
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
         }
       }
     }
@@ -83,6 +80,10 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF7F8FA),
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(CupertinoIcons.back),
+            onPressed: () => html.window.history.go(-1),
+          ),
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           elevation: 1,
@@ -114,17 +115,14 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('내 포트폴리오',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text('내 포트폴리오', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ActionChip(
                     avatar: const Icon(Icons.people_alt_outlined, size: 16),
                     label: const Text('전체 보기'),
                     onPressed: () {
                       // TODO: 전체 공개 포트폴리오 목록 보기
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     side: BorderSide(color: Colors.grey.shade300),
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -183,8 +181,7 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
                 width: double.infinity,
                 color: Colors.grey[200],
                 child: portfolio.backgroundImageUrl != null
-                    ? Image.network(portfolio.backgroundImageUrl!,
-                        fit: BoxFit.cover)
+                    ? Image.network(portfolio.backgroundImageUrl!, fit: BoxFit.cover)
                     : null,
               ),
               // 프로필 이미지 (배경 위에 걸쳐짐)
@@ -195,9 +192,8 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: 37,
-                    backgroundImage: portfolio.mainThumbnailUrl != null
-                        ? NetworkImage(portfolio.mainThumbnailUrl!)
-                        : null,
+                    backgroundImage:
+                        portfolio.mainThumbnailUrl != null ? NetworkImage(portfolio.mainThumbnailUrl!) : null,
                     child: portfolio.mainThumbnailUrl == null
                         ? const Icon(Icons.person, size: 30, color: Colors.grey)
                         : null,
@@ -212,8 +208,7 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
               children: [
                 Text(
                   portfolio.nickname ?? '무명',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 const Divider(height: 1),
@@ -224,16 +219,14 @@ class _MyPortfolioListScreenState extends State<MyPortfolioListScreen> {
                     _buildActionButton(
                       icon: Icons.open_in_new,
                       label: '보기',
-                      onPressed: () => GoRouter.of(context)
-                          .go('/portfolios/${portfolio.id}'),
+                      onPressed: () => GoRouter.of(context).go('/portfolios/${portfolio.id}'),
                     ),
                     const SizedBox(width: 8),
                     _buildActionButton(
                         icon: Icons.edit,
                         label: '수정',
                         onPressed: () {
-                          GoRouter.of(context)
-                              .go('/portfolio-edit', extra: portfolio.id);
+                          GoRouter.of(context).go('/portfolio-edit', extra: portfolio.id);
                         }),
                     const SizedBox(width: 8),
                     _buildActionButton(
