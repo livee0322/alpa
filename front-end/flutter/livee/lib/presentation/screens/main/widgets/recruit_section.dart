@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
+import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 
 /// 메인 화면의 '브랜드 pick' 섹션을 보여주는 위젯
@@ -134,7 +135,7 @@ class RecruitSection extends StatelessWidget {
                   // 지원하기 버튼
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+                      onPressed: () => showApplyBottomSheet(context, campaign),
                       icon: const Icon(Icons.send_outlined, size: 18),
                       label: const Text('지원하기'),
                       style: OutlinedButton.styleFrom(
