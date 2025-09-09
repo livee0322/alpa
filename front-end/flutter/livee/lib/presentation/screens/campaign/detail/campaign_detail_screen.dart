@@ -2,19 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
-import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/screens/campaign/vm/campaign_detail_view_model.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_product_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
 import 'package:universal_html/html.dart' as html;
 
-class CampaignDetailScreen extends StatefulWidget {
+class CampaignDetailScreen extends StatelessWidget {
   final String campaignId;
 
   const CampaignDetailScreen({
@@ -22,94 +19,40 @@ class CampaignDetailScreen extends StatefulWidget {
     required this.campaignId,
   });
 
+  /// 화면의 전체적인 UI 구조를 구성하고 ViewModel과 연결
   @override
-  State<CampaignDetailScreen> createState() => _CampaignDetailScreenState();
-}
-
-class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
-  // 로딩 상태와 데이터를 직접 관리
-  bool _isLoading = true;
-  Campaign? _campaign;
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCampaign();
-  }
-
-  // 데이터를 불러오고 상태를 관리하는 메소드
-  Future<void> _loadCampaign() async {
-    setState(() => _isLoading = true);
-    try {
-      final campaign = await locator<CampaignUseCase>().getCampaignById(widget.campaignId);
-      setState(() => _campaign = campaign);
-    } catch (e) {
-      setState(() => _errorMessage = e.toString());
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  // '지원하기' 버튼 클릭 시 실행될 메소드
-  void _handleApply(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    if (!authProvider.isLoggedIn) {
-      // 비회원일 경우: 로그인 유도 팝업
-
-      final result = await showCommonPromptDialog(
-        context: context,
-        title: '로그인이 필요합니다',
-        content: '회원 전용 서비스입니다.\n로그인 하시겠습니까?',
-        confirmText: '로그인',
-      );
-      if (result == true && context.mounted) {
-        GoRouter.of(context).go('/login');
-      }
-    } else if (authProvider.role == 'showhost') {
-      // 쇼호스트일 경우: 성공 토스트 및 홈으로 이동
-      // TODO: 실제 지원 API 연동 필요
-      showCustomToast(context, '성공적으로 지원되었습니다.', type: ToastType.success);
-      // history를 모두 지우고 홈으로 이동
-      GoRouter.of(context).go('/');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // AuthProvider를 가져와서 사용자 역할 확인
-    final authProvider = Provider.of<AuthProvider>(context);
-    return LoadingOverlay(
-      isLoading: _isLoading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(CupertinoIcons.back),
-            onPressed: () => html.window.history.go(-1),
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => CampaignDetailViewModel(context, campaignId: campaignId),
+        child: Consumer<CampaignDetailViewModel>(
+          builder: (context, viewModel, child) => LoadingOverlay(
+            isLoading: viewModel.isLoading,
+            child: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(CupertinoIcons.back),
+                  onPressed: () => html.window.history.go(-1),
+                ),
+                title: const Text('공고 상세'),
+              ),
+              body: _buildBody(context, viewModel),
+            ),
           ),
-          backgroundColor: Color(0xFFF6F7F9),
-          title: const Text('공고 상세'),
         ),
-        body: _buildBody(authProvider),
-      ),
-    );
-  }
+      );
 
-  // 화면 본문을 빌드하는 헬퍼 메소드
-  Widget _buildBody(AuthProvider authProvider) {
-    if (_errorMessage != null) {
-      return Center(child: Text('에러: $_errorMessage'));
+  /// ViewModel의 상태에 따라 화면의 본문을 구성
+  Widget _buildBody(BuildContext context, CampaignDetailViewModel viewModel) {
+    if (viewModel.errorMessage != null) {
+      return Center(child: Text('에러: ${viewModel.errorMessage}'));
     }
-    if (_campaign == null) {
+    if (viewModel.campaign == null) {
       return const Center(child: Text('공고 정보를 찾을 수 없습니다.'));
     }
 
-    final campaign = _campaign!;
+    final campaign = viewModel.campaign!;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return Scaffold(
-      backgroundColor: Color(0xFFF6F7F9),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(14, 16, 14, 100),
         child: Column(
@@ -129,7 +72,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(campaign, authProvider),
+      bottomNavigationBar: _buildBottomBar(context, campaign, authProvider, viewModel),
     );
   }
 
@@ -296,10 +239,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
   }
 
   // 하단 고정 바를 빌드
-  Widget _buildBottomBar(Campaign campaign, AuthProvider authProvider) {
+  Widget _buildBottomBar(
+      BuildContext context, Campaign campaign, AuthProvider authProvider, CampaignDetailViewModel viewModel) {
     String priceLabel = '';
     if (campaign.type == 'recruit') {
-      // fee를 "30만원" 형태의 문자열로 변환
       if (campaign.fee != null && campaign.fee! > 0) {
         priceLabel = '출연료 ${(campaign.fee! / 10000).round()}만원';
       } else {
@@ -309,18 +252,17 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       final price =
           campaign.products?.firstOrNull?.salePrice?.toString() ?? campaign.products?.firstOrNull?.price?.toString();
       if (price != null) {
-        priceLabel = '판매가 ${price}원';
+        priceLabel = '판매가 $price원';
       }
     }
 
-    // 사용자 역할에 따라 버튼 라벨과 기능을 분기
     bool isBrand = authProvider.role == 'brand';
 
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
       buttonLabel: isBrand ? '지원자 현황' : '지원하기',
       onButtonPressed: () =>
-          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : _handleApply(context),
+          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : viewModel.handleApply(),
     );
   }
 }
