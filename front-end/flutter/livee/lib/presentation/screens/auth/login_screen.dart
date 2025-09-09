@@ -1,85 +1,140 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/auth/vm/login_view_model.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
-import 'package:universal_html/html.dart' as html;
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
+  /// 화면의 전체적인 UI 구조를 구성하고 ViewModel과 연결
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => LoginViewModel(context),
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 380),
+                child: Consumer<LoginViewModel>(
+                  builder: (context, viewModel, child) => Form(
+                    key: viewModel.formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/liveelogo.png',
+                        ),
+                        _buildRoleSelector(viewModel),
+                        TextFormField(
+                          controller: viewModel.emailController,
+                          decoration: const InputDecoration(
+                            hintText: 'you@example.com',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF6C63FF)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) => (value == null || value.isEmpty) ? '이메일을 입력해주세요.' : null,
+                        ),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                          controller: viewModel.passwordController,
+                          decoration: const InputDecoration(
+                            hintText: '••••••••',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF6C63FF)),
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                            ),
+                          ),
+                          obscureText: true,
+                          validator: (value) => (value == null || value.isEmpty) ? '비밀번호를 입력해주세요.' : null,
+                        ),
+                        const SizedBox(height: 24),
+                        PrimaryActionButton(
+                          text: viewModel.isLoading ? '로그인 중...' : '로그인',
+                          onPressed: viewModel.login,
+                          isLoading: viewModel.isLoading,
+                        ),
+                        const SizedBox(height: 26),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              '아직 계정이 없으신가요? ',
+                              style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+                            ),
+                            InkWell(
+                              onTap: () => GoRouter.of(context).go('/signup'),
+                              child: const Text(
+                                '회원가입',
+                                style: TextStyle(
+                                  color: Color(0xFF6C63FF),
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          bottomNavigationBar: const CommonBottomNavBar(),
+        ),
+      );
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false;
+  /// 역할(brand/showhost)을 선택하는 버튼 UI를 구성
+  Widget _buildRoleSelector(LoginViewModel viewModel) => Container(
+        margin: const EdgeInsets.only(bottom: 22),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F3F5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE6E8EC)),
+        ),
+        child: Row(
+          children: [
+            _buildRoleButton('brand', '브랜드', viewModel),
+            _buildRoleButton('showhost', '쇼호스트', viewModel),
+          ],
+        ),
+      );
 
-  // 선택된 역할을 저장할 상태 변수
-  String _selectedRole = 'brand'; // 기본값 'brand'
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-
-      try {
-        await Provider.of<AuthProvider>(context, listen: false).login(
-          _emailController.text,
-          _passwordController.text,
-          _selectedRole,
-        );
-        // 로그인 성공 시 홈으로 이동 대신, 물리적인 뒤로가기 실행
-        if (context.mounted) html.window.history.go(-1);
-      } catch (e) {
-        if (context.mounted) {
-          showCustomToast(
-            context,
-            e.toString().replaceFirst('Exception: ', ''),
-            type: ToastType.error,
-          );
-        }
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  // 역할 선택 버튼 UI를 생성하는 위젯 메소드
-  Widget _buildRoleSelector() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 22),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE6E8EC)),
-      ),
-      child: Row(
-        children: [
-          _buildRoleButton('brand', '브랜드'),
-          _buildRoleButton('showhost', '쇼호스트'),
-        ],
-      ),
-    );
-  }
-
-  // 개별 역할 버튼 위젯
-  Widget _buildRoleButton(String role, String label) {
-    final isSelected = _selectedRole == role;
+  /// 역할 선택 버튼의 개별 UI를 구성
+  Widget _buildRoleButton(String role, String label, LoginViewModel viewModel) {
+    final isSelected = viewModel.selectedRole == role;
     return Expanded(
       child: InkWell(
-        onTap: () => setState(() => _selectedRole = role),
+        onTap: () => viewModel.setSelectedRole(role),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           height: 46,
@@ -97,125 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 380),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/liveelogo.png',
-                  ),
-
-                  // 생성한 역할 선택 위젯을 UI에 추가
-                  _buildRoleSelector(),
-
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'you@example.com',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6C63FF)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '이메일을 입력해주세요.';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      hintText: '••••••••',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6C63FF)),
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '비밀번호를 입력해주세요.';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  PrimaryActionButton(
-                    text: _isLoading ? '로그인 중...' : '로그인',
-                    onPressed: _login,
-                    isLoading: _isLoading,
-                  ),
-
-                  const SizedBox(height: 26),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        '아직 계정이 없으신가요? ',
-                        style: TextStyle(
-                          color: Color(0xFF6B7280),
-                          fontSize: 14,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => GoRouter.of(context).go('/signup'),
-                        child: const Text(
-                          '회원가입',
-                          style: TextStyle(
-                            color: Color(0xFF6C63FF),
-                            fontWeight: FontWeight.w700,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }
