@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
 import 'package:livee/presentation/screens/showhost/widgets/portfolio_basic_info_section.dart';
@@ -11,7 +12,9 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
+// 쇼호스트의 포트폴리오를 편집(생성/수정)하는 화면 위젯
 class PortfolioEditScreen extends StatelessWidget {
   final String? portfolioId;
 
@@ -29,6 +32,10 @@ class PortfolioEditScreen extends StatelessWidget {
         builder: (context, viewModel, child) => Scaffold(
           backgroundColor: const Color(0xFFF7F8FA),
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(CupertinoIcons.back),
+              onPressed: () => html.window.history.go(-1),
+            ),
             title: const Text('포트폴리오 등록'),
             centerTitle: false,
             backgroundColor: const Color(0xFFF7F8FA),

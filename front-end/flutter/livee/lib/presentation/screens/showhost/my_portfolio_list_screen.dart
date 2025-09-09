@@ -117,15 +117,14 @@ class MyPortfolioListScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
             clipBehavior: Clip.none,
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             children: [
               // 배경 이미지
               Container(
-                height: 120,
+                height: 150,
                 width: double.infinity,
                 color: Colors.grey[200],
                 child: portfolio.backgroundImageUrl != null
@@ -134,12 +133,13 @@ class MyPortfolioListScreen extends StatelessWidget {
               ),
               // 프로필 이미지
               Positioned(
-                top: 80,
+                left: 10,
+                top: 90,
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 48,
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
-                    radius: 37,
+                    radius: 45,
                     backgroundImage:
                         portfolio.mainThumbnailUrl != null ? NetworkImage(portfolio.mainThumbnailUrl!) : null,
                     child: portfolio.mainThumbnailUrl == null
@@ -153,16 +153,21 @@ class MyPortfolioListScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 50, 16, 16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   portfolio.nickname ?? '무명',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                ),
+                Text(
+                  portfolio.oneLineIntro ?? '소개글이 없습니다.',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
                 const Divider(height: 1),
                 const SizedBox(height: 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _buildActionButton(
                       icon: Icons.open_in_new,
@@ -221,12 +226,17 @@ class MyPortfolioListScreen extends StatelessWidget {
   }) {
     return OutlinedButton.icon(
       icon: Icon(icon, size: 16),
-      label: Text(label),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontWeight: FontWeight.w900,
+        ),
+      ),
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         foregroundColor: color ?? const Color(0xFF4B5563),
         side: BorderSide(color: color ?? Colors.grey.shade300),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.symmetric(horizontal: 16),
       ),
     );
