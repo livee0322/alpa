@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
 /// 모집 공고 목록에서 사용될 카드 위젯
@@ -103,12 +105,35 @@ class NewRecruitCard extends StatelessWidget {
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.send, size: 18),
                       label: Text(authProvider.recruitButtonText),
-                      onPressed: () {
-                        // TODO: 역할에 따른 버튼 액션 로직 구현
-                        if (authProvider.role == 'brand') {
-                          // 지원 현황 페이지로 이동
-                        } else {
-                          // 지원하기 기능 실행
+                      onPressed: () async {
+                        // 1. 비회원인 경우
+                        if (!authProvider.isLoggedIn) {
+                          final confirm = await showCommonPromptDialog(
+                            context: context,
+                            title: '로그인이 필요합니다',
+                            content: '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
+                            confirmText: '로그인',
+                          );
+                          if (confirm == true) {
+                            GoRouter.of(context).go('/login');
+                          }
+                          return;
+                        }
+
+                        // 2. 로그인된 사용자의 역할에 따라 분기
+                        switch (authProvider.role) {
+                          case 'showhost':
+                            // 쇼호스트인 경우: 지원 바텀 시트 표시
+                            showApplyBottomSheet(context, campaign);
+                            break;
+                          case 'brand':
+                            // 브랜드인 경우: 지원 현황 페이지로 이동
+                            GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
+                            break;
+                          default:
+                            // 기타 역할 (예: 일반 사용자)도 지원 바텀 시트 표시
+                            showApplyBottomSheet(context, campaign);
+                            break;
                         }
                       },
                       style: ElevatedButton.styleFrom(
