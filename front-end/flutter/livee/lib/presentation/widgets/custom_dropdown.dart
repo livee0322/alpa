@@ -7,6 +7,10 @@ class CustomDropdown extends StatefulWidget {
   final List<String> items;
   final ValueChanged<String?> onChanged;
   final Offset menuOffset;
+  final double fontSize;
+  final EdgeInsetsGeometry padding;
+  final FontWeight? fontWeight;
+  final BorderRadius? borderRadius;
 
   const CustomDropdown({
     super.key,
@@ -15,6 +19,10 @@ class CustomDropdown extends StatefulWidget {
     required this.items,
     required this.onChanged,
     this.menuOffset = const Offset(0, 8),
+    this.fontSize = 16,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    this.fontWeight = FontWeight.normal,
+    this.borderRadius,
   });
 
   @override
@@ -25,6 +33,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
+
+  BorderRadius get _borderRadius => widget.borderRadius ?? BorderRadius.circular(12);
 
   @override
   void dispose() {
@@ -73,10 +83,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
               child: Material(
                 elevation: 4.0,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: _borderRadius,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: _borderRadius,
                     border: Border.all(color: Colors.grey.shade300, width: 1.0),
                   ),
                   child: ListView.separated(
@@ -90,24 +100,19 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           _removeOverlay();
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           child: Text(
                             widget.items[index],
                             style: TextStyle(
-                              color: widget.items[index] == widget.value
-                                  ? const Color(0xFF6C63FF)
-                                  : Colors.black,
-                              fontWeight: widget.items[index] == widget.value
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              color: widget.items[index] == widget.value ? const Color(0xFF6C63FF) : Colors.black,
+                              fontWeight: widget.items[index] == widget.value ? FontWeight.bold : FontWeight.normal,
+                              fontSize: widget.fontSize,
                             ),
                           ),
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1, indent: 8, endIndent: 8),
+                    separatorBuilder: (context, index) => const Divider(height: 1, indent: 8, endIndent: 8),
                   ),
                 ),
               ),
@@ -136,13 +141,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
           child: InkWell(
             onTap: _toggleDropdown,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: widget.padding,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: _borderRadius,
                 border: Border.all(
-                  color:
-                      _isOpen ? const Color(0xFF6C63FF) : Colors.grey.shade300,
+                  color: _isOpen ? const Color(0xFF6C63FF) : Colors.grey.shade300,
                   width: _isOpen ? 1.5 : 1.0,
                 ),
               ),
@@ -151,7 +155,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 children: [
                   Text(
                     widget.value,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: widget.fontSize,
+                      fontWeight: widget.fontWeight,
+                    ),
                   ),
                   Icon(
                     _isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,

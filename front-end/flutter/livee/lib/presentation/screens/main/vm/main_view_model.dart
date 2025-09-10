@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
+import 'package:livee/domain/models/paginated_response.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
@@ -44,8 +45,8 @@ class MainViewModel with ChangeNotifier {
         // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
       ]);
 
-      _schedules = results[0] as List<Campaign>;
-      _recruits = results[1] as List<Campaign>;
+      _schedules = (results[0] as PaginatedResponse<Campaign>).items;
+      _recruits = (results[1] as PaginatedResponse<Campaign>).items;
       _featuredShowhosts = results[2] as List<Portfolio>;
       _errorMessage = null;
     } catch (e) {

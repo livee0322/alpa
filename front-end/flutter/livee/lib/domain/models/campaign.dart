@@ -16,6 +16,7 @@ class Campaign {
   final String? liveTime;
   final String? closeAt;
   final String? descriptionHTML;
+  final bool? isAd;
 
   Campaign({
     this.id,
@@ -32,6 +33,7 @@ class Campaign {
     this.liveTime,
     this.closeAt,
     this.descriptionHTML,
+    this.isAd,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class Campaign {
       liveTime: json['liveTime'] as String?,
       closeAt: json['closeAt'] as String?,
       descriptionHTML: json['descriptionHTML'] as String?,
+      isAd: json['isAd'] as bool?,
     );
   }
 }

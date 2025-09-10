@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:livee/data/core/api_client.dart';
 import 'package:livee/domain/models/campaign.dart';
+import 'package:livee/domain/models/paginated_response.dart';
 
 class CampaignRepository {
   final ApiClient _apiClient = ApiClient();
@@ -16,18 +17,25 @@ class CampaignRepository {
     }
   }
 
-  Future<List<Campaign>> getAllCampaigns({String? type, int? limit}) async {
+  Future<PaginatedResponse<Campaign>> getAllCampaigns({
+    String? type,
+    int? limit,
+    int? page,
+    String? search,
+    String? sort,
+  }) async {
     final Map<String, dynamic> queryParams = {};
     if (type != null) queryParams['type'] = type;
     if (limit != null) queryParams['limit'] = limit.toString();
+    if (page != null) queryParams['page'] = page.toString();
+    if (search != null && search.isNotEmpty) queryParams['search'] = search;
+    if (sort != null) queryParams['sort'] = sort;
 
     final response = await _apiClient.get('/campaigns?${Uri(queryParameters: queryParams).query}');
 
     if (response.statusCode == 200) {
       final json = jsonDecode(utf8.decode(response.bodyBytes));
-      // main.js의 getJson 함수 로직처럼 다양한 응답 구조를 처리합니다.
-      final items = json['items'] ?? json['data']?['items'] ?? json['docs'] ?? json['data']?['docs'] ?? [];
-      return (items as List).map((e) => Campaign.fromJson(e)).toList();
+      return PaginatedResponse.fromJson(json, (itemJson) => Campaign.fromJson(itemJson));
     } else {
       throw Exception('Failed to load all campaigns');
     }

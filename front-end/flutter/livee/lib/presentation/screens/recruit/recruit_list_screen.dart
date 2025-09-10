@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
-import 'package:livee/presentation/widgets/buttons/secondary_chip_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/recruit_list_card.dart';
+import 'package:livee/presentation/widgets/custom_dropdown.dart';
+import 'package:livee/presentation/widgets/new_recruit_card.dart';
 import 'package:provider/provider.dart';
 
 class RecruitListScreen extends StatefulWidget {
@@ -13,6 +13,16 @@ class RecruitListScreen extends StatefulWidget {
 }
 
 class _RecruitListScreenState extends State<RecruitListScreen> {
+  // 검색창 입력을 관리할 컨트롤러
+  final _searchController = TextEditingController();
+
+  // 정렬 옵션을 관리하기 위한 맵(Map)
+  // key: API에 보낼 값, value: UI에 표시할 텍스트
+  final Map<String, String> _sortOptions = {
+    'latest': '최신 등록순',
+    'deadline': '마감 임박순',
+  };
+
   @override
   void initState() {
     super.initState();
@@ -22,76 +32,144 @@ class _RecruitListScreenState extends State<RecruitListScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // provider 변수를 build 메소드 상단에서 선언하여 여러 곳에서 사용
+    final provider = Provider.of<RecruitListProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('공고 모아보기'),
+        backgroundColor: Colors.white,
+        title: const Text('모집 공고'),
       ),
-      body: Consumer<RecruitListProvider>(
-        builder: (context, provider, child) => Column(
-          children: [
-            // 필터 탭 영역
-            _buildFilterTabs(provider),
-            // 공고 목록 영역
-            Expanded(
-              child: provider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : provider.filteredRecruits.isEmpty
-                      ? const Center(child: Text('조건에 맞는 공고가 아직 없어요.'))
-                      : _buildRecruitList(provider),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // 검색창
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: '제목·내용·브랜드로 검색',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: () => provider.search(_searchController.text),
+                    ),
+                  ),
+                  onSubmitted: (value) => provider.search(value),
+                ),
+                const SizedBox(height: 8),
+                // 정렬 드롭다운
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('총 ${provider.totalRecruits}건'),
+                    SizedBox(
+                      width: 140, // 드롭다운 너비 지정
+                      child: CustomDropdown(
+                        menuOffset: Offset(0, 42),
+                        // 현재 선택된 정렬 key에 해당하는 표시 텍스트를 value로 전달
+                        value: _sortOptions[provider.sortBy] ?? '정렬 기준',
+                        // 표시할 텍스트 목록을 items로 전달
+                        items: _sortOptions.values.toList(),
+                        onChanged: (String? selectedValue) {
+                          // 선택된 표시 텍스트(selectedValue)를 통해 key를 찾아서 API 요청
+                          final sortKey = _sortOptions.entries
+                              .firstWhere(
+                                (entry) => entry.value == selectedValue,
+                              )
+                              .key;
+                          provider.setSortBy(sortKey);
+                        },
+                        fontSize: 14,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        fontWeight: FontWeight.w900,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: provider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : provider.filteredRecruits.isEmpty
+                    ? const Center(
+                        child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('표시할 공고가 없습니다.'),
+                          Text('검색어나 필터를 조정해보세요.'),
+                        ],
+                      ))
+                    : _buildRecruitList(provider),
+          ),
+          // 페이지네이션 기능 연결
+          if (provider.totalPages > 1) _buildPaginationControls(provider),
+        ],
       ),
       bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 
-  // 필터 탭 UI를 빌드하는 위젯
-  Widget _buildFilterTabs(RecruitListProvider provider) {
-    // 웹 버전의 필터 목록
-    final filters = {
-      'deadline': '⏳ 마감일 임박',
-      'mukbang': '🍜 먹방 전용',
-      'beauty': '💄 뷰티',
-      'pay': '💸 출연료 미쳤다',
-    };
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: filters.entries.map((entry) {
-          final isSelected = provider.activeFilter == entry.key;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: SecondaryChipButton(
-              text: entry.value,
-              isSelected: isSelected,
-              onPressed: () => provider.applyFilter(entry.key),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  // 필터링된 공고 목록을 ListView로 빌드하는 위젯
   Widget _buildRecruitList(RecruitListProvider provider) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // 2열 그리드
-        crossAxisSpacing: 14, // 가로 간격
-        mainAxisSpacing: 14, // 세로 간격
-        childAspectRatio: 0.65, // 카드 비율 (가로/세로)
-      ),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: provider.filteredRecruits.length,
       itemBuilder: (context, index) {
         final campaign = provider.filteredRecruits[index];
-        // ListTile 대신 새로 만든 RecruitListCard 위젯을 사용
-        return RecruitListCard(campaign: campaign);
+        return NewRecruitCard(campaign: campaign);
       },
+    );
+  }
+
+  // 페이지네이션 컨트롤 위젯 기능 완성
+  Widget _buildPaginationControls(RecruitListProvider provider) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.first_page),
+            onPressed: provider.currentPage > 1 ? () => provider.goToPage(1) : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: provider.currentPage > 1 ? () => provider.goToPage(provider.currentPage - 1) : null,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              '${provider.currentPage} / ${provider.totalPages}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed:
+                provider.currentPage < provider.totalPages ? () => provider.goToPage(provider.currentPage + 1) : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.last_page),
+            onPressed: provider.currentPage < provider.totalPages ? () => provider.goToPage(provider.totalPages) : null,
+          ),
+        ],
+      ),
     );
   }
 }
