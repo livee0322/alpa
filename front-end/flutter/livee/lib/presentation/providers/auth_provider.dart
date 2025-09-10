@@ -20,6 +20,23 @@ class AuthProvider with ChangeNotifier {
   User? get user => _user;
   String? get role => _role;
 
+  // 현재 사용자의 역할에 따라 버튼 텍스트를 반환하는 getter
+  String get recruitButtonText {
+    // 로그아웃 상태이거나 역할 정보가 없으면 '지원하기'
+    if (!_isLoggedIn || _role == null) {
+      return '지원하기';
+    }
+    // 역할에 따라 텍스트 분기
+    switch (_role) {
+      case 'showhost':
+        return '지원하기';
+      case 'brand':
+        return '지원현황';
+      default:
+        return '지원하기'; // 비회원 및 기타 역할
+    }
+  }
+
   Future<void> _checkInitialLoginStatus() async {
     final token = await _authUseCase.getAuthToken();
     if (token != null) {

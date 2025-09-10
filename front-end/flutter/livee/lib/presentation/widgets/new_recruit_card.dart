@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
-import 'package:go_router/go_router.dart'; // [추가] GoRouter 임포트
+import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 /// 모집 공고 목록에서 사용될 카드 위젯
 class NewRecruitCard extends StatelessWidget {
@@ -14,6 +16,7 @@ class NewRecruitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     // 출연료 텍스트를 계산 (예: 300000 -> "30만원")
     String feeText = '미정';
     if (campaign.fee != null && campaign.fee! > 0) {
@@ -99,9 +102,14 @@ class NewRecruitCard extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.send, size: 18),
-                      label: const Text('바로 지원하기'),
+                      label: Text(authProvider.recruitButtonText),
                       onPressed: () {
-                        // TODO: 지원하기 기능 연결
+                        // TODO: 역할에 따른 버튼 액션 로직 구현
+                        if (authProvider.role == 'brand') {
+                          // 지원 현황 페이지로 이동
+                        } else {
+                          // 지원하기 기능 실행
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
