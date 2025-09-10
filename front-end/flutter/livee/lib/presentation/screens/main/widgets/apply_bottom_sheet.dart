@@ -231,7 +231,7 @@ class ApplyBottomSheet extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: () async {
-                final success = await viewModel.submitApplication(messageController.text);
+                final success = await viewModel.submitApplication(campaign.id!, messageController.text);
                 if (success) {
                   Navigator.pop(context);
                   showCustomToast(context, '지원이 완료되었습니다!', type: ToastType.success);

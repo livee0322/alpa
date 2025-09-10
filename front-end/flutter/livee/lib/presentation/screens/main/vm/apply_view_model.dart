@@ -3,12 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
+import 'package:livee/domain/usecases/application_use_case.dart';
 import 'package:livee/service_locator.dart';
 
 /// '지원하기' 바텀 시트의 상태와 비즈니스 로직을 관리하는 ViewModel
 class ApplyViewModel with ChangeNotifier {
-  // 의존성 주입 
+  // 의존성 주입
   final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
+  final ApplicationUseCase _applicationUseCase = locator<ApplicationUseCase>();
 
   // 상태 변수
   bool _isLoading = true;
@@ -55,15 +57,25 @@ class ApplyViewModel with ChangeNotifier {
   }
 
   /// '지원 보내기' 로직을 처리하는 메소드
-  Future<bool> submitApplication(String message) async {
+  Future<bool> submitApplication(String campaignId, String message) async {
     if (_selectedPortfolioId == null) {
       _errorMessage = '포트폴리오를 선택해주세요.';
       notifyListeners();
       return false;
     }
-    // TODO: 실제 지원하기 API 호출 로직 구현
-    // 예: await _applicationRepository.apply(campaignId, _selectedPortfolioId, message);
-    debugPrint('지원 완료! 포트폴리오 ID: $_selectedPortfolioId, 메시지: $message');
-    return true;
+    try {
+      await _applicationUseCase.applyToCampaign(
+        campaignId: campaignId,
+        portfolioId: _selectedPortfolioId!,
+        message: message,
+      );
+      debugPrint('지원 완료! 캠페인 ID: $campaignId, 포트폴리오 ID: $_selectedPortfolioId, 메시지: $message');
+      return true;
+    } catch (e) {
+      _errorMessage = '지원에 실패했습니다: $e';
+      notifyListeners();
+      debugPrint(_errorMessage);
+      return false;
+    }
   }
 }

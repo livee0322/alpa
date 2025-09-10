@@ -40,6 +40,9 @@ class _BannerSliderSectionState extends State<BannerSliderSection> {
     super.initState();
     // 5초마다 배너가 자동으로 넘어가도록 타이머 설정
     _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      // [추가] 위젯이 화면에 없을 때는 애니메이션을 실행하지 않도록 방어 코드 추가
+      if (!mounted) return;
+
       if (_currentPage < _bannerData.length - 1) {
         _currentPage++;
       } else {
