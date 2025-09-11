@@ -30,6 +30,7 @@ class RecruitListProvider with ChangeNotifier {
 
   // 모든 '쇼호스트 모집' 공고를 서버에서 불러오기
   Future<void> fetchRecruits({bool isNewSearch = false}) async {
+    print("✅ (C) Provider의 fetchRecruits 함수가 호출되었습니다!");
     if (isNewSearch) {
       _currentPage = 1;
     }

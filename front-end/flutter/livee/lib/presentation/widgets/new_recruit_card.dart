@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
@@ -45,7 +46,8 @@ class NewRecruitCard extends StatelessWidget {
             Stack(
               children: [
                 Image.network(
-                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/400/200',
+                  campaign.coverImageUrl ??
+                      'https://picsum.photos/seed/${campaign.id}/400/200',
                   width: double.infinity,
                   height: 180,
                   fit: BoxFit.cover,
@@ -60,24 +62,31 @@ class NewRecruitCard extends StatelessWidget {
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.7),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text('AD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: const Text('AD',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                 Positioned(
                   top: 12,
                   right: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text('AD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: const Text('AD',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -91,7 +100,8 @@ class NewRecruitCard extends StatelessWidget {
                   // 공고 제목
                   Text(
                     campaign.title ?? '제목 없음',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   // 브랜드명과 메타 정보
@@ -127,15 +137,27 @@ class NewRecruitCard extends StatelessWidget {
                             // 쇼호스트인 경우, 이미 지원했는지 먼저 확인
                             if (campaign.isApplied == true) {
                               // 이미 지원했다면 토스트 메시지 표시
-                              showCustomToast(context, '이미 지원한 공고입니다.', type: ToastType.info);
+                              showCustomToast(context, '이미 지원한 공고입니다.',
+                                  type: ToastType.info);
                             } else {
-                              // 지원하지 않았다면 바텀 시트 표시
-                              showApplyBottomSheet(context, campaign);
+                              // [수정] 바텀시트의 반환 값을 확인하여 목록을 새로고침합니다.
+                              final result =
+                                  await showApplyBottomSheet(context, campaign);
+                              print(
+                                  "✅ (B) 바텀 시트가 닫혔고, 반환된 값은 [ $result ] 입니다.");
+                              if (result == true) {
+                                print("✅ (B-1) 반환값이 true이므로, 데이터 새로고침을 요청합니다!");
+                                // 지원에 성공했으면 RecruitListProvider의 데이터를 새로고침
+                                context
+                                    .read<RecruitListProvider>()
+                                    .fetchRecruits();
+                              }
                             }
                             break;
                           case 'brand':
                             // 브랜드인 경우: 지원 현황 페이지로 이동
-                            GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
+                            GoRouter.of(context)
+                                .go('/campaign/${campaign.id}/applicants');
                             break;
                           default:
                             // 기타 역할 (예: 일반 사용자)도 지원 바텀 시트 표시
@@ -145,7 +167,8 @@ class NewRecruitCard extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: const Color(0xFF007AFF), // 이미지와 유사한 파란색
+                        backgroundColor:
+                            const Color(0xFF007AFF), // 이미지와 유사한 파란색
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
