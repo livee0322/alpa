@@ -23,7 +23,7 @@ class ApplicationRepository {
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Failed to create application: ${response.body}');
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 

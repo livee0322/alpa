@@ -1,6 +1,7 @@
 // lib/presentation/screens/main/vm/apply_view_model.dart
 
 import 'package:flutter/material.dart';
+import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/application_use_case.dart';
@@ -72,7 +73,7 @@ class ApplyViewModel with ChangeNotifier {
       debugPrint('지원 완료! 캠페인 ID: $campaignId, 포트폴리오 ID: $_selectedPortfolioId, 메시지: $message');
       return true;
     } catch (e) {
-      _errorMessage = '지원에 실패했습니다: $e';
+      _errorMessage = parseApiError(e);
       notifyListeners();
       debugPrint(_errorMessage);
       return false;

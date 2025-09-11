@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,7 @@ class SignupViewModel with ChangeNotifier {
       // 실패 시 에러 토스트 메시지를 보여주기
       showCustomToast(
         context,
-        e.toString().replaceFirst('Exception: ', ''),
+        parseApiError(e),
         type: ToastType.error,
       );
     } finally {

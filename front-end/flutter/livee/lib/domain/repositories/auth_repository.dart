@@ -27,16 +27,11 @@ class AuthRepository {
       }
       return user;
     } else {
-      // [수정] 서버에서 보내주는 실제 에러 메시지를 파싱하여 Exception으로 전달
-      // final errorJson = jsonDecode(utf8.decode(response.bodyBytes));
-      // final message = errorJson['message'] ?? '로그인에 실패했습니다.';
-      final message = '로그인에 실패했습니다.';
-      throw Exception(message);
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 
-  Future<User> signup(
-      String name, String email, String password, String role) async {
+  Future<User> signup(String name, String email, String password, String role) async {
     final response = await _apiClient.post(
       '/users/signup',
       body: {
@@ -53,9 +48,7 @@ class AuthRepository {
       final user = User.fromJson(data);
       return user;
     } else {
-      // 200번대 외의 응답 코드는 실패로 처리
-      final message = data['message'] ?? '가입 실패';
-      throw Exception(message);
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 

@@ -34,7 +34,7 @@ class PortfolioRepository {
   Future<void> createPortfolio(Map<String, dynamic> data) async {
     final response = await _apiClient.post('/portfolios', body: data);
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Failed to create portfolio: ${response.body}');
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 
@@ -42,7 +42,7 @@ class PortfolioRepository {
   Future<void> updatePortfolio(String id, Map<String, dynamic> data) async {
     final response = await _apiClient.put('/portfolios/$id', body: data);
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Failed to update portfolio: ${response.body}');
+      throw Exception(utf8.decode(response.bodyBytes));
     }
   }
 

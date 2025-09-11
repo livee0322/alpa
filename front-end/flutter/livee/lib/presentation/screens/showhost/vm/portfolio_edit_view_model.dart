@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
@@ -227,7 +228,7 @@ class PortfolioEditViewModel with ChangeNotifier {
       showCustomToast(context, '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.', type: ToastType.success);
       GoRouter.of(context).pop();
     } catch (e) {
-      showCustomToast(context, '저장 실패: $e', type: ToastType.error);
+      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {
       _setLoading(false);
     }
