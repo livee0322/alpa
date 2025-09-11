@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 /// 모집 공고 목록에서 사용될 카드 위젯
@@ -123,8 +124,14 @@ class NewRecruitCard extends StatelessWidget {
                         // 2. 로그인된 사용자의 역할에 따라 분기
                         switch (authProvider.role) {
                           case 'showhost':
-                            // 쇼호스트인 경우: 지원 바텀 시트 표시
-                            showApplyBottomSheet(context, campaign);
+                            // 쇼호스트인 경우, 이미 지원했는지 먼저 확인
+                            if (campaign.isApplied == true) {
+                              // 이미 지원했다면 토스트 메시지 표시
+                              showCustomToast(context, '이미 지원한 공고입니다.', type: ToastType.info);
+                            } else {
+                              // 지원하지 않았다면 바텀 시트 표시
+                              showApplyBottomSheet(context, campaign);
+                            }
                             break;
                           case 'brand':
                             // 브랜드인 경우: 지원 현황 페이지로 이동

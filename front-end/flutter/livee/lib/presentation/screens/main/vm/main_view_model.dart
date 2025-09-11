@@ -39,7 +39,7 @@ class MainViewModel with ChangeNotifier {
     try {
       // 여러 API를 동시에 호출하여 성능 향상
       final results = await Future.wait([
-        _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6),
+        _campaignUseCase.getAllCampaigns(type: 'product', limit: 6),
         _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
         _portfolioRepository.getPublicPortfolios(limit: 5),
         // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
