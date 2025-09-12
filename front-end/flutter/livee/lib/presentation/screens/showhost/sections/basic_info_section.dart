@@ -12,9 +12,6 @@ class BasicInfoSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('기본 정보',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
         CustomTextFormField(
           controller: viewModel.nicknameController,
           label: '닉네임 *',

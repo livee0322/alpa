@@ -11,8 +11,6 @@ class ShortsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('내 쇼츠 가져오기',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             OutlinedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.refresh),

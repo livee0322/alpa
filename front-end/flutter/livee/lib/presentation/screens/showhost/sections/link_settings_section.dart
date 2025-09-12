@@ -15,8 +15,6 @@ class LinkSettingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // --- 링크 & 공개 설정 ---
-        _buildSectionTitle('링크 & 공개 설정'),
         CustomTextFormField(
           controller: viewModel.websiteUrlController,
           label: '웹사이트',
@@ -57,14 +55,6 @@ class LinkSettingsSection extends StatelessWidget {
           activeColor: const Color(0xFF6C63FF),
         ),
       ],
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 }

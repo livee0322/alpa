@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
-// [수정] 새로 만든 섹션 위젯들을 모두 임포트합니다.
 import 'package:livee/presentation/screens/showhost/sections/basic_info_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/link_settings_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
@@ -9,10 +8,11 @@ import 'package:livee/presentation/screens/showhost/sections/recent_live_section
 import 'package:livee/presentation/screens/showhost/sections/selection_info_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/shorts_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
-import 'package:livee/presentation/screens/showhost/widgets/portfolio_tags_section.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/widgets/section_title.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/screens/showhost/widgets/portfolio_tags_section.dart';
 import 'package:provider/provider.dart';
 
 class PortfolioEditScreen extends StatelessWidget {
@@ -37,8 +37,20 @@ class PortfolioEditScreen extends StatelessWidget {
             elevation: 0,
             foregroundColor: Colors.black,
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
+          body: _buildBody(context, viewModel),
+          bottomNavigationBar: const CommonBottomNavBar(),
+        ),
+      ),
+    );
+  }
+
+  /// 화면의 본문(Body) UI를 구성하는 헬퍼 위젯
+  Widget _buildBody(BuildContext context, PortfolioEditViewModel viewModel) =>
+      Stack(
+        children: [
+          SingleChildScrollView(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Form(
               key: viewModel.formKey,
               child: Column(
@@ -59,6 +71,7 @@ class PortfolioEditScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
+                  // 서브 썸네일
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
                     child: SubThumbnailSection(
@@ -71,49 +84,85 @@ class PortfolioEditScreen extends StatelessWidget {
                           viewModel.removeSubThumbnail(index),
                     ),
                   ),
-                  const SizedBox(height: 32),
 
+                  // 기본 정보 섹션
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
-                    child: BasicInfoSection(viewModel: viewModel),
-                  ),
-                  const SizedBox(height: 32),
-
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: SelectionInfoSection(viewModel: viewModel),
-                  ),
-                  const SizedBox(height: 32),
-
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: const ShortsSection(),
-                  ),
-                  const SizedBox(height: 32),
-
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: RecentLiveSection(
-                      controllers: viewModel.recentLiveControllers,
-                      onAdd: viewModel.addRecentLiveLink,
-                      onRemove: viewModel.removeRecentLiveLink,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '기본 정보'),
+                        BasicInfoSection(viewModel: viewModel),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 32),
 
+                  // 선택 정보 섹션
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
-                    child: LinkSettingsSection(viewModel: viewModel),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '선택 정보'),
+                        SelectionInfoSection(viewModel: viewModel),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 32),
 
+                  // 내 쇼츠 가져오기 섹션
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
-                    child: PortfolioTagsSection(
-                      tagController: viewModel.tagController,
-                      tags: viewModel.tags,
-                      onAddTag: viewModel.addTag,
-                      onRemoveTag: viewModel.removeTag,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '내 쇼츠 가져오기'),
+                        const ShortsSection(),
+                      ],
+                    ),
+                  ),
+
+                  // 최근 라이브 링크 섹션
+                  StandardContentCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '최근 라이브 링크'),
+                        RecentLiveSection(
+                          controllers: viewModel.recentLiveControllers,
+                          onAdd: viewModel.addRecentLiveLink,
+                          onRemove: viewModel.removeRecentLiveLink,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 링크 & 공개설정 섹션
+                  StandardContentCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '링크 & 공개 설정'),
+                        LinkSettingsSection(viewModel: viewModel),
+                      ],
+                    ),
+                  ),
+
+                  // 테그 섹션
+                  StandardContentCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '포트폴리오 태그'),
+                        PortfolioTagsSection(
+                          tagController: viewModel.tagController,
+                          tags: viewModel.tags,
+                          onAddTag: viewModel.addTag,
+                          onRemoveTag: viewModel.removeTag,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -123,11 +172,17 @@ class PortfolioEditScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: const CommonBottomNavBar(),
-        ),
-      ),
-    );
-  }
+          if (viewModel.isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.7),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+        ],
+      );
 
   /// 하단 액션 버튼 (임시저장, 발행)을 만드는 헬퍼 위젯
   Widget _buildActionButtons(PortfolioEditViewModel viewModel) {
