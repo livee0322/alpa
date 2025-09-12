@@ -25,57 +25,58 @@ class HotClipSection extends StatelessWidget {
     return Column(
       children: [
         // 1. 섹션 헤더 (제목 + 더보기 버튼)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text.rich(
-                TextSpan(
-                  text: 'HOT ',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.red,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: 'clip',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900,
-                      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text.rich(
+              TextSpan(
+                text: 'HOT ',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.red,
+                ),
+                children: [
+                  TextSpan(
+                    text: 'clip',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // TODO: 숏클립 전체 페이지로 이동
+              },
+              child: const Text(
+                '더보기',
+                style: TextStyle(
+                  color: Color(0xFF6B7280),
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  // TODO: 숏클립 전체 페이지로 이동
-                },
-                child: const Text(
-                  '더보기',
-                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
 
         // 2. 가로 스크롤 클립 목록
         SizedBox(
           height: 200, // 목록의 높이를 지정
-          child: ListView.builder(
+          child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: hotClips.length,
-            // 첫 번째 아이템의 왼쪽과 마지막 아이템의 오른쪽에만 패딩을 주기 위한 로직
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.zero, // ListView 자체의 좌우 여백 제거
             itemBuilder: (context, index) {
               final clip = hotClips[index];
               return _buildClipCard(clip);
             },
+            // 아이템 사이의 간격
+            separatorBuilder: (context, index) => const SizedBox(width: 12),
           ),
         ),
       ],
@@ -84,9 +85,8 @@ class HotClipSection extends StatelessWidget {
 
   /// 개별 클립 카드를 구성하는 위젯
   Widget _buildClipCard(Map<String, String> clip) {
-    return Container(
+    return SizedBox(
       width: 150, // 각 카드의 너비를 지정
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Card(
         clipBehavior: Clip.antiAlias, // Card의 경계를 넘어가는 자식 위젯을 잘라냄
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
