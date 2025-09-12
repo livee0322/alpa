@@ -3,11 +3,9 @@ import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
-/// 포트폴리오의 링크 및 공개 설정을 담당하는 위젯
-class EditLinkSection extends StatelessWidget {
+class LinkSettingsSection extends StatelessWidget {
   final PortfolioEditViewModel viewModel;
-
-  const EditLinkSection({
+  const LinkSettingsSection({
     super.key,
     required this.viewModel,
   });

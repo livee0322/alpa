@@ -2,12 +2,12 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 
-class PortfolioSubThumbnailSection extends StatelessWidget {
+class SubThumbnailSection extends StatelessWidget {
   final List<PortfolioImage> sources;
   final VoidCallback onAddImage;
   final Function(int) onRemoveImage;
 
-  const PortfolioSubThumbnailSection({
+  const SubThumbnailSection({
     super.key,
     required this.sources,
     required this.onAddImage,

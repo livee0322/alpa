@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 
-class PortfolioPreviewSection extends StatelessWidget {
+class PreviewSection extends StatelessWidget {
   final PortfolioImage? mainThumbnailSource;
   final PortfolioImage? backgroundImageSource;
   final TextEditingController nicknameController;
   final VoidCallback onPickMainThumbnail;
   final VoidCallback onPickBackgroundImage;
-
-  const PortfolioPreviewSection({
+  const PreviewSection({
     super.key,
     required this.mainThumbnailSource,
     required this.backgroundImageSource,
@@ -91,7 +90,8 @@ class PortfolioPreviewSection extends StatelessWidget {
                       builder: (context, value, child) {
                         return Text(
                           value.text.isNotEmpty ? value.text : '닉네임',
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         );
                       },
                     ),

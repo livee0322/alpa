@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
-class PortfolioRecentLiveSection extends StatelessWidget {
+class RecentLiveSection extends StatelessWidget {
   final List<RecentLiveControllers> controllers;
   final VoidCallback onAdd;
   final Function(int) onRemove;
-
-  const PortfolioRecentLiveSection({
+  const RecentLiveSection({
     super.key,
     required this.controllers,
     required this.onAdd,
