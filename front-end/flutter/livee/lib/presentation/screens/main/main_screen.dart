@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/screens/main/vm/main_view_model.dart'; // ViewModel import
+import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
 import 'package:livee/presentation/screens/main/widgets/banner_slider_section.dart';
 import 'package:livee/presentation/screens/main/widgets/consultation_section.dart';
 import 'package:livee/presentation/screens/main/widgets/featured_showhost_section.dart';
 import 'package:livee/presentation/screens/main/widgets/hot_clip_section.dart';
 import 'package:livee/presentation/screens/main/widgets/news_section.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
+import 'package:livee/presentation/screens/main/widgets/section_container.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
-/// 메인 화면을 구성하는 StatelessWidget
+/// 메인 화면
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
@@ -38,6 +40,7 @@ class MainScreen extends StatelessWidget {
                       },
                     ),
                     const CommonTopTabBar(),
+                    // 로딩 중이 아닐 때만 Padding을 적용하여 일관성 유지
                     if (!viewModel.isLoading)
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -62,84 +65,65 @@ class MainScreen extends StatelessWidget {
       children: [
         const BannerSliderSection(),
         const SizedBox(height: 24),
-        _buildSectionHeader(
-          blackTitle: '쇼핑 라이브 공고',
-          purpleTitle: '지금 뜨는 ',
-          purpleFirst: true,
-          onTap: () => GoRouter.of(context).go('/schedule'),
+
+        // 지금 뜨는 쇼핑 라이브 공고
+        SectionContainer(
+          title: ColoredTitle(
+            blackText: '쇼핑 라이브 공고',
+            purpleText: '지금 뜨는 ',
+            purpleFirst: true,
+          ),
+          onMorePressed: () => GoRouter.of(context).go('/recruits'),
+          child: _buildScheduleSection(context, viewModel.schedules),
         ),
-        _buildScheduleSection(viewModel.schedules),
-        const SizedBox(height: 18),
-        _buildSectionHeader(
-          blackTitle: '브랜드 ',
-          purpleTitle: 'pick',
-          onTap: () => GoRouter.of(context).go('/schedule'),
-        ),
-        RecruitSection(recruits: viewModel.recruits),
-        const SizedBox(height: 18),
-        _buildSectionHeader(
-          blackTitle: '라이비 ',
-          purpleTitle: '뉴스',
-          onTap: () {
-            // TODO: 뉴스 전체 목록 페이지로 이동
-          },
-        ),
-        const NewsSection(), // NewsSection은 자체 목업 데이터 사용
-        const SizedBox(height: 18),
-        _buildSectionHeader(
-          blackTitle: '는 어떠세요?',
-          purpleTitle: '이런 쇼호스트',
-          purpleFirst: true,
-          onTap: () {
-            // TODO: 쇼호스트 전체 목록 페이지로 이동
-          },
-        ),
-        FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
         const SizedBox(height: 18),
 
-        // HOT clip
+        // 브랜드 pick
+        SectionContainer(
+          title: ColoredTitle(
+            blackText: '브랜드 ',
+            purpleText: 'pick',
+          ),
+          onMorePressed: () => GoRouter.of(context).go('/recruits'),
+          child: RecruitSection(recruits: viewModel.recruits),
+        ),
+        const SizedBox(height: 18),
+
+        // 라이비 뉴스
+        SectionContainer(
+          title: ColoredTitle(
+            blackText: '라이비 ',
+            purpleText: '뉴스',
+          ),
+          onMorePressed: () => GoRouter.of(context).go('/news'),
+          child: const NewsSection(),
+        ),
+        const SizedBox(height: 18),
+
+        // 이런 쇼호스트는 어떠세요?
+        SectionContainer(
+          title: ColoredTitle(
+            blackText: '는 어떠세요?',
+            purpleText: '이런 쇼호스트',
+            purpleFirst: true,
+          ),
+          onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+          child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
+        ),
+        const SizedBox(height: 18),
+
+        // 'HOT clip' 섹션 (자체 헤더를 사용하므로 SectionContainer 미적용)
         const HotClipSection(),
         const SizedBox(height: 18),
 
+        // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
         const ConsultationSection(),
       ],
     );
   }
 
-  /// 섹션 헤더 UI를 구성하는 메소드
-  Widget _buildSectionHeader({
-    required String blackTitle,
-    required String purpleTitle,
-    bool purpleFirst = false,
-    VoidCallback? onTap,
-  }) =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ColoredTitle(
-              blackText: blackTitle,
-              purpleText: purpleTitle,
-              purpleFirst: purpleFirst,
-            ),
-            if (onTap != null)
-              InkWell(
-                onTap: onTap,
-                child: const Text(
-                  '더보기',
-                  style: TextStyle(
-                    color: Color(0xFF6B7280),
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      );
-
   /// '지금 뜨는 쇼핑 라이브 공고' 섹션 UI를 구성하는 메소드
-  Widget _buildScheduleSection(List<Campaign> schedules) {
+  Widget _buildScheduleSection(BuildContext context, List<Campaign> schedules) {
     if (schedules.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(14),
@@ -172,23 +156,9 @@ class MainScreen extends StatelessWidget {
           } else if (campaign.feeNegotiable == true) {
             feeText = '협의';
           }
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: const Color(0xFFF1F3F5),
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.06),
-                  offset: Offset(0, 2),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
+          // [리팩토링] 기존 Container 디자인을 StandardContentCard로 교체
+          return StandardContentCard(
+            onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
             child: Row(
               children: [
                 ClipRRect(
