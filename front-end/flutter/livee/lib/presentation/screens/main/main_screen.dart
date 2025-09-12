@@ -6,6 +6,7 @@ import 'package:livee/presentation/screens/main/vm/main_view_model.dart'; // Vie
 import 'package:livee/presentation/screens/main/widgets/banner_slider_section.dart';
 import 'package:livee/presentation/screens/main/widgets/consultation_section.dart';
 import 'package:livee/presentation/screens/main/widgets/featured_showhost_section.dart';
+import 'package:livee/presentation/screens/main/widgets/hot_clip_section.dart';
 import 'package:livee/presentation/screens/main/widgets/news_section.dart';
 import 'package:livee/presentation/screens/main/widgets/recruit_section.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
@@ -95,6 +96,11 @@ class MainScreen extends StatelessWidget {
         ),
         FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
         const SizedBox(height: 18),
+
+        // HOT clip
+        const HotClipSection(),
+        const SizedBox(height: 18),
+
         const ConsultationSection(),
       ],
     );
