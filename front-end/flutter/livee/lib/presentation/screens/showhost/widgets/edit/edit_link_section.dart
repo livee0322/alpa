@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
+import 'package:livee/presentation/widgets/custom_dropdown.dart';
+import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+
+/// 포트폴리오의 링크 및 공개 설정을 담당하는 위젯
+class EditLinkSection extends StatelessWidget {
+  final PortfolioEditViewModel viewModel;
+
+  const EditLinkSection({
+    super.key,
+    required this.viewModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // --- 링크 & 공개 설정 ---
+        _buildSectionTitle('링크 & 공개 설정'),
+        CustomTextFormField(
+          controller: viewModel.websiteUrlController,
+          label: '웹사이트',
+          hintText: 'https://...',
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          controller: viewModel.instagramUrlController,
+          label: 'Instagram',
+          hintText: 'https://instagram.com/...',
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          controller: viewModel.youtubeUrlController,
+          label: 'YouTube',
+          hintText: 'https://youtube.com/...',
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          controller: viewModel.tiktokUrlController,
+          label: 'TikTok',
+          hintText: 'https://tiktok.com/...',
+        ),
+        const SizedBox(height: 16),
+        CustomDropdown(
+          label: '공개 범위',
+          value: viewModel.publicScope,
+          items: const ['전체공개', '링크 공개', '비공개'],
+          onChanged: viewModel.setPublicScope,
+        ),
+        const SizedBox(height: 16),
+        CheckboxListTile(
+          title: const Text('제안 받기'),
+          value: viewModel.isReceivingOffers,
+          onChanged: viewModel.setIsReceivingOffers,
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+          activeColor: const Color(0xFF6C63FF),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Text(title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    );
+  }
+}
