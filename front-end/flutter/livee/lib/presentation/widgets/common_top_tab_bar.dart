@@ -30,20 +30,22 @@ class CommonTopTabBar extends StatelessWidget {
         ),
       ),
       height: 48,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-        child: Row(
-          // 리스트 데이터를 기반으로 탭 버튼 동적 생성
-          children: tabs.map((tab) {
-            final bool isActive = currentPath == tab['path'];
-            return _buildTab(
-              context: context,
-              label: tab['label']!,
-              path: tab['path']!,
-              isActive: isActive,
-            );
-          }).toList(),
+      child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Row(
+            // 리스트 데이터를 기반으로 탭 버튼 동적 생성
+            children: tabs.map((tab) {
+              final bool isActive = currentPath == tab['path'];
+              return _buildTab(
+                context: context,
+                label: tab['label']!,
+                path: tab['path']!,
+                isActive: isActive,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -61,7 +63,7 @@ class CommonTopTabBar extends StatelessWidget {
       child: TextButton(
         onPressed: () => GoRouter.of(context).go(path),
         style: TextButton.styleFrom(
-          backgroundColor: isActive ? Colors.transparent : Colors.transparent,
+          backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
           ),
