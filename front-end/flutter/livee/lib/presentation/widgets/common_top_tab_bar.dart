@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 
 class CommonTopTabBar extends StatelessWidget {
   final String currentPath; // 외부에서 현재 경로
@@ -62,7 +63,18 @@ class CommonTopTabBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5.0),
       child: TextButton(
-        onPressed: () => GoRouter.of(context).go(path),
+        onPressed: () {
+          // 준비 중인 페이지의 경로 목록
+          const comingSoonPaths = ['/live', '/event', '/service'];
+
+          if (comingSoonPaths.contains(path)) {
+            // 준비 중인 페이지일 경우 토스트 메시지를 표시
+            showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info);
+          } else {
+            // 그 외의 경우에는 해당 경로로 이동.
+            GoRouter.of(context).go(path);
+          }
+        },
         style: TextButton.styleFrom(
           backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
