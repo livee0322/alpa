@@ -8,6 +8,7 @@ import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart'
 import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/service_locator.dart';
+import 'package:universal_html/html.dart' as html;
 
 // PortfolioEditScreen의 상태와 비즈니스 로직을 모두 관리하는 ViewModel
 class PortfolioEditViewModel with ChangeNotifier {
@@ -226,7 +227,9 @@ class PortfolioEditViewModel with ChangeNotifier {
 
       // --- 후처리 ---
       showCustomToast(context, '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.', type: ToastType.success);
-      GoRouter.of(context).pop();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        html.window.history.go(-1);
+      });
     } catch (e) {
       showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {

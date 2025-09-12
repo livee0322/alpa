@@ -38,7 +38,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 
@@ -55,7 +56,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
-    setState(() => _isOpen = false);
+    if (mounted) {
+      setState(() => _isOpen = false);
+    }
   }
 
   OverlayEntry _createOverlayEntry() {

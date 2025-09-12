@@ -34,7 +34,7 @@ class PortfolioEditScreen extends StatelessWidget {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(CupertinoIcons.back),
-              onPressed: () => html.window.history.go(-1),
+              onPressed: () => WidgetsBinding.instance.addPostFrameCallback((_) => html.window.history.go(-1)),
             ),
             title: const Text('포트폴리오 등록'),
             centerTitle: false,
