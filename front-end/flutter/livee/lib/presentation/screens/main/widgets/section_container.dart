@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 
 /// 메인 화면의 각 섹션을 구성하는 공통 컨테이너 위젯
 class SectionContainer extends StatelessWidget {
-  /// 섹션의 제목이 될 위젯
-  final Widget title;
-
-  /// '더보기' 버튼을 눌렀을 때 실행될 함수
-  final VoidCallback? onMorePressed;
-
-  /// 섹션의 내용이 될 위젯
-  final Widget child;
+  final Widget title; // 제목 위젯
+  final VoidCallback? onMorePressed; // 더보기 로직
+  final Widget child; // 내용 위젯
 
   const SectionContainer({
     super.key,

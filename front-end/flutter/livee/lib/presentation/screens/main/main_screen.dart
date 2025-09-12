@@ -107,9 +107,27 @@ class MainScreen extends StatelessWidget {
           child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
         ),
 
-        // 'HOT clip' 섹션 (자체 헤더를 사용하므로 SectionContainer 미적용)
-        const HotClipSection(),
-        const SizedBox(height: 18),
+        // 'HOT clip' 섹션
+        SectionContainer(
+          title: const Text.rich(
+            TextSpan(
+              text: 'HOT ',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Colors.red,
+              ),
+              children: [
+                TextSpan(
+                  text: 'clip',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+          onMorePressed: () => GoRouter.of(context).go('/clips'),
+          child: const HotClipSection(),
+        ),
 
         // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
         const ConsultationSection(),

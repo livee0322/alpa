@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 /// 메인 화면 섹션들에서 사용할 표준 디자인의 공통 카드 위젯
 class StandardContentCard extends StatelessWidget {
-  /// 카드 내부에 표시될 내용
-  final Widget child;
-
-  /// 카드를 탭했을 때 실행될 함수
-  final VoidCallback? onTap;
+  final Widget child; // 카드 내용
+  final VoidCallback? onTap; // 카드 선택 로직
+  final EdgeInsetsGeometry? padding; // 패딩
+  final EdgeInsetsGeometry? margin; // 마진
 
   const StandardContentCard({
     super.key,
     required this.child,
     this.onTap,
+    this.padding,
+    this.margin,
   });
 
   @override
@@ -20,8 +21,8 @@ class StandardContentCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(10),
+        margin: margin ?? const EdgeInsets.only(bottom: 10),
+        padding: padding ?? const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
