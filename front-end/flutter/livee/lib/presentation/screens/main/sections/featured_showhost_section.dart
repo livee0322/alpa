@@ -39,7 +39,7 @@ class FeaturedShowhostSection extends StatelessWidget {
                 // 이름
                 Text(
                   host.nickname ?? host.name ?? '이름 없음',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 2),
                 // 소개
