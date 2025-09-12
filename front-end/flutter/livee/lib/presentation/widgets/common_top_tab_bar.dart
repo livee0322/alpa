@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CommonTopTabBar extends StatelessWidget {
-  const CommonTopTabBar({super.key});
+  final String currentPath; // 외부에서 현재 경로
+  const CommonTopTabBar({
+    super.key,
+    required this.currentPath,
+  });
 
   @override
   Widget build(BuildContext context) {
     // 탭 데이터를 리스트로 관리
     final List<Map<String, String>> tabs = [
+      {'label': '홈', 'path': '/'},
       {'label': '숏클립', 'path': '/clips'},
       {'label': '쇼핑라이브', 'path': '/live'},
       {'label': '뉴스', 'path': '/news'},
       {'label': '이벤트', 'path': '/event'},
       {'label': '서비스', 'path': '/service'},
     ];
-
-    // 현재 경로 확인
-    final String currentPath =
-        GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString();
 
     return Container(
       decoration: const BoxDecoration(
@@ -76,24 +77,21 @@ class CommonTopTabBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: isActive
-                    ? const Color(0xFF6C63FF)
-                    : const Color(0xFF374151),
+                color: isActive ? const Color(0xFF6C63FF) : const Color(0xFF374151),
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
               ),
             ),
             // 활성화된 탭 하단에 밑줄 표시
-            if (isActive)
-              Container(
-                margin: const EdgeInsets.only(top: 2),
-                height: 3,
-                width: 30,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6C63FF),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              )
+            Container(
+              margin: const EdgeInsets.only(top: 2),
+              height: 3,
+              width: 30,
+              decoration: BoxDecoration(
+                color: isActive ? const Color(0xFF6C63FF) : Colors.transparent,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/main/sections/schedule_section.dart';
 import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
 import 'package:livee/presentation/screens/main/sections/banner_slider_section.dart';
@@ -11,15 +10,12 @@ import 'package:livee/presentation/screens/main/sections/news_section.dart';
 import 'package:livee/presentation/screens/main/sections/recruit_section.dart';
 import 'package:livee/presentation/screens/main/widgets/section_container.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/common_header.dart';
-import 'package:livee/presentation/widgets/common_top_tab_bar.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 /// 메인 화면
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
@@ -27,28 +23,11 @@ class MainScreen extends StatelessWidget {
         child: Consumer<MainViewModel>(
           builder: (context, viewModel, child) => LoadingOverlay(
             isLoading: viewModel.isLoading,
-            child: Scaffold(
-              backgroundColor: const Color(0xFFF6F7F9),
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Consumer<AuthProvider>(
-                      builder: (context, authProvider, child) {
-                        return CommonHeader(isLoggedIn: authProvider.isLoggedIn);
-                      },
-                    ),
-                    const CommonTopTabBar(),
-                    // 로딩 중이 아닐 때만 Padding을 적용하여 일관성 유지
-                    if (!viewModel.isLoading)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: _buildBody(context, viewModel),
-                      ),
-                  ],
-                ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildBody(context, viewModel),
               ),
-              bottomNavigationBar: const CommonBottomNavBar(),
             ),
           ),
         ),

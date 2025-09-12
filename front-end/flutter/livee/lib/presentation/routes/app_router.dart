@@ -6,12 +6,13 @@ import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.da
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
+import 'package:livee/presentation/screens/shell_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
 import 'package:livee/presentation/screens/showhost/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/tabs/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
-import 'package:livee/presentation/screens/main/main_screen.dart';
+import 'package:livee/presentation/screens/tabs/home_screen.dart';
 import 'package:livee/presentation/screens/recruit/my_applications_screen.dart';
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
 import 'package:livee/presentation/screens/tabs/news_screen.dart';
@@ -34,9 +35,39 @@ GoRouter createRouter(AuthProvider authProvider) {
     // refreshListenable에 외부에서 생성된 AuthProvider 인스턴스를 전달받아 사용
     refreshListenable: authProvider,
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const MainScreen(),
+      ShellRoute(
+        builder: (context, state, child) {
+          return ShellScreen(
+            location: state.uri.toString(),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/clips',
+            builder: (context, state) => const ShortClipsScreen(),
+          ),
+          GoRoute(
+            path: '/live',
+            builder: (context, state) => const ShoppingLiveScreen(),
+          ),
+          GoRoute(
+            path: '/news',
+            builder: (context, state) => const NewsScreen(),
+          ),
+          GoRoute(
+            path: '/event',
+            builder: (context, state) => const EventScreen(),
+          ),
+          GoRoute(
+            path: '/service',
+            builder: (context, state) => const ServiceScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/login',
@@ -56,8 +87,7 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: '/campaign-form',
-        builder: (context, state) =>
-            CampaignFormScreen(campaignId: state.extra as String?),
+        builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
       ),
       GoRoute(
         path: '/campaign/:campaignId',
@@ -88,8 +118,7 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: '/portfolio-edit',
-        builder: (context, state) =>
-            PortfolioEditScreen(portfolioId: state.extra as String?),
+        builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
       ),
       GoRoute(
         path: '/my-portfolios',
@@ -130,26 +159,6 @@ GoRouter createRouter(AuthProvider authProvider) {
           final showhostId = state.extra as String;
           return CastingRequestScreen(showhostId: showhostId);
         },
-      ),
-      GoRoute(
-        path: '/clips',
-        builder: (context, state) => const ShortClipsScreen(),
-      ),
-      GoRoute(
-        path: '/live',
-        builder: (context, state) => const ShoppingLiveScreen(),
-      ),
-      GoRoute(
-        path: '/news',
-        builder: (context, state) => const NewsScreen(),
-      ),
-      GoRoute(
-        path: '/event',
-        builder: (context, state) => const EventScreen(),
-      ),
-      GoRoute(
-        path: '/service',
-        builder: (context, state) => const ServiceScreen(),
       ),
     ],
     redirect: (context, GoRouterState state) {

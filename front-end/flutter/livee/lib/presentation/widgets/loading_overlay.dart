@@ -19,7 +19,7 @@ class LoadingOverlay extends StatelessWidget {
         // isLoading이 true일 때만 표시되는 로딩 화면
         if (isLoading)
           Container(
-            color: Colors.black.withOpacity(0.7),
+            color: Colors.white.withOpacity(0.7),
             child: const Center(
               child: CircularProgressIndicator(
                 color: Colors.white,
