@@ -22,28 +22,33 @@ class SectionContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 1. 섹션 헤더 (제목 + 더보기 버튼)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        Column(
           children: [
-            title,
-            if (onMorePressed != null)
-              InkWell(
-                onTap: onMorePressed,
-                child: const Text(
-                  '더보기',
-                  style: TextStyle(
-                    color: Color(0xFF6B7280),
-                    fontWeight: FontWeight.w800,
+            // 1. 섹션 헤더 (제목 + 더보기 버튼)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                title,
+                if (onMorePressed != null)
+                  InkWell(
+                    onTap: onMorePressed,
+                    child: const Text(
+                      '더보기',
+                      style: TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // 2. 섹션 내용
+            child,
           ],
         ),
-        const SizedBox(height: 10),
-        // 2. 섹션 내용
-        child,
+        const SizedBox(height: 18),
       ],
     );
   }

@@ -75,7 +75,6 @@ class MainScreen extends StatelessWidget {
           onMorePressed: () => GoRouter.of(context).go('/recruits'),
           child: ScheduleSection(schedules: viewModel.schedules),
         ),
-        const SizedBox(height: 18),
 
         // 브랜드 pick
         SectionContainer(
@@ -86,7 +85,6 @@ class MainScreen extends StatelessWidget {
           onMorePressed: () => GoRouter.of(context).go('/recruits'),
           child: RecruitSection(recruits: viewModel.recruits),
         ),
-        const SizedBox(height: 18),
 
         // 라이비 뉴스
         SectionContainer(
@@ -97,7 +95,6 @@ class MainScreen extends StatelessWidget {
           onMorePressed: () => GoRouter.of(context).go('/news'),
           child: const NewsSection(),
         ),
-        const SizedBox(height: 18),
 
         // 이런 쇼호스트는 어떠세요?
         SectionContainer(
@@ -109,7 +106,6 @@ class MainScreen extends StatelessWidget {
           onMorePressed: () => GoRouter.of(context).go('/showhosts'),
           child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
         ),
-        const SizedBox(height: 18),
 
         // 'HOT clip' 섹션 (자체 헤더를 사용하므로 SectionContainer 미적용)
         const HotClipSection(),
