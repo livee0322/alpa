@@ -1,57 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/screens/account/widgets/profile_card.dart';
+import 'package:livee/presentation/screens/account/widgets/section_header.dart';
+import 'package:livee/presentation/screens/account/widgets/mypage_menu_item.dart';
+import 'package:livee/presentation/screens/account/sections/guest_section.dart';
+import 'package:livee/presentation/screens/account/sections/brand_section.dart';
+import 'package:livee/presentation/screens/account/sections/showhost_section.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 
 class MypageScreen extends StatelessWidget {
   const MypageScreen({super.key});
 
-  // 접근 제한 팝업을 표시
-  Future<void> _showAccessDeniedDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('접근 불가'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('“쇼호스트” 유형 가입자만 사용 가능한 기능입니다.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('닫기'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text('내 정보 변경'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                GoRouter.of(context).go('/account-edit');
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final role = authProvider.role;
-    final isLoggedIn = authProvider.isLoggedIn;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -64,117 +32,16 @@ class MypageScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. 프로필 카드 섹션
-                  _buildProfileCard(context, authProvider),
-                  const SizedBox(height: 24),
+                  // 1. 공통 프로필 카드
+                  ProfileCard(authProvider: authProvider),
+                  const SizedBox(height: 32),
 
-                  // 2. 브랜드 전용 메뉴 (브랜드 역할일 때만 보임)
-                  if (role == 'brand') ...[
-                    _buildSectionHeader(
-                      title: '내가 등록한 공고',
-                      actionWidget: PrimaryActionButton(
-                        text: '공고 등록하기',
-                        onPressed: () => GoRouter.of(context).go('/campaign-form'),
-                        isFullWidth: false, // 전체 너비가 아닌 작은 버튼으로 설정
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.list_bullet,
-                      title: '등록한 공고 목록',
-                      subtitle: '진행중/마감 구분',
-                      onTap: () => GoRouter.of(context).go('/campaigns'),
-                    ),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.person_2,
-                      title: '지원자 현황',
-                      subtitle: '캠페인별 지원자/상태',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
-                    ),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.paperplane,
-                      title: '제안하기',
-                      subtitle: '쇼호스트에게 직접 제안',
-                      onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                  // 2. 역할별 섹션 표시
+                  _buildRoleSpecificSection(authProvider),
+                  const SizedBox(height: 32),
 
-                  // 3. 쇼호스트 전용 메뉴 (쇼호스트 역할일 때만 보임)
-                  if (role == 'showhost') ...[
-                    _buildSectionHeader(
-                      title: '쇼호스트 메뉴',
-                      actionWidget: PrimaryActionButton(
-                        text: '+ 등록',
-                        onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
-                        isFullWidth: false,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.person_badge_plus,
-                      title: '내 포트폴리오',
-                      subtitle: '프로필/경력/미디어 관리',
-                      onTap: () => GoRouter.of(context).go('/my-portfolios'),
-                    ),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.doc_text,
-                      title: '내 지원 내역',
-                      subtitle: '대기/합격/거절/정산',
-                      onTap: () => GoRouter.of(context).go('/my-applications'),
-                    ),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.envelope_open,
-                      title: '받은 제안',
-                      subtitle: '브랜드가 보낸 제안',
-                      onTap: () => GoRouter.of(context).go('/received-offers'),
-                    ),
-                    _buildMyPageItem(
-                      icon: CupertinoIcons.heart,
-                      title: '찜한 공고',
-                      subtitle: '북마크한 공고 모아보기',
-                      onTap: () => GoRouter.of(context).go('/bookmarked-recruits'),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // 4. 설정 메뉴 (모두에게 보임)
-                  _buildSectionHeader(title: '설정'),
-                  const SizedBox(height: 10),
-                  _buildMyPageItem(
-                    icon: CupertinoIcons.settings,
-                    title: '알림 설정',
-                    subtitle: '푸시/이메일 수신 관리',
-                    onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
-                  ),
-                  _buildMyPageItem(
-                    icon: isLoggedIn ? CupertinoIcons.square_arrow_left : CupertinoIcons.square_arrow_right,
-                    title: isLoggedIn ? '로그아웃' : '로그인',
-                    subtitle: '계정 전환 및 로그인',
-                    onTap: () async {
-                      if (isLoggedIn) {
-                        // 공통 다이얼로그 호출
-                        final confirm = await showCommonPromptDialog(
-                          context: context,
-                          title: '로그아웃',
-                          content: '정말로 로그아웃 하시겠습니까?',
-                          confirmText: '로그아웃',
-                        );
-                        if (confirm == true) {
-                          // 로그아웃 로직 실행
-                          await authProvider.logout();
-                          if (context.mounted) {
-                            // 토스트 메시지 표시
-                            showCustomToast(context, '로그아웃 되었습니다.');
-                            // 물리적 뒤로가기 실행
-                            html.window.history.go(-1);
-                          }
-                        }
-                      } else {
-                        GoRouter.of(context).go('/login');
-                      }
-                    },
-                  ),
+                  // 3. 공통 설정 메뉴 (로그인한 사용자에게만 보임)
+                  if (authProvider.isLoggedIn) _buildSettingsSection(context, authProvider)
                 ],
               ),
             ),
@@ -185,131 +52,59 @@ class MypageScreen extends StatelessWidget {
     );
   }
 
-  // 상단 프로필 카드 위젯
-  Widget _buildProfileCard(BuildContext context, AuthProvider authProvider) {
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey[200]!),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.grey[200],
-              // TODO: 사용자 프로필 이미지 연동
-              child: const Icon(CupertinoIcons.person_fill, color: Colors.grey),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    authProvider.user?.name ?? '로그인 필요',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    authProvider.role ?? '비회원',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                if (authProvider.isLoggedIn) {
-                  GoRouter.of(context).go('/account-edit');
-                } else {
-                  GoRouter.of(context).go('/login');
-                }
-              },
-              child: Text(authProvider.isLoggedIn ? '프로필 수정' : '로그인'),
-            )
-          ],
-        ),
-      ),
-    );
+  /// 사용자의 역할에 따라 적절한 섹션 위젯을 반환하는 헬퍼 메소드
+  Widget _buildRoleSpecificSection(AuthProvider authProvider) {
+    if (!authProvider.isLoggedIn) {
+      return const GuestSection();
+    }
+    switch (authProvider.role) {
+      case 'brand':
+        return const BrandSection();
+      case 'showhost':
+        return const ShowhostSection();
+      default:
+        // 해당하는 역할이 없을 경우 아무것도 표시하지 않음
+        return const SizedBox.shrink();
+    }
   }
 
-  // 섹션 헤더 위젯 (예: "내가 등록한 공고" + 버튼)
-  Widget _buildSectionHeader({required String title, Widget? actionWidget}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+  /// 로그인한 모든 사용자에게 공통으로 표시될 설정 메뉴 섹션
+  Widget _buildSettingsSection(BuildContext context, AuthProvider authProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w900,
-          ),
+        const SectionHeader(title: '설정'),
+        const SizedBox(height: 10),
+        MyPageMenuItem(
+          icon: CupertinoIcons.settings,
+          title: '알림 설정',
+          subtitle: '푸시/이메일 수신 관리',
+          onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
         ),
-        if (actionWidget != null) actionWidget,
+        MyPageMenuItem(
+          icon: CupertinoIcons.square_arrow_left,
+          title: '로그아웃',
+          subtitle: '계정 전환 및 로그인',
+          onTap: () async => _handleLogout(context, authProvider),
+        ),
       ],
     );
   }
 
-  // 아이콘과 새로운 스타일이 적용된 메뉴 아이템 위젯
-  Widget _buildMyPageItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey[200]!),
-      ),
-      margin: const EdgeInsets.only(bottom: 10),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.grey[600]),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey,
-                size: 16,
-              ),
-            ],
-          ),
-        ),
-      ),
+  /// 로그아웃 로직을 처리하는 헬퍼 함수
+  Future<void> _handleLogout(BuildContext context, AuthProvider authProvider) async {
+    final confirm = await showCommonPromptDialog(
+      context: context,
+      title: '로그아웃',
+      content: '정말로 로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
     );
+    if (confirm == true) {
+      await authProvider.logout();
+      if (context.mounted) {
+        showCustomToast(context, '로그아웃 되었습니다.');
+        html.window.history.go(-1);
+      }
+    }
   }
 }

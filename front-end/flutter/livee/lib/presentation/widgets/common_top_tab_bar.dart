@@ -90,8 +90,8 @@ class CommonTopTabBar extends StatelessWidget {
               label,
               style: TextStyle(
                 color: isActive ? const Color(0xFF6C63FF) : const Color(0xFF374151),
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
+                fontSize: 14.0,
+                fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
               ),
             ),
             // 활성화된 탭 하단에 밑줄 표시
