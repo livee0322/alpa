@@ -44,7 +44,7 @@ class FeaturedShowhostSection extends StatelessWidget {
                 const SizedBox(height: 2),
                 // 소개
                 Text(
-                  host.jobTag ?? '소개 준비 중',
+                  host.oneLineIntro ?? '소개 준비 중',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 12),
