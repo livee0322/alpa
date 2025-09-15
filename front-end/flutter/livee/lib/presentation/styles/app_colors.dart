@@ -19,7 +19,7 @@ class AppColors {
 
   // 비활성화 또는 보조적인 UI에 사용되는 색상
   static const Color disabled = Color(0xFFE5E7EB);
-  static const Color border = Color(0xFFE5E7EB);
+  static const Color border = Color(0xFFE6EDF3);
 
   // 기타 색상
   static const Color error = Colors.red;

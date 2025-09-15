@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 
 /// 표준 디자인의 공통 카드 위젯
 class StandardContentCard extends StatelessWidget {
@@ -27,7 +28,7 @@ class StandardContentCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
-            color: Colors.grey.shade300, // 테두리 색상
+            color: AppColors.border,
             width: 1.0, // 테두리 두께
           ),
           borderRadius: BorderRadius.circular(14),
