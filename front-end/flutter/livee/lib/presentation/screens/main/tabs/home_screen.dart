@@ -33,7 +33,8 @@ class HomeScreen extends StatelessWidget {
   /// 화면 본문을 빌드하는 헬퍼 메소드
   Widget _buildBody(BuildContext context, MainViewModel viewModel) {
     if (viewModel.errorMessage != null) {
-      return Center(child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
+      return Center(
+          child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +85,8 @@ class HomeScreen extends StatelessWidget {
                   purpleFirst: true,
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/showhosts'),
-                child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
+                child: FeaturedShowhostSection(
+                    showhosts: viewModel.featuredShowhosts),
               ),
 
               // 'HOT clip' 섹션
@@ -111,6 +113,20 @@ class HomeScreen extends StatelessWidget {
 
               // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
               const ConsultationSection(),
+
+              // [추가] 5:1 비율의 광고 배너를 추가합니다.
+              const SizedBox(height: 24), // 상담 섹션과의 간격
+              AspectRatio(
+                aspectRatio: 5 / 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.asset(
+                    'assets/images/banner_03.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24), // 상담 섹션과의 간격
             ],
           ),
         ),
