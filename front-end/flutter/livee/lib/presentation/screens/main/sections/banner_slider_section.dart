@@ -19,19 +19,14 @@ class _BannerSliderSectionState extends State<BannerSliderSection> {
   // --- 목업 데이터: 배너에 표시될 이미지와 텍스트 ---
   final List<Map<String, String>> _bannerData = [
     {
-      'imageUrl': 'assets/images/banner_01.png',
-      'title': '라이브 커머스, 어렵지 않아요!',
-      'subtitle': 'Livee와 함께라면 기획부터 섭외까지 한 번에!',
+      'imageUrl': 'assets/images/banner_01.jpg',
+      'title': '',
+      'subtitle': '',
     },
     {
       'imageUrl': 'assets/images/banner_02.jpg',
-      'title': '9월 뷰티 페스타 OPEN',
-      'subtitle': '인기 뷰티 쇼호스트와 함께하는 런칭쇼',
-    },
-    {
-      'imageUrl': 'assets/images/banner_03.jpg',
-      'title': '추석맞이 식품 라이브 특가',
-      'subtitle': '최대 50% 할인! 지금 바로 확인하세요.',
+      'title': '',
+      'subtitle': '',
     },
   ];
 
@@ -66,7 +61,7 @@ class _BannerSliderSectionState extends State<BannerSliderSection> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 16 / 7, // 배너 비율
+      aspectRatio: 16 / 9, // 배너 비율
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
