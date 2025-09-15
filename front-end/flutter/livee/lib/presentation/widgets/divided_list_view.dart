@@ -24,7 +24,7 @@ class DividedListView extends StatelessWidget {
       },
       separatorBuilder: (context, index) => const Divider(
         height: 1,
-        thickness: 1,
+        thickness: 0.3,
       ),
     );
   }
