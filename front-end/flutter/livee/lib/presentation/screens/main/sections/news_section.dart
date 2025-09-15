@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/widgets/divided_list_view.dart';
 
+// 뉴스 기사 데이터를 담기 위한 임시 내부 클래스
 class _NewsArticle {
   final String title;
   final String description;
   final String publishedAt;
-  _NewsArticle({required this.title, required this.description, required this.publishedAt});
+  _NewsArticle(
+      {required this.title,
+      required this.description,
+      required this.publishedAt});
 }
 
+// 메인 화면의 '라이비 뉴스' 섹션 UI
 class NewsSection extends StatelessWidget {
   const NewsSection({super.key});
 
@@ -27,15 +32,10 @@ class NewsSection extends StatelessWidget {
       ),
     ];
 
-    // [수정] ListView.separated가 Card를 생성하도록 구조 변경
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: dummyArticles.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final article = dummyArticles[index];
-        return StandardContentCard(
+    // DividedListView와 DividedListItem을 사용하여 UI를 구성
+    return DividedListView(
+      children: dummyArticles.map((article) {
+        return DividedListItem(
           onTap: () {
             // TODO: 외부 링크로 이동하는 기능 구현
           },
@@ -46,9 +46,9 @@ class NewsSection extends StatelessWidget {
                 article.title,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
@@ -58,13 +58,13 @@ class NewsSection extends StatelessWidget {
                   fontSize: 14,
                   color: Colors.grey[600],
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         );
-      },
+      }).toList(),
     );
   }
 }
