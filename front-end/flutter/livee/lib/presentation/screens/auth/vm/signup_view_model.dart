@@ -44,12 +44,14 @@ class SignupViewModel with ChangeNotifier {
   bool _privacyPolicyConsent = false;
   bool _ageConsent = false;
   bool _marketingConsent = false;
+  bool _thirdPartyConsent = false; //
 
   // UI에서 ViewModel의 상태 값을 읽을 수 있도록 public getter를 추가
   bool get serviceTermsConsent => _serviceTermsConsent;
   bool get privacyPolicyConsent => _privacyPolicyConsent;
   bool get ageConsent => _ageConsent;
   bool get marketingConsent => _marketingConsent;
+  bool get thirdPartyConsent => _thirdPartyConsent;
 
   void _setLoading(bool loading) {
     _isLoading = loading;
@@ -82,40 +84,49 @@ class SignupViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // 회원가입 로직을 처리
+  void setThirdPartyConsent(bool? value) {
+    _thirdPartyConsent = value ?? false;
+    notifyListeners();
+  }
+
+  // 회원가입
   Future<void> signup() async {
+    // Form 위젯의 유효성 검사를 통과하지 못하면 함수를 종료
     if (!formKey.currentState!.validate()) return;
 
-    if (_selectedRole == 'brand' && (!_serviceTermsConsent || !_privacyPolicyConsent)) {
-      showCustomToast(context, '서비스 이용약관과 개인정보처리방침에 동의해주세요.', type: ToastType.error);
-      return;
-    }
-    if (!_ageConsent) {
-      showCustomToast(context, '만 14세 이상 필수 항목에 동의해주세요.', type: ToastType.error);
+    // 필수 약관 동의 여부를 역할 구분 없이 공통으로 확인
+    if (!_serviceTermsConsent || !_privacyPolicyConsent || !_ageConsent) {
+      showCustomToast(context, '필수 약관에 모두 동의해주세요.', type: ToastType.error);
       return;
     }
 
     _setLoading(true);
     try {
+      // AuthProvider를 통해 실제 회원가입 API를 호출
       await _authProvider.signup(
         name: nameController.text,
         email: emailController.text,
         password: passwordController.text,
         role: _selectedRole,
         phone: phoneController.text,
+        // 쇼호스트 정보
         nickname: nicknameController.text,
         snsLink: snsLinkController.text,
         introduction: introController.text,
+        // 브랜드 정보
         brandName: brandNameController.text,
         companyName: companyNameController.text,
         businessNumber: businessNumberController.text,
       );
 
+      // 성공 시 토스트 메시지를 보여주고 이전 페이지로 이동
       showCustomToast(context, '회원가입이 완료되었습니다.', type: ToastType.success);
       html.window.history.go(-1);
     } catch (e) {
+      // 실패 시 에러 메시지를 파싱하여 토스트 보여주기
       showCustomToast(context, parseApiError(e), type: ToastType.error);
     } finally {
+      // 성공/실패 여부와 관계없이 로딩 상태를 종료
       _setLoading(false);
     }
   }
