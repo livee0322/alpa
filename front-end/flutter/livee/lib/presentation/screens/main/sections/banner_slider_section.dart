@@ -113,45 +113,31 @@ class _BannerSliderSectionState extends State<BannerSliderSection> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Container(
-        // 이미지 위에 어두운 오버레이를 추가하여 텍스트 가독성 확보
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              Colors.black.withOpacity(0.1),
-              Colors.black.withOpacity(0.7),
-            ],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  shadows: [Shadow(blurRadius: 10.0, color: Colors.black54)],
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                shadows: [Shadow(blurRadius: 10.0, color: Colors.black54)],
               ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  shadows: [Shadow(blurRadius: 8.0, color: Colors.black54)],
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                shadows: [Shadow(blurRadius: 8.0, color: Colors.black54)],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

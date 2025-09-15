@@ -24,10 +24,7 @@ class HomeScreen extends StatelessWidget {
           builder: (context, viewModel, child) => LoadingOverlay(
             isLoading: viewModel.isLoading,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: _buildBody(context, viewModel),
-              ),
+              child: _buildBody(context, viewModel),
             ),
           ),
         ),
@@ -43,73 +40,80 @@ class HomeScreen extends StatelessWidget {
       children: [
         const BannerSliderSection(),
         const SizedBox(height: 24),
-
-        // 지금 뜨는 쇼핑 라이브 공고
-        SectionContainer(
-          title: ColoredTitle(
-            blackText: '쇼핑 라이브 공고',
-            purpleText: '지금 뜨는 ',
-            purpleFirst: true,
-          ),
-          onMorePressed: () => GoRouter.of(context).go('/recruits'),
-          child: ScheduleSection(schedules: viewModel.schedules),
-        ),
-
-        // 브랜드 pick
-        SectionContainer(
-          title: ColoredTitle(
-            blackText: '브랜드 ',
-            purpleText: 'pick',
-          ),
-          onMorePressed: () => GoRouter.of(context).go('/recruits'),
-          child: RecruitSection(recruits: viewModel.recruits),
-        ),
-
-        // 라이비 뉴스
-        SectionContainer(
-          title: ColoredTitle(
-            blackText: '라이비 ',
-            purpleText: '뉴스',
-          ),
-          onMorePressed: () => GoRouter.of(context).go('/news'),
-          child: const NewsSection(),
-        ),
-
-        // 이런 쇼호스트는 어떠세요?
-        SectionContainer(
-          title: ColoredTitle(
-            blackText: '는 어떠세요?',
-            purpleText: '이런 쇼호스트',
-            purpleFirst: true,
-          ),
-          onMorePressed: () => GoRouter.of(context).go('/showhosts'),
-          child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
-        ),
-
-        // 'HOT clip' 섹션
-        SectionContainer(
-          title: const Text.rich(
-            TextSpan(
-              text: 'HOT ',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: Colors.red,
-              ),
-              children: [
-                TextSpan(
-                  text: 'clip',
-                  style: TextStyle(color: Colors.black),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 지금 뜨는 쇼핑 라이브 공고
+              SectionContainer(
+                title: ColoredTitle(
+                  blackText: '쇼핑 라이브 공고',
+                  purpleText: '지금 뜨는 ',
+                  purpleFirst: true,
                 ),
-              ],
-            ),
-          ),
-          onMorePressed: () => GoRouter.of(context).go('/clips'),
-          child: const HotClipSection(),
-        ),
+                onMorePressed: () => GoRouter.of(context).go('/recruits'),
+                child: ScheduleSection(schedules: viewModel.schedules),
+              ),
 
-        // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
-        const ConsultationSection(),
+              // 브랜드 pick
+              SectionContainer(
+                title: ColoredTitle(
+                  blackText: '브랜드 ',
+                  purpleText: 'pick',
+                ),
+                onMorePressed: () => GoRouter.of(context).go('/recruits'),
+                child: RecruitSection(recruits: viewModel.recruits),
+              ),
+
+              // 라이비 뉴스
+              SectionContainer(
+                title: ColoredTitle(
+                  blackText: '라이비 ',
+                  purpleText: '뉴스',
+                ),
+                onMorePressed: () => GoRouter.of(context).go('/news'),
+                child: const NewsSection(),
+              ),
+
+              // 이런 쇼호스트는 어떠세요?
+              SectionContainer(
+                title: ColoredTitle(
+                  blackText: '는 어떠세요?',
+                  purpleText: '이런 쇼호스트',
+                  purpleFirst: true,
+                ),
+                onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
+              ),
+
+              // 'HOT clip' 섹션
+              SectionContainer(
+                title: const Text.rich(
+                  TextSpan(
+                    text: 'HOT ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.red,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'clip',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+                onMorePressed: () => GoRouter.of(context).go('/clips'),
+                child: const HotClipSection(),
+              ),
+
+              // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
+              const ConsultationSection(),
+            ],
+          ),
+        ),
       ],
     );
   }
