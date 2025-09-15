@@ -61,9 +61,37 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> signup(String name, String email, String password, String role) async {
+  // 회원가입을 요청
+  Future<void> signup({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    String? phone,
+    // 쇼호스트 정보
+    String? nickname,
+    String? snsLink,
+    String? introduction,
+    // [추가] 브랜드 정보
+    String? brandName,
+    String? companyName,
+    String? businessNumber,
+  }) async {
     try {
-      await _authUseCase.signup(name, email, password, role);
+      // [수정] Repository로 모든 파라미터를 전달합니다.
+      await _authUseCase.signup(
+        name: name,
+        email: email,
+        password: password,
+        role: role,
+        phone: phone,
+        nickname: nickname,
+        snsLink: snsLink,
+        introduction: introduction,
+        brandName: brandName,
+        companyName: companyName,
+        businessNumber: businessNumber,
+      );
     } catch (e) {
       debugPrint('Signup failed: $e');
       rethrow;

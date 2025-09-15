@@ -31,7 +31,20 @@ class AuthRepository {
     }
   }
 
-  Future<User> signup(String name, String email, String password, String role) async {
+  // 회원가입 API를 호출
+  Future<User> signup({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    String? phone,
+    String? nickname,
+    String? snsLink,
+    String? introduction,
+    String? brandName,
+    String? companyName,
+    String? businessNumber,
+  }) async {
     final response = await _apiClient.post(
       '/users/signup',
       body: {
@@ -39,12 +52,18 @@ class AuthRepository {
         'email': email,
         'password': password,
         'role': role,
+        'phone': phone,
+        'nickname': nickname,
+        'snsLink': snsLink,
+        'introduction': introduction,
+        'brandName': brandName,
+        'companyName': companyName,
+        'businessNumber': businessNumber,
       },
     );
 
     final data = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      // 200번대 응답 코드는 성공으로 처리
       final user = User.fromJson(data);
       return user;
     } else {
