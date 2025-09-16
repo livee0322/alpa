@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -88,6 +90,9 @@ class PortfolioEditViewModel with ChangeNotifier {
 
   /// 동적 입력 필드 (최근 라이브 링크, 태그)
   final List<RecentLiveControllers> recentLiveControllers = [];
+
+  // [추가] 선택한 파일의 실제 데이터를 임시 저장할 상태 변수 (캐시 역할)
+  Uint8List? _tempAttachedFileBytes;
 
   // MARK: 기능 함수
 
@@ -270,6 +275,20 @@ class PortfolioEditViewModel with ChangeNotifier {
     _setLoading(true);
 
     try {
+      // --- 지연된 파일 업로드 처리 ---
+      String? finalAttachedFileUrl = attachedFileUrl; // 기존 URL을 기본값으로 설정
+
+      // 1. 캐시된 새 파일이 있는지 확인합니다.
+      if (_tempAttachedFileBytes != null) {
+        // 2. 새 파일이 있다면, '저장' 시점에 업로드를 실행합니다.
+        final uploader = CloudinaryUploader();
+        finalAttachedFileUrl = await uploader.uploadFile(
+          _tempAttachedFileBytes!,
+          fileName: attachedFileName,
+          type: 'raw',
+        );
+      }
+
       final uploader = CloudinaryUploader();
 
       // --- 지연된 이미지 업로드 처리 ---
@@ -295,7 +314,7 @@ class PortfolioEditViewModel with ChangeNotifier {
         }
       }
 
-       // [추가] 성별 값을 한글에서 영문으로 변환하는 로직
+      // [추가] 성별 값을 한글에서 영문으로 변환하는 로직
       String? genderPayload;
       if (_gender == '남성') {
         genderPayload = 'male';
@@ -349,7 +368,7 @@ class PortfolioEditViewModel with ChangeNotifier {
                 item['date']!.isNotEmpty)
             .toList(),
 
-        'attachedFileUrl': attachedFileUrl,
+        'attachedFileUrl': finalAttachedFileUrl,
       };
 
       // --- API 호출 ---
@@ -374,7 +393,7 @@ class PortfolioEditViewModel with ChangeNotifier {
   }
 
   // [추가] 첨부 파일을 선택하고 업로드하는 메소드
-  Future<void> pickAndUploadFile() async {
+  Future<void> pickFileForCache() async {
     // 1. 파일 선택기 열기
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -382,26 +401,11 @@ class PortfolioEditViewModel with ChangeNotifier {
     );
 
     if (result != null && result.files.single.bytes != null) {
-      final file = result.files.single;
-      _setLoading(true);
-      try {
-        // 2. Cloudinary에 'raw' 타입으로 업로드
-        final uploader = CloudinaryUploader();
-        final url = await uploader.uploadFile(
-          file.bytes!,
-          fileName: file.name,
-          type: 'raw',
-        );
-
-        // 3. 상태 업데이트 및 UI 알림
-        attachedFileUrl = url;
-        attachedFileName = file.name;
-        showCustomToast(context, '파일이 첨부되었습니다.', type: ToastType.success);
-      } catch (e) {
-        showCustomToast(context, '파일 업로드 실패: $e', type: ToastType.error);
-      } finally {
-        _setLoading(false);
-      }
+      // [수정] 파일 데이터와 이름을 ViewModel의 임시 변수에 저장만 합니다. (API 호출 없음)
+      _tempAttachedFileBytes = result.files.single.bytes;
+      attachedFileName = result.files.single.name;
+      attachedFileUrl = null; // 기존에 있던 파일 URL은 무효화합니다.
+      notifyListeners();
     }
   }
 
@@ -409,6 +413,7 @@ class PortfolioEditViewModel with ChangeNotifier {
   void removeAttachedFile() {
     attachedFileUrl = null;
     attachedFileName = null;
+    _tempAttachedFileBytes = null; // [추가] 캐시된 파일 데이터를 지웁니다.
     notifyListeners();
   }
 

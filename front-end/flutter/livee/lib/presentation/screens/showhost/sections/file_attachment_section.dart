@@ -16,7 +16,7 @@ class FileAttachmentSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         InkWell(
-          onTap: viewModel.pickAndUploadFile,
+          onTap: viewModel.pickFileForCache,
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -28,7 +28,7 @@ class FileAttachmentSection extends StatelessWidget {
             child: Row(
               children: [
                 ElevatedButton(
-                  onPressed: viewModel.pickAndUploadFile,
+                  onPressed: viewModel.pickFileForCache,
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     backgroundColor: Colors.grey[200],
