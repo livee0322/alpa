@@ -14,13 +14,13 @@ class BasicInfoSection extends StatelessWidget {
       children: [
         CustomTextFormField(
           controller: viewModel.nicknameController,
-          label: '닉네임 *',
+          label: '닉네임',
           isRequired: true,
         ),
         const SizedBox(height: 16),
         CustomTextFormField(
           controller: viewModel.oneLineIntroController,
-          label: '한 줄 소개 *',
+          label: '한 줄 소개',
           isRequired: true,
         ),
         const SizedBox(height: 16),
@@ -30,25 +30,6 @@ class BasicInfoSection extends StatelessWidget {
           maxLines: 5,
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-                child: CustomTextFormField(
-                    controller: viewModel.experienceYearsController,
-                    label: '경력(년)')),
-            const SizedBox(width: 16),
-            Expanded(
-                child: CustomTextFormField(
-                    controller: viewModel.ageController, label: '나이')),
-          ],
-        ),
-        CheckboxListTile(
-          title: const Text('나이 공개'),
-          value: viewModel.isAgePublic,
-          onChanged: viewModel.setIsAgePublic,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-        ),
       ],
     );
   }

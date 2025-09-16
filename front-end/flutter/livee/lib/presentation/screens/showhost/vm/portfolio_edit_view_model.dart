@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
@@ -31,6 +30,7 @@ class PortfolioEditViewModel with ChangeNotifier {
   /// 로딩 오버레이 표시 여부를 제어하는 변수
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool get isEditing => portfolioId != null;
 
   /// 이미지 데이터 소스 (로컬 파일 또는 네트워크 URL)
   PortfolioImage? mainThumbnailSource;
@@ -63,17 +63,25 @@ class PortfolioEditViewModel with ChangeNotifier {
 
   /// 드롭다운 및 체크박스 상태 변수
   String _publicScope = '전체공개';
+  String? _gender;
+  String? get gender => _gender;
   String get publicScope => _publicScope;
   bool _isReceivingOffers = true;
   bool get isReceivingOffers => _isReceivingOffers;
 
+  // 각 필드별 공개 여부 상태 변수
   bool _isAgePublic = false;
   bool get isAgePublic => _isAgePublic;
   bool _isSizingPublic = false;
   bool get isSizingPublic => _isSizingPublic;
-  bool get isEditing => portfolioId != null;
-  String? _gender;
-  String? get gender => _gender;
+  bool _isExperiencePublic = false;
+  bool get isExperiencePublic => _isExperiencePublic;
+  bool _isRegionPublic = false;
+  bool get isRegionPublic => _isRegionPublic;
+  bool _isGenderPublic = false;
+  bool get isGenderPublic => _isGenderPublic;
+  bool _isHeightPublic = false;
+  bool get isHeightPublic => _isHeightPublic;
 
   /// 동적 입력 필드 (최근 라이브 링크, 태그)
   final List<RecentLiveControllers> recentLiveControllers = [];
@@ -97,8 +105,24 @@ class PortfolioEditViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setGender(String? value) {
-    _gender = value == '선택 안함' ? null : value;
+  // [추가] 새로운 setter 메소드들
+  void setIsExperiencePublic(bool? value) {
+    _isExperiencePublic = value ?? false;
+    notifyListeners();
+  }
+
+  void setIsRegionPublic(bool? value) {
+    _isRegionPublic = value ?? false;
+    notifyListeners();
+  }
+
+  void setIsGenderPublic(bool? value) {
+    _isGenderPublic = value ?? false;
+    notifyListeners();
+  }
+
+  void setIsHeightPublic(bool? value) {
+    _isHeightPublic = value ?? false;
     notifyListeners();
   }
 
@@ -141,6 +165,15 @@ class PortfolioEditViewModel with ChangeNotifier {
     if (tag.isNotEmpty && !tags.contains(tag)) {
       tags.add(tag);
       tagController.clear();
+      notifyListeners();
+    }
+  }
+
+  // [추가] 성별 상태 변경 메소드 (오류 해결의 핵심)
+  void setGender(String? value) {
+    if (value != null) {
+      // '선택 안함'을 선택하면 null로 저장하여 서버 요구사항에 맞춤
+      _gender = value == '선택 안함' ? null : value;
       notifyListeners();
     }
   }
@@ -194,6 +227,10 @@ class PortfolioEditViewModel with ChangeNotifier {
       bottomSizeController.text = portfolio.bottomSize ?? '';
       shoeSizeController.text = portfolio.shoeSize?.toString() ?? '';
       _isSizingPublic = portfolio.isSizingPublic ?? false;
+      _isExperiencePublic = portfolio.isExperiencePublic ?? false;
+      _isRegionPublic = portfolio.isRegionPublic ?? false;
+      _isGenderPublic = portfolio.isGenderPublic ?? false;
+      _isHeightPublic = portfolio.isHeightPublic ?? false;
 
       // 링크 및 공개 설정
       websiteUrlController.text = portfolio.websiteUrl ?? '';
@@ -286,6 +323,10 @@ class PortfolioEditViewModel with ChangeNotifier {
         'bottomSize': bottomSizeController.text,
         'shoeSize': int.tryParse(shoeSizeController.text),
         'isSizingPublic': _isSizingPublic,
+        'isExperiencePublic': _isExperiencePublic,
+        'isRegionPublic': _isRegionPublic,
+        'isGenderPublic': _isGenderPublic,
+        'isHeightPublic': _isHeightPublic,
         // 링크 및 공개 설정
         'websiteUrl': websiteUrlController.text,
         'instagramUrl': instagramUrlController.text,

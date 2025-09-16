@@ -3,7 +3,7 @@ import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
-/// 포트폴리오의 '선택 정보' UI를 구성하는 위젯
+// 포트폴리오의 '선택 정보' UI
 class SelectionInfoSection extends StatelessWidget {
   final PortfolioEditViewModel viewModel;
 
@@ -12,83 +12,129 @@ class SelectionInfoSection extends StatelessWidget {
     required this.viewModel,
   });
 
+  // [추가] 반복되는 UI 구조를 만드는 헬퍼 메소드
+  /// 입력 위젯과 '공개' 체크박스를 한 줄에 배치하는 공통 위젯을 생성합니다.
+  Widget _buildPublicSettingRow({
+    required Widget inputField, // TextFormField, Dropdown 등 입력 위젯
+    required bool isPublic, // 체크박스의 현재 값
+    required ValueChanged<bool?> onPublicChanged, // 체크박스 값 변경 콜백
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 3,
+          child: inputField,
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 24.0), // 라벨이 있는 필드와의 높이를 맞추기 위함
+            child: CheckboxListTile(
+              title: const Text('공개'),
+              value: isPublic,
+              onChanged: onPublicChanged,
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // [수정] build 메소드를 헬퍼 메소드를 사용하도록 리팩토링
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextFormField(
-                controller: viewModel.regionController,
-                label: '지역',
-                hintText: '시/도 (예: 서울)',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextFormField(
-                controller: viewModel.detailedRegionController,
-                label: '상세 지역',
-                hintText: '구/군 (예: 강남구)',
-              ),
-            ),
-          ],
+        // 경력
+        _buildPublicSettingRow(
+          inputField: CustomTextFormField(
+            controller: viewModel.experienceYearsController,
+            label: '경력(년)',
+            keyboardType: TextInputType.number,
+          ),
+          isPublic: viewModel.isExperiencePublic,
+          onPublicChanged: viewModel.setIsExperiencePublic,
         ),
         const SizedBox(height: 16),
-        CustomDropdown(
-          label: '성별',
-          value: viewModel.gender ?? '선택 안함',
-          items: const ['선택 안함', '남성', '여성'],
-          onChanged: viewModel.setGender,
+
+        // 나이
+        _buildPublicSettingRow(
+          inputField: CustomTextFormField(
+            controller: viewModel.ageController,
+            label: '나이',
+            keyboardType: TextInputType.number,
+          ),
+          isPublic: viewModel.isAgePublic,
+          onPublicChanged: viewModel.setIsAgePublic,
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextFormField(
-                controller: viewModel.heightController,
-                label: '키(cm)',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextFormField(
-                controller: viewModel.weightController,
-                label: '몸무게(kg)',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-          ],
+
+        // 지역
+        _buildPublicSettingRow(
+          inputField: CustomTextFormField(
+            controller: viewModel.regionController,
+            label: '지역',
+            hintText: '시/도 (예: 서울)',
+          ),
+          isPublic: viewModel.isRegionPublic,
+          onPublicChanged: viewModel.setIsRegionPublic,
         ),
         const SizedBox(height: 16),
+
+        // 성별
+        _buildPublicSettingRow(
+          inputField: CustomDropdown(
+            label: '성별',
+            value: viewModel.gender ?? '선택 안함',
+            items: const ['선택 안함', '남성', '여성'],
+            onChanged: viewModel.setGender,
+          ),
+          isPublic: viewModel.isGenderPublic,
+          onPublicChanged: viewModel.setIsGenderPublic,
+        ),
+        const SizedBox(height: 16),
+
+        // 키
+        _buildPublicSettingRow(
+          inputField: CustomTextFormField(
+            controller: viewModel.heightController,
+            label: '키(cm)',
+            keyboardType: TextInputType.number,
+          ),
+          isPublic: viewModel.isHeightPublic,
+          onPublicChanged: viewModel.setIsHeightPublic,
+        ),
+        const SizedBox(height: 16),
+
+        // 치수
+        const Text('치수',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+        const SizedBox(height: 8),
         CustomTextFormField(
           controller: viewModel.topSizeController,
-          label: '상의',
-          hintText: '예: 55, 95, M',
+          hintText: '상의 S/M/L',
         ),
         const SizedBox(height: 16),
         CustomTextFormField(
           controller: viewModel.bottomSizeController,
-          label: '하의',
-          hintText: '예: 26, 30',
+          hintText: '하의 26/28...',
         ),
         const SizedBox(height: 16),
         CustomTextFormField(
           controller: viewModel.shoeSizeController,
-          label: '신발',
-          hintText: '예: 240',
+          hintText: '신발 240',
           keyboardType: TextInputType.number,
         ),
         CheckboxListTile(
-          title: const Text('치수 공개'),
+          title: const Text('치수 정보 공개'),
           value: viewModel.isSizingPublic,
           onChanged: viewModel.setIsSizingPublic,
           controlAffinity: ListTileControlAffinity.leading,
           contentPadding: EdgeInsets.zero,
-          activeColor: const Color(0xFF6C63FF),
         ),
       ],
     );

@@ -33,6 +33,10 @@ class Portfolio {
   final String? instagramUrl; // 인스타그램 링크
   final String? youtubeUrl; // 유튜브 링크
   final String? tiktokUrl; // 틱톡 링크
+  final bool? isExperiencePublic;
+  final bool? isRegionPublic;
+  final bool? isGenderPublic;
+  final bool? isHeightPublic;
 
   Portfolio({
     required this.id,
@@ -68,6 +72,10 @@ class Portfolio {
     this.instagramUrl,
     this.youtubeUrl,
     this.tiktokUrl,
+    this.isExperiencePublic,
+    this.isRegionPublic,
+    this.isGenderPublic,
+    this.isHeightPublic,
   });
 
   factory Portfolio.fromJson(Map<String, dynamic> json) {
@@ -109,6 +117,10 @@ class Portfolio {
       instagramUrl: json['instagramUrl'] as String?,
       youtubeUrl: json['youtubeUrl'] as String?,
       tiktokUrl: json['tiktokUrl'] as String?,
+      isExperiencePublic: json['isExperiencePublic'] as bool?,
+      isRegionPublic: json['isRegionPublic'] as bool?,
+      isGenderPublic: json['isGenderPublic'] as bool?,
+      isHeightPublic: json['isHeightPublic'] as bool?,
     );
   }
 }
