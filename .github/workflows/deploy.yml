@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - flutter
+    paths:
+      - 'front-end/flutter/livee/**'
 
 # 실행될 작업들
 jobs:
@@ -29,13 +31,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
         # flutter 프로젝트가 있는 실제 폴더 경로를 지정
-        working-directory: ./flutter/livee
+        working-directory: ./front-end/flutter/livee
 
       # 4. Flutter 웹 앱 빌드
       - name: Build Flutter web app
         run: flutter build web
         # flutter 프로젝트가 있는 실제 폴더 경로를 지정
-        working-directory: ./flutter/livee
+        working-directory: ./front-end/flutter/livee
 
       # 5. 임시 폴더 생성 (서버 스크립트 실행)
       - name: Create temporary directory on NAS-PC
@@ -56,10 +58,10 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # livbee 프로젝트의 빌드 결과물 경로로 변경
-          source: "flutter/livee/build/web/*"
+          source: "front-end/flutter/livee/build/web/*"
           target: "temp/livbee-new"
-          # source 경로에서 상위 4개 폴더(flutter/livee/build/web)를 제외
-          strip_components: 4
+          # source 경로에서 상위 5개 폴더(front-end/flutter/livee/build/web)를 제외
+          strip_components: 5
 
       # 7. 배포 실행 (서버 스크립트 실행)
       - name: Deploy on NAS-PC
