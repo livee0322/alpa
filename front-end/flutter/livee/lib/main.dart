@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Livee Hello',
+      title: 'Livee best',
       theme: ThemeData(
         fontFamily: 'SUIT',
         scaffoldBackgroundColor: Colors.white,
