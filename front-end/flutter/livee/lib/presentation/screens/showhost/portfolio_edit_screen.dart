@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
 import 'package:livee/presentation/screens/showhost/sections/basic_info_section.dart';
@@ -11,7 +10,6 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/section_title.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
-import 'package:livee/presentation/screens/showhost/widgets/portfolio_tags_section.dart';
 import 'package:provider/provider.dart';
 
 class PortfolioEditScreen extends StatelessWidget {
@@ -136,22 +134,6 @@ class PortfolioEditScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // 테그 섹션
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '포트폴리오 태그'),
-                        PortfolioTagsSection(
-                          tagController: viewModel.tagController,
-                          tags: viewModel.tags,
-                          onAddTag: viewModel.addTag,
-                          onRemoveTag: viewModel.removeTag,
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 40),
 
                   _buildActionButtons(viewModel),

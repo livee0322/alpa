@@ -43,8 +43,6 @@ class PortfolioEditViewModel with ChangeNotifier {
   final detailedIntroController = TextEditingController();
   final experienceYearsController = TextEditingController();
   final ageController = TextEditingController();
-  final mainLinkController = TextEditingController(); // (구) 대표링크
-  final tagController = TextEditingController();
 
   // 선택 정보 컨트롤러
   final regionController = TextEditingController();
@@ -85,7 +83,6 @@ class PortfolioEditViewModel with ChangeNotifier {
 
   /// 동적 입력 필드 (최근 라이브 링크, 태그)
   final List<RecentLiveControllers> recentLiveControllers = [];
-  final List<String> tags = [];
 
   // MARK: 기능 함수
 
@@ -159,16 +156,6 @@ class PortfolioEditViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 입력된 태그를 태그 목록에 추가하고 UI에 알림
-  void addTag() {
-    final tag = tagController.text.trim();
-    if (tag.isNotEmpty && !tags.contains(tag)) {
-      tags.add(tag);
-      tagController.clear();
-      notifyListeners();
-    }
-  }
-
   // [추가] 성별 상태 변경 메소드 (오류 해결의 핵심)
   void setGender(String? value) {
     if (value != null) {
@@ -176,12 +163,6 @@ class PortfolioEditViewModel with ChangeNotifier {
       _gender = value == '선택 안함' ? null : value;
       notifyListeners();
     }
-  }
-
-  /// 특정 태그를 목록에서 삭제하고 UI에 알림
-  void removeTag(String tag) {
-    tags.remove(tag);
-    notifyListeners();
   }
 
   /// 갤러리에서 이미지를 선택하고, 선택된 이미지 데이터를 콜백으로 전달
@@ -252,8 +233,6 @@ class PortfolioEditViewModel with ChangeNotifier {
       subThumbnailSources.clear();
       subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? [])
           .map((url) => PortfolioImage(networkUrl: url)));
-      tags.clear();
-      tags.addAll(portfolio.tags ?? []);
       recentLiveControllers.clear();
       if (portfolio.recentLives != null && portfolio.recentLives!.isNotEmpty) {
         for (var live in portfolio.recentLives!) {
@@ -338,7 +317,6 @@ class PortfolioEditViewModel with ChangeNotifier {
         'mainThumbnailUrl': finalMainThumbUrl,
         'backgroundImageUrl': finalBackgroundUrl,
         'subThumbnailUrls': finalSubUrls,
-        'tags': tags,
         'recentLives': recentLiveControllers
             .map((c) => {
                   'title': c.titleController.text,
@@ -383,8 +361,6 @@ class PortfolioEditViewModel with ChangeNotifier {
     detailedIntroController.dispose();
     experienceYearsController.dispose();
     ageController.dispose();
-    mainLinkController.dispose();
-    tagController.dispose();
     regionController.dispose();
     detailedRegionController.dispose();
     heightController.dispose();

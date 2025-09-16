@@ -90,11 +90,6 @@ class _PortfolioDetailScreenState extends State<PortfolioDetailScreen> {
                 _buildInfoSection(portfolio),
                 const SizedBox(height: 24),
                 _buildSection(
-                  title: '스킬',
-                  child: _buildTags(portfolio.tags),
-                ),
-                const SizedBox(height: 24),
-                _buildSection(
                   title: '경력',
                   total: '${portfolio.experienceYears ?? '0'}년',
                   child: _buildRecentLives(portfolio.recentLives),
@@ -219,15 +214,6 @@ class _PortfolioDetailScreenState extends State<PortfolioDetailScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTags(List<String>? tags) {
-    if (tags == null || tags.isEmpty) return const Text('등록된 스킬이 없습니다.');
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
-      children: tags.map((tag) => Chip(label: Text(tag))).toList(),
     );
   }
 

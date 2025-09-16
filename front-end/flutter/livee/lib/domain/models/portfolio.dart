@@ -18,7 +18,6 @@ class Portfolio {
   final String? publicScope; // 포트폴리오 공개 범위 (전체공개, 링크공개, 비공개)
   final bool? isReceivingOffers; // 제안 받기 여부
   final List<RecentLive>? recentLives; // 최근 라이브 이력 목록
-  final List<String>? tags; // 스킬 태그 목록
   final String? status; // 포트폴리오 상태 (published: 발행, draft: 임시저장)
   final bool? isAgePublic; // 나이 공개 여부
   final String? detailedRegion; // 상세 지역 (구/군)
@@ -57,7 +56,6 @@ class Portfolio {
     this.publicScope,
     this.isReceivingOffers,
     this.recentLives,
-    this.tags,
     this.status,
     this.isAgePublic,
     this.detailedRegion,
@@ -102,7 +100,6 @@ class Portfolio {
       recentLives: (json['recentLives'] as List<dynamic>?)
           ?.map((e) => RecentLive.fromJson(e as Map<String, dynamic>))
           .toList(),
-      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
       status: json['status'] as String?,
       isAgePublic: json['isAgePublic'] as bool?,
       detailedRegion: json['detailedRegion'] as String?,
