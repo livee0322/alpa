@@ -20,35 +20,34 @@ class CloudinaryUploader {
       }
 
       final signatureData = jsonDecode(utf8.decode(response.bodyBytes));
-      final sig = signatureData['data'] ?? signatureData;
-      final String apiKey = sig['apiKey'] as String;
-      final int timestamp = sig['timestamp'] as int;
-      final String signature = sig['signature'] as String;
-      final String? folder = sig['folder'] as String?;
+      // [수정] sig의 타입을 명확히 Map<String, dynamic>으로 지정합니다.
+      final sig =
+          (signatureData['data'] ?? signatureData) as Map<String, dynamic>;
 
       final uploadUrl = type == 'image'
           ? '$_uploadApi/image/upload'
           : '$_uploadApi/raw/upload';
       final uri = Uri.parse(uploadUrl);
 
-      final request = http.MultipartRequest('POST', uri)
-        ..fields['api_key'] = apiKey
-        ..fields['timestamp'] = timestamp.toString()
-        ..fields['signature'] = signature;
+      final request = http.MultipartRequest('POST', uri);
 
-      if (folder != null) {
-        request.fields['folder'] = folder;
-      }
-      if (fileName != null) {
-        request.fields['public_id'] = fileName;
-      }
+      // [수정] Cloudinary가 요구하는 api_key를 명시적으로 추가합니다.
+      // 백엔드 응답의 'apiKey' 값을 사용합니다.
+      request.fields['api_key'] = sig['apiKey'].toString();
+
+      // 나머지 파라미터들은 동적으로 추가합니다.
+      sig.forEach((key, value) {
+        // api_key는 이미 추가했으므로 건너뜁니다.
+        if (key != 'apiKey') {
+          request.fields[key] = value.toString();
+        }
+      });
 
       request.files.add(http.MultipartFile.fromBytes(
         'file',
         fileBytes,
         filename: fileName ?? 'upload',
       ));
-
       final streamedResponse = await request.send();
       final res = await http.Response.fromStream(streamedResponse);
 

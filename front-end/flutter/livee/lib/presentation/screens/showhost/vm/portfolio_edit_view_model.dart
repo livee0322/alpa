@@ -295,6 +295,14 @@ class PortfolioEditViewModel with ChangeNotifier {
         }
       }
 
+       // [추가] 성별 값을 한글에서 영문으로 변환하는 로직
+      String? genderPayload;
+      if (_gender == '남성') {
+        genderPayload = 'male';
+      } else if (_gender == '여성') {
+        genderPayload = 'female';
+      }
+
       // --- 최종 데이터 취합 ---
       final Map<String, dynamic> payload = {
         // 기본 정보
@@ -307,7 +315,7 @@ class PortfolioEditViewModel with ChangeNotifier {
         // 선택 정보
         'region': regionController.text,
         'detailedRegion': detailedRegionController.text,
-        'gender': _gender,
+        'gender': genderPayload,
         'height': int.tryParse(heightController.text),
         'weight': int.tryParse(weightController.text),
         'topSize': topSizeController.text,
