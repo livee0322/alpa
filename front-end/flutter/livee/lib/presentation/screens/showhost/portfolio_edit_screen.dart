@@ -6,7 +6,6 @@ import 'package:livee/presentation/screens/showhost/sections/link_settings_secti
 import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/recent_live_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/selection_info_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/shorts_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
@@ -105,18 +104,6 @@ class PortfolioEditScreen extends StatelessWidget {
                       children: [
                         const SectionTitle(title: '선택 정보'),
                         SelectionInfoSection(viewModel: viewModel),
-                      ],
-                    ),
-                  ),
-
-                  // 내 쇼츠 가져오기 섹션
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '내 쇼츠 가져오기'),
-                        const ShortsSection(),
                       ],
                     ),
                   ),
