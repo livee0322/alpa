@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/screens/showhost/sections/file_attachment_section.dart';
 import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
@@ -46,6 +47,10 @@ class LinkSettingsSection extends StatelessWidget {
           onChanged: viewModel.setPublicScope,
         ),
         const SizedBox(height: 16),
+
+        // [추가] 파일 첨부 섹션 위젯
+        FileAttachmentSection(viewModel: viewModel),
+
         CheckboxListTile(
           title: const Text('제안 받기'),
           value: viewModel.isReceivingOffers,

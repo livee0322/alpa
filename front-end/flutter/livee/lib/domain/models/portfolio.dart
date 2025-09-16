@@ -36,6 +36,7 @@ class Portfolio {
   final bool? isRegionPublic;
   final bool? isGenderPublic;
   final bool? isHeightPublic;
+  final String? attachedFileUrl; // 첨부 파일 URL
 
   Portfolio({
     required this.id,
@@ -74,6 +75,7 @@ class Portfolio {
     this.isRegionPublic,
     this.isGenderPublic,
     this.isHeightPublic,
+    this.attachedFileUrl,
   });
 
   factory Portfolio.fromJson(Map<String, dynamic> json) {
@@ -118,6 +120,7 @@ class Portfolio {
       isRegionPublic: json['isRegionPublic'] as bool?,
       isGenderPublic: json['isGenderPublic'] as bool?,
       isHeightPublic: json['isHeightPublic'] as bool?,
+      attachedFileUrl: json['attachedFileUrl'] as String?,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/api_error_parser.dart';
@@ -80,6 +81,10 @@ class PortfolioEditViewModel with ChangeNotifier {
   bool get isGenderPublic => _isGenderPublic;
   bool _isHeightPublic = false;
   bool get isHeightPublic => _isHeightPublic;
+
+  // 첨부 파일 관련 상태 변수
+  String? attachedFileUrl;
+  String? attachedFileName;
 
   /// 동적 입력 필드 (최근 라이브 링크, 태그)
   final List<RecentLiveControllers> recentLiveControllers = [];
@@ -221,6 +226,13 @@ class PortfolioEditViewModel with ChangeNotifier {
       _publicScope = portfolio.publicScope ?? '전체공개';
       _isReceivingOffers = portfolio.isReceivingOffers ?? true;
 
+      // [추가] 첨부 파일 정보 로딩
+      if (portfolio.attachedFileUrl != null) {
+        attachedFileUrl = portfolio.attachedFileUrl;
+        // URL에서 파일 이름 추출 (마지막 '/' 이후의 문자열)
+        attachedFileName = portfolio.attachedFileUrl!.split('/').last;
+      }
+
       // 이미지 및 동적 필드 데이터 채우기
       if (portfolio.mainThumbnailUrl != null) {
         mainThumbnailSource =
@@ -264,19 +276,19 @@ class PortfolioEditViewModel with ChangeNotifier {
       String? finalMainThumbUrl = mainThumbnailSource?.networkUrl;
       if (mainThumbnailSource?.localBytes != null) {
         finalMainThumbUrl =
-            await uploader.uploadImage(mainThumbnailSource!.localBytes!);
+            await uploader.uploadFile(mainThumbnailSource!.localBytes!);
       }
 
       String? finalBackgroundUrl = backgroundImageSource?.networkUrl;
       if (backgroundImageSource?.localBytes != null) {
         finalBackgroundUrl =
-            await uploader.uploadImage(backgroundImageSource!.localBytes!);
+            await uploader.uploadFile(backgroundImageSource!.localBytes!);
       }
 
       final List<String> finalSubUrls = [];
       for (final source in subThumbnailSources) {
         if (source.localBytes != null) {
-          final newUrl = await uploader.uploadImage(source.localBytes!);
+          final newUrl = await uploader.uploadFile(source.localBytes!);
           finalSubUrls.add(newUrl);
         } else if (source.networkUrl != null) {
           finalSubUrls.add(source.networkUrl!);
@@ -328,6 +340,8 @@ class PortfolioEditViewModel with ChangeNotifier {
                 item['url']!.isNotEmpty ||
                 item['date']!.isNotEmpty)
             .toList(),
+
+        'attachedFileUrl': attachedFileUrl,
       };
 
       // --- API 호출 ---
@@ -349,6 +363,45 @@ class PortfolioEditViewModel with ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  // [추가] 첨부 파일을 선택하고 업로드하는 메소드
+  Future<void> pickAndUploadFile() async {
+    // 1. 파일 선택기 열기
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['hwp', 'doc', 'docx', 'ppt', 'pptx', 'pdf'],
+    );
+
+    if (result != null && result.files.single.bytes != null) {
+      final file = result.files.single;
+      _setLoading(true);
+      try {
+        // 2. Cloudinary에 'raw' 타입으로 업로드
+        final uploader = CloudinaryUploader();
+        final url = await uploader.uploadFile(
+          file.bytes!,
+          fileName: file.name,
+          type: 'raw',
+        );
+
+        // 3. 상태 업데이트 및 UI 알림
+        attachedFileUrl = url;
+        attachedFileName = file.name;
+        showCustomToast(context, '파일이 첨부되었습니다.', type: ToastType.success);
+      } catch (e) {
+        showCustomToast(context, '파일 업로드 실패: $e', type: ToastType.error);
+      } finally {
+        _setLoading(false);
+      }
+    }
+  }
+
+  // [추가] 첨부 파일을 제거하는 메소드
+  void removeAttachedFile() {
+    attachedFileUrl = null;
+    attachedFileName = null;
+    notifyListeners();
   }
 
   /// ViewModel이 소멸될 때 모든 컨트롤러의 리소스를 해제

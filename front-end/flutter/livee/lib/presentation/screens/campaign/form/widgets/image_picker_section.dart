@@ -58,7 +58,7 @@ class ImagePickerSection extends StatelessWidget {
       provider.setLoading(true);
       try {
         final url =
-            await CloudinaryUploader().uploadImage(result.files.single.bytes!, fileName: result.files.single.name);
+            await CloudinaryUploader().uploadFile(result.files.single.bytes!, fileName: result.files.single.name);
         provider.imageUrlController.text = url;
       } catch (e) {
         if (context.mounted) {
