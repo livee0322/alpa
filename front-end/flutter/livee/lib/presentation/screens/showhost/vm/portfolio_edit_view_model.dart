@@ -252,8 +252,8 @@ class PortfolioEditViewModel with ChangeNotifier {
     }
   }
 
-  /// 입력된 모든 데이터를 취합하고, '발행' 또는 '임시저장' 상태로 서버에 저장/수정 요청을 보내기
-  Future<void> savePortfolio(String status) async {
+  /// 입력된 모든 데이터를 취합하고, 서버에 저장/수정 요청을 보내기
+  Future<void> savePortfolio() async {
     if (!formKey.currentState!.validate()) return;
     _setLoading(true);
 
@@ -328,7 +328,6 @@ class PortfolioEditViewModel with ChangeNotifier {
                 item['url']!.isNotEmpty ||
                 item['date']!.isNotEmpty)
             .toList(),
-        'status': status,
       };
 
       // --- API 호출 ---
@@ -339,8 +338,7 @@ class PortfolioEditViewModel with ChangeNotifier {
       }
 
       // --- 후처리 ---
-      showCustomToast(
-          context, '포트폴리오가 성공적으로 ${status == 'draft' ? '저장' : '발행'}되었습니다.',
+      showCustomToast(context, '포트폴리오가 성공적으로 저장되었습니다.',
           type: ToastType.success);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         html.window.history.go(-1);

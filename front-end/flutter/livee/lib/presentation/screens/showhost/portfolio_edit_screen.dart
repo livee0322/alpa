@@ -158,26 +158,14 @@ class PortfolioEditScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        SizedBox(
-          height: 48,
-          child: TextButton(
-            onPressed: viewModel.isLoading
-                ? null
-                : () => viewModel.savePortfolio('draft'),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey[600],
-            ),
-            child: const Text('임시저장', style: TextStyle(fontSize: 16)),
-          ),
-        ),
         const SizedBox(width: 8),
         SizedBox(
           height: 48,
           child: PrimaryActionButton(
-            text: '발행',
+            text: '저장',
             isFullWidth: false,
             isLoading: viewModel.isLoading,
-            onPressed: () => viewModel.savePortfolio('published'),
+            onPressed: () => viewModel.savePortfolio(),
           ),
         ),
       ],
