@@ -128,31 +128,7 @@ class FooterSection extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          Row(
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: '통신판매업 신고',
-                  children: [
-                    const TextSpan(
-                      text: ' 미대상(간이과세자)',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
+
           Row(
             children: [
               Text.rich(
@@ -160,7 +136,7 @@ class FooterSection extends StatelessWidget {
                   text: '대표 이메일',
                   children: [
                     const TextSpan(
-                      text: ' livee0720@naver.com',
+                      text: ' livee08@naver.com',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
