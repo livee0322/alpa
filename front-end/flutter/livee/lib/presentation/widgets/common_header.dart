@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
-import 'package:provider/provider.dart';
 
 class CommonHeader extends StatelessWidget {
   final bool isLoggedIn;
@@ -25,6 +23,7 @@ class CommonHeader extends StatelessWidget {
             onTap: () => GoRouter.of(context).go('/'),
             child: Image.asset(
               'assets/images/liveelogo.png',
+              height: 36,
               fit: BoxFit.cover,
             ),
           ),
