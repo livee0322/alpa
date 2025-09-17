@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: '태웅 보고 있나 성공했다',
+      title: '라이비',
       theme: ThemeData(
         fontFamily: 'SUIT',
         scaffoldBackgroundColor: Colors.white,
