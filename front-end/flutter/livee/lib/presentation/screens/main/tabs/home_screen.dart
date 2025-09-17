@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/screens/main/sections/footer_section.dart';
 import 'package:livee/presentation/screens/main/sections/schedule_section.dart';
 import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
 import 'package:livee/presentation/screens/main/sections/banner_slider_section.dart';
@@ -33,8 +34,7 @@ class HomeScreen extends StatelessWidget {
   /// 화면 본문을 빌드하는 헬퍼 메소드
   Widget _buildBody(BuildContext context, MainViewModel viewModel) {
     if (viewModel.errorMessage != null) {
-      return Center(
-          child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
+      return Center(child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +85,7 @@ class HomeScreen extends StatelessWidget {
                   purpleFirst: true,
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/showhosts'),
-                child: FeaturedShowhostSection(
-                    showhosts: viewModel.featuredShowhosts),
+                child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
               ),
 
               // 'HOT clip' 섹션
@@ -130,6 +129,8 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+
+        FooterSection(),
       ],
     );
   }

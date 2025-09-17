@@ -21,6 +21,7 @@ class AppColors {
   static const Color disabled = Color(0xFFE5E7EB);
   static const Color border = Color(0xFFE6EDF3);
   static const Color dividerColor = Color(0xFFF8FBFD);
+  static const Color footerColor = Color(0xFFFAFAFA);
 
   // 기타 색상
   static const Color error = Colors.red;
