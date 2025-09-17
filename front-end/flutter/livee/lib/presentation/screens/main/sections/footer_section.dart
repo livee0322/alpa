@@ -17,7 +17,14 @@ class FooterSection extends StatelessWidget {
                 'assets/images/liveelogo.png',
                 height: 24,
               ),
-              Text('브랜드와 쇼호스트(모델)를 원스톱으로 연결하는 플랫폼'),
+              Text(
+                '브랜드와 쇼호스트(모델)를 원스톱으로 연결하는 플랫폼',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 16),
@@ -28,7 +35,7 @@ class FooterSection extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -37,7 +44,7 @@ class FooterSection extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -46,7 +53,7 @@ class FooterSection extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -55,7 +62,7 @@ class FooterSection extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -72,7 +79,7 @@ class FooterSection extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -80,7 +87,7 @@ class FooterSection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -93,7 +100,7 @@ class FooterSection extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -101,7 +108,7 @@ class FooterSection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -114,7 +121,7 @@ class FooterSection extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -122,13 +129,12 @@ class FooterSection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
             ],
           ),
           SizedBox(height: 16),
-
           Row(
             children: [
               Text.rich(
@@ -140,7 +146,7 @@ class FooterSection extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -148,7 +154,7 @@ class FooterSection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               SizedBox(width: 16),
@@ -161,7 +167,7 @@ class FooterSection extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -169,7 +175,7 @@ class FooterSection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
             ],
