@@ -93,26 +93,34 @@ flutter:
   #     fonts:
   #       - asset: assets/fonts/SUIT-Variable.ttf
   fonts:
-    - family: SUIT # 앱 전체에서 사용할 폰트의 이름
+    # - family: SUIT # 앱 전체에서 사용할 폰트의 이름
+    #   fonts:
+    #     - asset: assets/fonts/SUIT-Thin.ttf
+    #       weight: 100
+    #     - asset: assets/fonts/SUIT-ExtraLight.ttf
+    #       weight: 200
+    #     - asset: assets/fonts/SUIT-Light.ttf
+    #       weight: 300
+    #     - asset: assets/fonts/SUIT-Regular.ttf
+    #       weight: 400
+    #     - asset: assets/fonts/SUIT-Medium.ttf
+    #       weight: 500
+    #     - asset: assets/fonts/SUIT-SemiBold.ttf
+    #       weight: 600
+    #     - asset: assets/fonts/SUIT-Bold.ttf
+    #       weight: 700
+    #     - asset: assets/fonts/SUIT-ExtraBold.ttf
+    #       weight: 800
+    #     - asset: assets/fonts/SUIT-Heavy.ttf
+    #       weight: 900
+    - family: NEXONLv1 # 앱 전체에서 사용할 폰트의 이름
       fonts:
-        - asset: assets/fonts/SUIT-Thin.ttf
+        - asset: assets/fonts/NEXONLv1GothicLight.ttf
           weight: 100
-        - asset: assets/fonts/SUIT-ExtraLight.ttf
+        - asset: assets/fonts/NEXONLv1GothicRegular.ttf
           weight: 200
-        - asset: assets/fonts/SUIT-Light.ttf
+        - asset: assets/fonts/NEXONLv1GothicBold.ttf
           weight: 300
-        - asset: assets/fonts/SUIT-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/SUIT-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/SUIT-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/SUIT-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/SUIT-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/SUIT-Heavy.ttf
-          weight: 900
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf

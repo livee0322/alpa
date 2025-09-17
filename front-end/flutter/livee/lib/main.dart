@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: '라이비',
       theme: ThemeData(
-        fontFamily: 'SUIT',
+        fontFamily: 'NEXONLv1',
         scaffoldBackgroundColor: Colors.white,
       ),
       // 전달받은 router 인스턴스를 routerConfig에 설정
