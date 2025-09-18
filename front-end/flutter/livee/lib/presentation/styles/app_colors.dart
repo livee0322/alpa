@@ -8,7 +8,7 @@ class AppColors {
   // 기본 색상 (Primary Color)
   static const Color primary = Color(0xFF687CF4);
 
-  // [상수] 자주 사용되는 다른 색상들도 미리 정의해두면 좋습니다.
+  // 자주 사용되는 색상
   static const Color background = Color(0xFFF7F8FA);
   static const Color white = Colors.white;
   static const Color black = Colors.black;
@@ -17,7 +17,10 @@ class AppColors {
   static const Color textBlack = Color(0xFF1F2937);
   static const Color textGrey = Color(0xFF6B7280);
 
-  // 비활성화 또는 보조적인 UI에 사용되는 색상
+  // 버튼 등 어두운 UI 색상
+  static const Color buttonDark = Color(0xFF1F2937);
+
+  // 비활성화 또는 보조적인 UI 색상
   static const Color disabled = Color(0xFFE5E7EB);
   static const Color border = Color(0xFFE6EDF3);
   static const Color dividerColor = Color(0xFFF8FBFD);
