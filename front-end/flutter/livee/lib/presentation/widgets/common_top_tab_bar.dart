@@ -13,7 +13,6 @@ class CommonTopTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // 탭 데이터를 리스트로 관리
     final List<Map<String, String>> tabs = [
-      {'label': '홈', 'path': '/'},
       {'label': '숏클립', 'path': '/clips'},
       {'label': '쇼핑라이브', 'path': '/live'},
       {'label': '뉴스', 'path': '/news'},
