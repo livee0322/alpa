@@ -65,6 +65,10 @@ GoRouter createRouter(AuthProvider authProvider) {
             path: '/service',
             builder: (context, state) => const ServiceScreen(),
           ),
+          GoRoute(
+            path: '/recruits',
+            builder: (context, state) => const RecruitListScreen(),
+          ),
         ],
       ),
       GoRoute(
@@ -102,10 +106,6 @@ GoRouter createRouter(AuthProvider authProvider) {
             },
           ),
         ],
-      ),
-      GoRoute(
-        path: '/recruits',
-        builder: (context, state) => const RecruitListScreen(),
       ),
       GoRoute(
         path: '/portfolios/:id',
