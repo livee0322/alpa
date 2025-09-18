@@ -48,7 +48,6 @@ class MypageScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 

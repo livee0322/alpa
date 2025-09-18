@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 
 // '내 정보 변경'을 위한 임시 화면
 class AccountEditScreen extends StatelessWidget {
@@ -17,7 +16,6 @@ class AccountEditScreen extends StatelessWidget {
           style: TextStyle(fontSize: 18),
         ),
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }

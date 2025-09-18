@@ -112,7 +112,6 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: const CommonBottomNavBar(),
         ),
       );
 

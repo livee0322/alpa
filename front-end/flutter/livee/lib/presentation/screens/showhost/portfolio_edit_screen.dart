@@ -35,7 +35,6 @@ class PortfolioEditScreen extends StatelessWidget {
             foregroundColor: Colors.black,
           ),
           body: _buildBody(context, viewModel),
-          bottomNavigationBar: const CommonBottomNavBar(),
         ),
       ),
     );

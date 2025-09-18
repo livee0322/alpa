@@ -206,7 +206,6 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }

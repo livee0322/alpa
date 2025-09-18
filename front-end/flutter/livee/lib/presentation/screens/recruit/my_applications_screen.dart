@@ -18,7 +18,6 @@ class MyApplicationsScreen extends StatelessWidget {
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }

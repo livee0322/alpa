@@ -21,7 +21,6 @@ class BookmarkedRecruitsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }

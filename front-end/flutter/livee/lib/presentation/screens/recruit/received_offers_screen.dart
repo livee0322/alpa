@@ -21,7 +21,6 @@ class ReceivedOffersScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 }

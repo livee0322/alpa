@@ -69,7 +69,6 @@ class SignupScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: const CommonBottomNavBar(),
         ),
       );
 
