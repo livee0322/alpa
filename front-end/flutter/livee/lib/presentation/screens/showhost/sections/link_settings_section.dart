@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/showhost/sections/file_attachment_section.dart';
-import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
+import 'package:livee/presentation/screens/showhost/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
 class LinkSettingsSection extends StatelessWidget {
-  final PortfolioEditViewModel viewModel;
+  final ProfileEditViewModelBase viewModel;
   const LinkSettingsSection({
     super.key,
     required this.viewModel,
@@ -48,8 +48,12 @@ class LinkSettingsSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // [추가] 파일 첨부 섹션 위젯
-        FileAttachmentSection(viewModel: viewModel),
+        // FileAttachmentSection도 이제 viewModel을 그대로 전달받아 사용할 수 있습니다.
+        FileAttachmentSection(
+          onPickFile: viewModel.pickFileForCache,
+          onRemoveFile: viewModel.removeAttachedFile,
+          fileName: viewModel.attachedFileName,
+        ),
 
         CheckboxListTile(
           title: const Text('제안 받기'),

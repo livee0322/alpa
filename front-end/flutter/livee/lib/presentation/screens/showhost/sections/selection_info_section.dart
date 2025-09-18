@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
+import 'package:livee/presentation/screens/showhost/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
 // 포트폴리오의 '선택 정보' UI
 class SelectionInfoSection extends StatelessWidget {
-  final PortfolioEditViewModel viewModel;
+  final ProfileEditViewModelBase viewModel;
 
-  const SelectionInfoSection({
-    super.key,
-    required this.viewModel,
-  });
-
+  const SelectionInfoSection({super.key, required this.viewModel});
   // [추가] 반복되는 UI 구조를 만드는 헬퍼 메소드
   /// 입력 위젯과 '공개' 체크박스를 한 줄에 배치하는 공통 위젯을 생성합니다.
   Widget _buildPublicSettingRow({
@@ -111,8 +107,7 @@ class SelectionInfoSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // 치수
-        const Text('치수',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+        const Text('치수', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
         const SizedBox(height: 8),
         CustomTextFormField(
           controller: viewModel.topSizeController,

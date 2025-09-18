@@ -1,9 +1,18 @@
+// [파일경로/파일명] lib/presentation/screens/showhost/sections/file_attachment_section.dart 파일이 수정되었습니다.
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
 
 class FileAttachmentSection extends StatelessWidget {
-  final PortfolioEditViewModel viewModel;
-  const FileAttachmentSection({super.key, required this.viewModel});
+  // [수정] ViewModel 대신 필요한 속성과 콜백 함수를 직접 받도록 변경합니다.
+  final VoidCallback onPickFile;
+  final VoidCallback onRemoveFile;
+  final String? fileName;
+
+  const FileAttachmentSection({
+    super.key,
+    required this.onPickFile,
+    required this.onRemoveFile,
+    this.fileName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +25,7 @@ class FileAttachmentSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         InkWell(
-          onTap: viewModel.pickFileForCache,
+          onTap: onPickFile, // [수정] 전달받은 콜백 함수 사용
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -28,7 +37,7 @@ class FileAttachmentSection extends StatelessWidget {
             child: Row(
               children: [
                 ElevatedButton(
-                  onPressed: viewModel.pickFileForCache,
+                  onPressed: onPickFile, // [수정] 전달받은 콜백 함수 사용
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     backgroundColor: Colors.grey[200],
@@ -39,19 +48,17 @@ class FileAttachmentSection extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    viewModel.attachedFileName ?? '선택된 파일 없음',
+                    fileName ?? '선택된 파일 없음', // [수정] 전달받은 파일 이름 사용
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: viewModel.attachedFileName != null
-                          ? Colors.black
-                          : Colors.grey,
+                      color: fileName != null ? Colors.black : Colors.grey,
                     ),
                   ),
                 ),
-                if (viewModel.attachedFileName != null)
+                if (fileName != null)
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.grey),
-                    onPressed: viewModel.removeAttachedFile,
+                    onPressed: onRemoveFile, // [수정] 전달받은 콜백 함수 사용
                   ),
               ],
             ),
