@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -51,8 +52,8 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
   final isActive = currentPath == path;
 
   // 활성화 색상을 이미지와 유사한 파란색 계열로 변경
-  const activeColor = Color(0xFF007AFF); // iOS System Blue와 유사한 색상
-  const inactiveColor = Color(0xFF9AA3AF); // 비활성화 색상은 유지
+  const activeColor = AppColors.primary;
+  const inactiveColor = AppColors.disabled;
 
   return Expanded(
     child: InkWell(
@@ -90,7 +91,7 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
               label,
               style: TextStyle(
                 fontSize: 12.0,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
                 color: isActive ? activeColor : inactiveColor,
               ),
             ),
