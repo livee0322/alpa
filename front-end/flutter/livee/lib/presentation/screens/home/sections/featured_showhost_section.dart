@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:remixicon/remixicon.dart';
 
 // '이런 쇼호스트는 어떠세요?' 섹션
 class FeaturedShowhostListSection extends StatelessWidget {
@@ -66,8 +67,13 @@ class FeaturedShowhostListSection extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.send, size: 16),
-                  label: const Text('제안'),
+                  icon: const Icon(RemixIcons.send_plane_line, size: 16),
+                  label: const Text(
+                    '제안',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   onPressed: () {
                     // TODO: 제안하기 기능 구현
                   },
@@ -82,8 +88,13 @@ class FeaturedShowhostListSection extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  icon: const Icon(Icons.person_outline, size: 16),
-                  label: const Text('프로필 보기'),
+                  icon: const Icon(RemixIcons.user_line, size: 16),
+                  label: const Text(
+                    '프로필 보기',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   onPressed: () {
                     // TODO: 프로필 보기 페이지로 이동
                   },

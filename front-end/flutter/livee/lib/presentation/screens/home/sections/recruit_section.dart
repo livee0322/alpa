@@ -9,6 +9,7 @@ import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
+import 'package:remixicon/remixicon.dart';
 
 // 브랜드 pick' 섹션 위젯
 class RecruitSection extends StatelessWidget {
@@ -114,8 +115,13 @@ class RecruitSection extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        icon: const Icon(Icons.send_outlined, size: 18),
-                        label: const Text('지원하기'),
+                        icon: const Icon(RemixIcons.send_plane_line, size: 18),
+                        label: const Text(
+                          '지원하기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         onPressed: () async {
                           if (!authProvider.isLoggedIn) {
                             final confirm = await showCommonPromptDialog(

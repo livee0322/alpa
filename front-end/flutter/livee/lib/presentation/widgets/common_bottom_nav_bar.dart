@@ -5,6 +5,7 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:remixicon/remixicon.dart';
 
 class CommonBottomNavBar extends StatelessWidget {
   final String? currentPath; // 현재 경로
@@ -42,7 +43,8 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
-                      CupertinoIcons.home,
+                      // CupertinoIcons.home,
+                      RemixIcons.home_line,
                       '홈',
                       '/',
                       effectivePath,
@@ -50,7 +52,7 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
-                      CupertinoIcons.archivebox,
+                      RemixIcons.archive_drawer_line,
                       '모집공고',
                       '/recruits',
                       effectivePath,
@@ -58,7 +60,7 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
-                      CupertinoIcons.person_2,
+                      RemixIcons.user_star_line,
                       '모델',
                       '/models',
                       effectivePath,
@@ -66,7 +68,7 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
-                      CupertinoIcons.collections,
+                      RemixIcons.user_3_line,
                       '포트폴리오',
                       '/portfolios',
                       effectivePath,
@@ -74,7 +76,7 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
-                      CupertinoIcons.settings,
+                      RemixIcons.user_settings_line,
                       '마이페이지',
                       '/mypage',
                       effectivePath,
@@ -119,8 +121,8 @@ Widget _buildNavItem(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 26, color: isActive ? activeColor : inactiveColor),
-            const SizedBox(height: 4),
+            Icon(icon, size: 20, color: isActive ? activeColor : inactiveColor),
+            const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(

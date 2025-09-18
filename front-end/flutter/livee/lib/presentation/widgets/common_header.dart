@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:remixicon/remixicon.dart';
 
 class CommonHeader extends StatelessWidget {
   final bool isLoggedIn;
@@ -32,13 +33,21 @@ class CommonHeader extends StatelessWidget {
             children: [
               // 알림
               IconButton(
-                icon: const Icon(Icons.notifications_none_outlined),
-                onPressed: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+                icon: const Icon(RemixIcons.notification_3_line),
+                onPressed: () => showCustomToast(
+                  context,
+                  '준비중인 기능입니다.',
+                  type: ToastType.info,
+                ),
               ),
               // 검색
               IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+                icon: const Icon(RemixIcons.search_line),
+                onPressed: () => showCustomToast(
+                  context,
+                  '준비중인 기능입니다.',
+                  type: ToastType.info,
+                ),
               ),
             ],
           ),
