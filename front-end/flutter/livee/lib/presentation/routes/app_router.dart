@@ -22,8 +22,6 @@ import 'package:livee/presentation/screens/recruit/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/main/tabs/service_screen.dart';
 import 'package:livee/presentation/screens/main/tabs/shopping_live_screen.dart';
 import 'package:livee/presentation/screens/main/tabs/short_clips_screen.dart';
-import 'package:livee/presentation/screens/showhost/showhost_detail_screen.dart';
-import 'package:livee/presentation/screens/showhost/showhost_list_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
 
 // GoRouter 인스턴스를 생성
@@ -139,19 +137,6 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/my-applications',
         builder: (context, state) => const MyApplicationsScreen(),
-      ),
-      GoRoute(
-        path: '/showhosts',
-        builder: (context, state) => const ShowhostListScreen(),
-        routes: [
-          GoRoute(
-            path: ':id',
-            builder: (context, state) {
-              final showhostId = state.pathParameters['id']!;
-              return ShowhostDetailScreen(showhostId: showhostId);
-            },
-          ),
-        ],
       ),
       GoRoute(
         path: '/casting-request',

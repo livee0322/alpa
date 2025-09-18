@@ -86,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                   purpleText: '이런 쇼호스트',
                   purpleFirst: true,
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                // onMorePressed: () => GoRouter.of(context).go('/showhosts'),
                 child: FeaturedShowhostListSection(models: viewModel.featuredShowhosts),
               ),
 
@@ -96,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                   blackText: '컨셉에 맞는 ',
                   purpleText: '모델 찾기',
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                // onMorePressed: () => GoRouter.of(context).go('/showhosts'),
                 child: ConceptModelSection(models: viewModel.conceptModels),
               ),
 
