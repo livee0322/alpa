@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
+import 'package:livee/presentation/screens/home/vm/home_view_model.dart';
 import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
 import 'package:livee/presentation/utils/utility.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
@@ -44,7 +44,7 @@ class RecruitSection extends StatelessWidget {
   // 개별 공고 카드 위젯을 생성
   Widget _buildRecruitCard(BuildContext context, Campaign campaign) {
     final authProvider = context.watch<AuthProvider>();
-    final mainViewModel = context.read<MainViewModel>();
+    final mainViewModel = context.read<HomeViewModel>();
     final dDay = Utility.calculateDday(campaign.closeAt);
     String feeText = '협의';
     if (campaign.fee != null && campaign.fee! > 0) {

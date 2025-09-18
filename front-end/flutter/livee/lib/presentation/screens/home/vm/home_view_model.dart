@@ -6,8 +6,8 @@ import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/service_locator.dart';
 
-/// 메인 화면의 상태와 비즈니스 로직을 관리하는 ViewModel
-class MainViewModel with ChangeNotifier {
+/// 홈 화면의 상태와 비즈니스 로직을 관리하는 ViewModel
+class HomeViewModel with ChangeNotifier {
   // 의존성 주입
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
   final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
@@ -29,7 +29,7 @@ class MainViewModel with ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   // 생성자
-  MainViewModel() {
+  HomeViewModel() {
     loadData(); // ViewModel 생성 시 데이터 로딩 시작
   }
 

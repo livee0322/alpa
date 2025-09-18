@@ -10,18 +10,18 @@ import 'package:livee/presentation/screens/main/shell_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
 import 'package:livee/presentation/screens/showhost/portfolio_detail_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/event_screen.dart';
+import 'package:livee/presentation/screens/event/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/home_screen.dart';
+import 'package:livee/presentation/screens/home/home_screen.dart';
 import 'package:livee/presentation/screens/recruit/my_applications_screen.dart';
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/news_screen.dart';
+import 'package:livee/presentation/screens/news/news_screen.dart';
 import 'package:livee/presentation/screens/showhost/portfolio_edit_screen.dart';
 import 'package:livee/presentation/screens/recruit/received_offers_screen.dart';
 import 'package:livee/presentation/screens/recruit/recruit_list_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/service_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/shopping_live_screen.dart';
-import 'package:livee/presentation/screens/main/tabs/short_clips_screen.dart';
+import 'package:livee/presentation/screens/service/service_screen.dart';
+import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
+import 'package:livee/presentation/screens/clips/short_clips_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
 
 // GoRouter 인스턴스를 생성

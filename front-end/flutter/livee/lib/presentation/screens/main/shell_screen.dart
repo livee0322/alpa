@@ -36,7 +36,7 @@ class ShellScreen extends StatelessWidget {
         ],
       ),
       // 공통 하단 네비게이션 바
-      bottomNavigationBar: const CommonBottomNavBar(),
+      bottomNavigationBar: CommonBottomNavBar(currentPath: location),
     );
   }
 }

@@ -7,10 +7,16 @@ import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:provider/provider.dart';
 
 class CommonBottomNavBar extends StatelessWidget {
-  const CommonBottomNavBar({super.key});
+  final String? currentPath; // 현재 경로
+  const CommonBottomNavBar({
+    super.key,
+    this.currentPath,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // 위젯이 전달받은 currentPath를 사용하고, 없으면 라우터에서 직접 가져오기
+    final effectivePath = currentPath ?? GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString();
     return Consumer<AuthProvider>(
         builder: (context, authProvider, child) => Container(
               decoration: const BoxDecoration(
@@ -39,6 +45,7 @@ class CommonBottomNavBar extends StatelessWidget {
                       CupertinoIcons.home,
                       '홈',
                       '/',
+                      effectivePath,
                     ),
                     _buildNavItem(
                       context,
@@ -46,6 +53,7 @@ class CommonBottomNavBar extends StatelessWidget {
                       CupertinoIcons.archivebox,
                       '모집공고',
                       '/recruits',
+                      effectivePath,
                     ),
                     _buildNavItem(
                       context,
@@ -53,6 +61,7 @@ class CommonBottomNavBar extends StatelessWidget {
                       CupertinoIcons.settings,
                       '마이페이지',
                       '/mypage',
+                      effectivePath,
                     ),
                   ],
                 ),
@@ -61,27 +70,20 @@ class CommonBottomNavBar extends StatelessWidget {
   }
 }
 
-Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData icon, String label, String path) {
-  final GoRouter router = GoRouter.of(context);
-  final currentPath = router.routerDelegate.currentConfiguration.uri.toString();
-  // 경로가 정확히 일치하는지 확인하는 로직을 강화
-  final isActive = currentPath == path;
+Widget _buildNavItem(
+    BuildContext context, AuthProvider authProvider, IconData icon, String label, String itemPath, String currentPath) {
+  final bool isActive = currentPath == itemPath;
 
-  // 활성화 색상을 이미지와 유사한 파란색 계열로 변경
   const activeColor = AppColors.primary;
   const inactiveColor = AppColors.disabled;
 
   return Expanded(
     child: InkWell(
-      // onTap 로직에 접근 제어 기능을 추가
       onTap: () async {
+        // ... (onTap 로직은 동일)
         final isLoggedIn = authProvider.isLoggedIn;
-
-        // 로그인이 필요한 페이지 목록
-        final authRequiredRoutes = ['/mypage', '/library']; // 예시: 마이페이지, 라이브러리
-
-        if (authRequiredRoutes.contains(path) && !isLoggedIn) {
-          // [수정] showLoginPromptDialog 대신 공통 다이얼로그 직접 호출
+        final authRequiredRoutes = ['/mypage']; // 라이브러리 제거
+        if (authRequiredRoutes.contains(itemPath) && !isLoggedIn) {
           final result = await showCommonPromptDialog(
             context: context,
             title: '로그인이 필요합니다',
@@ -92,7 +94,7 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
             GoRouter.of(context).go('/login');
           }
         } else {
-          GoRouter.of(context).go(path);
+          GoRouter.of(context).go(itemPath);
         }
       },
       borderRadius: BorderRadius.circular(8),
@@ -107,7 +109,7 @@ Widget _buildNavItem(BuildContext context, AuthProvider authProvider, IconData i
               label,
               style: TextStyle(
                 fontSize: 12.0,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
                 color: isActive ? activeColor : inactiveColor,
               ),
             ),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/presentation/screens/main/sections/concept_model_section.dart';
-import 'package:livee/presentation/screens/main/sections/footer_section.dart';
-import 'package:livee/presentation/screens/main/sections/schedule_section.dart';
-import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
-import 'package:livee/presentation/screens/main/sections/banner_slider_section.dart';
-import 'package:livee/presentation/screens/main/sections/consultation_section.dart';
-import 'package:livee/presentation/screens/main/sections/featured_showhost_section.dart';
-import 'package:livee/presentation/screens/main/sections/hot_clip_section.dart';
-import 'package:livee/presentation/screens/main/sections/news_section.dart';
-import 'package:livee/presentation/screens/main/sections/recruit_section.dart';
+import 'package:livee/presentation/screens/home/sections/concept_model_section.dart';
+import 'package:livee/presentation/screens/home/sections/footer_section.dart';
+import 'package:livee/presentation/screens/home/sections/schedule_section.dart';
+import 'package:livee/presentation/screens/home/sections/banner_slider_section.dart';
+import 'package:livee/presentation/screens/home/sections/consultation_section.dart';
+import 'package:livee/presentation/screens/home/sections/featured_showhost_section.dart';
+import 'package:livee/presentation/screens/home/sections/hot_clip_section.dart';
+import 'package:livee/presentation/screens/home/sections/news_section.dart';
+import 'package:livee/presentation/screens/home/sections/recruit_section.dart';
+import 'package:livee/presentation/screens/home/vm/home_view_model.dart';
 import 'package:livee/presentation/screens/main/widgets/section_container.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
@@ -22,8 +22,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => MainViewModel(),
-        child: Consumer<MainViewModel>(
+        create: (_) => HomeViewModel(),
+        child: Consumer<HomeViewModel>(
           builder: (context, viewModel, child) => LoadingOverlay(
             isLoading: viewModel.isLoading,
             child: SingleChildScrollView(
@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
       );
 
   /// 화면 본문을 빌드하는 헬퍼 메소드
-  Widget _buildBody(BuildContext context, MainViewModel viewModel) {
+  Widget _buildBody(BuildContext context, HomeViewModel viewModel) {
     if (viewModel.errorMessage != null) {
       return Center(child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
     }
