@@ -17,6 +17,7 @@ class MainViewModel with ChangeNotifier {
   List<Campaign> _schedules = [];
   List<Campaign> _recruits = [];
   List<Portfolio> _featuredShowhosts = [];
+  List<Portfolio> _conceptModels = [];
   String? _errorMessage;
 
   // Getter
@@ -24,6 +25,7 @@ class MainViewModel with ChangeNotifier {
   List<Campaign> get schedules => _schedules;
   List<Campaign> get recruits => _recruits;
   List<Portfolio> get featuredShowhosts => _featuredShowhosts;
+  List<Portfolio> get conceptModels => _conceptModels;
   String? get errorMessage => _errorMessage;
 
   // 생성자
@@ -31,7 +33,7 @@ class MainViewModel with ChangeNotifier {
     loadData(); // ViewModel 생성 시 데이터 로딩 시작
   }
 
-  /// 페이지에 필요한 모든 데이터를 한 번에 불러오는 메소드
+  // 페이지에 필요한 모든 데이터를 한 번에 불러오는 메소드
   Future<void> loadData() async {
     _isLoading = true;
     notifyListeners();
@@ -41,6 +43,7 @@ class MainViewModel with ChangeNotifier {
       final results = await Future.wait([
         _campaignUseCase.getAllCampaigns(type: 'product', limit: 6),
         _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
+        _portfolioRepository.getPublicPortfolios(limit: 4),
         _portfolioRepository.getPublicPortfolios(limit: 5),
         // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
       ]);
@@ -48,6 +51,7 @@ class MainViewModel with ChangeNotifier {
       _schedules = (results[0] as PaginatedResponse<Campaign>).items;
       _recruits = (results[1] as PaginatedResponse<Campaign>).items;
       _featuredShowhosts = results[2] as List<Portfolio>;
+      _conceptModels = results[3] as List<Portfolio>;
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/screens/main/sections/concept_model_section.dart';
 import 'package:livee/presentation/screens/main/sections/footer_section.dart';
 import 'package:livee/presentation/screens/main/sections/schedule_section.dart';
 import 'package:livee/presentation/screens/main/vm/main_view_model.dart';
@@ -77,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                 child: const NewsSection(),
               ),
 
-              // 이런 쇼호스트는 어떠세요?
+              // "이런 쇼호스트는 어떠세요?" 섹션
               SectionContainer(
                 title: ColoredTitle(
                   blackText: '는 어떠세요?',
@@ -85,7 +86,17 @@ class HomeScreen extends StatelessWidget {
                   purpleFirst: true,
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/showhosts'),
-                child: FeaturedShowhostSection(showhosts: viewModel.featuredShowhosts),
+                child: FeaturedShowhostListSection(models: viewModel.featuredShowhosts),
+              ),
+
+              // "컨셉에 맞는 모델 찾기" 섹션
+              SectionContainer(
+                title: ColoredTitle(
+                  blackText: '컨셉에 맞는 ',
+                  purpleText: '모델 찾기',
+                ),
+                onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                child: ConceptModelSection(models: viewModel.conceptModels),
               ),
 
               // 'HOT clip' 섹션
@@ -129,7 +140,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
-
         FooterSection(),
       ],
     );

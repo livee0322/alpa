@@ -3,116 +3,117 @@ import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 
-/// 메인 화면의 '추천 쇼호스트' 섹션 UI
-class FeaturedShowhostSection extends StatelessWidget {
-  final List<Portfolio> showhosts;
+// '이런 쇼호스트는 어떠세요?' 섹션
+class FeaturedShowhostListSection extends StatelessWidget {
+  final List<Portfolio> models;
 
-  const FeaturedShowhostSection({
+  const FeaturedShowhostListSection({
     super.key,
-    required this.showhosts,
+    required this.models,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (showhosts.isEmpty) {
-      return const Center(child: Text('추천 쇼호스트가 없습니다.'));
+    if (models.isEmpty) {
+      return const SizedBox.shrink();
     }
 
-    // 목록의 첫 번째 쇼호스트 정보를 사용
-    final host = showhosts.first;
+    return Column(
+      // List.generate 대신 map을 사용하여 각 모델을 카드 위젯으로 변환
+      children: models.map((model) {
+        return _buildModelCard(context, model);
+      }).toList(),
+    );
+  }
 
+  // 개별 모델 정보를 표시하는 카드 위젯
+  Widget _buildModelCard(BuildContext context, Portfolio model) {
     return StandardContentCard(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
       child: Column(
         children: [
-          // 1. 상단 프로필 정보 (프로필 이미지, 이름, 소개, 별 아이콘)
           Row(
             children: [
-              // 프로필 이미지
+              // 1. 프로필 이미지
               CircleAvatar(
                 radius: 32,
-                backgroundImage: host.mainThumbnailUrl != null
-                    ? NetworkImage(host.mainThumbnailUrl!)
-                    : null,
-                child: host.mainThumbnailUrl == null
-                    ? const Icon(Icons.person)
-                    : null,
+                backgroundImage: model.mainThumbnailUrl != null ? NetworkImage(model.mainThumbnailUrl!) : null,
+                child: model.mainThumbnailUrl == null ? const Icon(Icons.person) : null,
               ),
               const SizedBox(width: 16),
-              // 이름과 한 줄 소개
+              // 2. 이름과 한 줄 소개
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      host.nickname ?? host.name ?? '이름 없음',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      model.nickname ?? '이름 없음',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      host.oneLineIntro ?? '소개 준비 중',
-                      style: TextStyle(color: Colors.grey[600]),
+                      model.oneLineIntro ?? '소개 준비 중',
+                      style: const TextStyle(color: AppColors.textGrey, fontSize: 14),
                     ),
                   ],
                 ),
               ),
-              // 별 아이콘 버튼
-              IconButton(
-                icon: const Icon(Icons.star_border, color: Colors.grey),
-                onPressed: () {
-                  // TODO: 찜하기 기능 구현
-                },
-              )
             ],
           ),
           const SizedBox(height: 16),
-
-          // 2. '제안하기' 버튼
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: 제안하기 기능 구현
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    AppColors.primary.withOpacity(0.1), // 반투명한 기본 색상
-                foregroundColor: AppColors.primary, // 기본 색상 텍스트
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('제안하기',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // 3. 하단 구분선 및 '프로필 상세보기' 링크
-          const Divider(
-            color: AppColors.border,
-            thickness: 1,
-          ),
-          const SizedBox(height: 4),
-          Align(
-            alignment: Alignment.center,
-            child: InkWell(
-              onTap: () {
-                // TODO: 프로필 상세보기 페이지로 이동
-              },
-              child: Text(
-                '프로필 상세보기',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
+          // 3. '제안', '프로필 보기' 버튼
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.send, size: 16),
+                  label: const Text('제안'),
+                  onPressed: () {
+                    // TODO: 제안하기 기능 구현
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.buttonDark,
+                    foregroundColor: AppColors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.person_outline, size: 16),
+                  label: const Text('프로필 보기'),
+                  onPressed: () {
+                    // TODO: 프로필 보기 페이지로 이동
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textBlack,
+                    side: const BorderSide(color: AppColors.border),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 12),
+          const Divider(color: AppColors.border, height: 0.1, thickness: 1), // [추가] 구분선을 추가합니다
+
+          // 4. '프로필 상세보기' 텍스트 버튼
+          TextButton(
+            onPressed: () {
+              // TODO: 프로필 상세보기 페이지로 이동
+            },
+            child: const Text(
+              '프로필 상세보기 >',
+              style: TextStyle(
+                color: AppColors.textGrey,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
         ],
       ),
     );
