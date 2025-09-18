@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 
 class ConsultationSection extends StatelessWidget {
@@ -14,8 +15,8 @@ class ConsultationSection extends StatelessWidget {
           const Text(
             '무료 상담',
             style: TextStyle(
-              color: Color(0xFF6C63FF),
-              fontWeight: FontWeight.w900,
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
           ),
@@ -24,7 +25,7 @@ class ConsultationSection extends StatelessWidget {
             '지금 바로 라이브 커머스 시작해보세요',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
@@ -32,8 +33,8 @@ class ConsultationSection extends StatelessWidget {
             '기획 · 섭외 · 계약 · 결제까지 도와드립니다',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              color: AppColors.textGrey,
+              fontWeight: FontWeight.normal,
             ),
           ),
           const SizedBox(height: 16),
@@ -76,13 +77,13 @@ class ConsultationSection extends StatelessWidget {
         label,
         style: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
         ),
       ),
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFF374151),
-        backgroundColor: Colors.white,
+        foregroundColor: AppColors.black,
+        backgroundColor: AppColors.white,
         side: BorderSide(color: Colors.grey.shade300),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

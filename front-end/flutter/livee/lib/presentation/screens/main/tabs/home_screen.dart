@@ -11,6 +11,7 @@ import 'package:livee/presentation/screens/main/sections/hot_clip_section.dart';
 import 'package:livee/presentation/screens/main/sections/news_section.dart';
 import 'package:livee/presentation/screens/main/sections/recruit_section.dart';
 import 'package:livee/presentation/screens/main/widgets/section_container.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/colored_title.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +63,7 @@ class HomeScreen extends StatelessWidget {
               SectionContainer(
                 title: ColoredTitle(
                   blackText: '브랜드 ',
-                  purpleText: 'pick',
+                  purpleText: 'PICK',
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/recruits'),
                 child: RecruitSection(recruits: viewModel.recruits),
@@ -106,13 +107,15 @@ class HomeScreen extends StatelessWidget {
                     text: 'HOT ',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.error,
                     ),
                     children: [
                       TextSpan(
-                        text: 'clip',
-                        style: TextStyle(color: Colors.black),
+                        text: 'CLIP',
+                        style: TextStyle(
+                          color: AppColors.black,
+                        ),
                       ),
                     ],
                   ),

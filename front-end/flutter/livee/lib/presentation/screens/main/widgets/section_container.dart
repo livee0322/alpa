@@ -32,7 +32,7 @@ class SectionContainer extends StatelessWidget {
                       '더보기',
                       style: TextStyle(
                         color: Color(0xFF6B7280),
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -43,7 +43,7 @@ class SectionContainer extends StatelessWidget {
             child,
           ],
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
       ],
     );
   }

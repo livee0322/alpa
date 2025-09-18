@@ -96,14 +96,18 @@ class RecruitSection extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       campaign.title ?? '공고 제목',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '마감 $dDay · 출연료 $feeText',
-                      style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFF6B7280),
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
                     const Spacer(),
                     // 지원하기 버튼

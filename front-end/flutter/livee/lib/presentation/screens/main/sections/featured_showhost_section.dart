@@ -48,7 +48,7 @@ class FeaturedShowhostListSection extends StatelessWidget {
                   children: [
                     Text(
                       model.nickname ?? '이름 없음',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -110,7 +110,7 @@ class FeaturedShowhostListSection extends StatelessWidget {
               style: TextStyle(
                 color: AppColors.textGrey,
                 fontSize: 13,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
               ),
             ),
           )

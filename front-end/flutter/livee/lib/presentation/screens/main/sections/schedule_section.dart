@@ -74,14 +74,14 @@ class ScheduleSection extends StatelessWidget {
                       style: const TextStyle(
                         color: AppColors.textBlack,
                         fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       campaign.title ?? '제목 없음',
                       style: const TextStyle(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                       overflow: TextOverflow.ellipsis,
