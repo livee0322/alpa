@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
@@ -44,6 +42,7 @@ class ConceptModelSection extends StatelessWidget {
       child: StandardContentCard(
         padding: EdgeInsets.zero,
         margin: EdgeInsets.zero,
+        borderRadius: BorderRadius.zero,
         onTap: () {
           // TODO: 모델 상세 페이지로 이동
         },
@@ -52,14 +51,13 @@ class ConceptModelSection extends StatelessWidget {
           children: [
             // 1. 모델 이미지 (카드 상단)
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(0)),
               child: AspectRatio(
                 aspectRatio: 1, // 1:1 비율
                 child: Image.network(
                   model.mainThumbnailUrl ?? 'https://picsum.photos/seed/${model.id}/200/200',
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(color: AppColors.disabled),
+                  errorBuilder: (context, error, stackTrace) => Container(color: AppColors.disabled),
                 ),
               ),
             ),

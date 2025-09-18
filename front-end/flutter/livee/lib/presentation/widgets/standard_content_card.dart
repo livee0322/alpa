@@ -7,6 +7,7 @@ class StandardContentCard extends StatelessWidget {
   final VoidCallback? onTap; // 카드 선택 로직
   final EdgeInsetsGeometry? padding; // 패딩
   final EdgeInsetsGeometry? margin; // 마진
+  final BorderRadiusGeometry? borderRadius; // 라운드
 
   const StandardContentCard({
     super.key,
@@ -14,14 +15,16 @@ class StandardContentCard extends StatelessWidget {
     this.onTap,
     this.padding,
     this.margin,
+    this.borderRadius,
   });
 
   // 위젯의 UI를 빌드
   @override
   Widget build(BuildContext context) {
+    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(14);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: effectiveBorderRadius.resolve(Directionality.of(context)),
       child: Container(
         margin: margin ?? const EdgeInsets.only(bottom: 10),
         padding: padding ?? const EdgeInsets.all(10),
@@ -31,7 +34,7 @@ class StandardContentCard extends StatelessWidget {
             color: AppColors.border,
             width: 1.0, // 테두리 두께
           ),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: effectiveBorderRadius.resolve(Directionality.of(context)),
         ),
         child: child,
       ),
