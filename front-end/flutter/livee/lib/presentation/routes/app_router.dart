@@ -2,6 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
+import 'package:livee/presentation/screens/model/model_screen.dart';
+import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.dart';
@@ -68,6 +70,14 @@ GoRouter createRouter(AuthProvider authProvider) {
           GoRoute(
             path: '/recruits',
             builder: (context, state) => const RecruitListScreen(),
+          ),
+          GoRoute(
+            path: '/models',
+            builder: (context, state) => const ModelScreen(),
+          ),
+          GoRoute(
+            path: '/portfolios',
+            builder: (context, state) => const PortfolioScreen(),
           ),
         ],
       ),

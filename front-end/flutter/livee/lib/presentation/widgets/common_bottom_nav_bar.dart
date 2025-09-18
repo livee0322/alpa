@@ -58,6 +58,22 @@ class CommonBottomNavBar extends StatelessWidget {
                     _buildNavItem(
                       context,
                       authProvider,
+                      CupertinoIcons.person_2,
+                      '모델',
+                      '/models',
+                      effectivePath,
+                    ),
+                    _buildNavItem(
+                      context,
+                      authProvider,
+                      CupertinoIcons.collections,
+                      '포트폴리오',
+                      '/portfolios',
+                      effectivePath,
+                    ),
+                    _buildNavItem(
+                      context,
+                      authProvider,
                       CupertinoIcons.settings,
                       '마이페이지',
                       '/mypage',
