@@ -25,6 +25,16 @@ class PortfolioScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '카드를 누르면 상세 프로필을 보실 수 있어요.',
+                        style: TextStyle(color: AppColors.textGrey, fontSize: 13),
+                      ),
+                    ),
+                  ),
                   _buildSearchBar(context, viewModel),
                   Expanded(
                     child: _buildPortfolioList(context, viewModel),
@@ -74,6 +84,7 @@ class PortfolioScreen extends StatelessWidget {
           const SizedBox(width: 8),
           // 정렬 드롭다운
           CustomDropdown(
+            menuOffset: Offset(0, 50),
             value: '최신순', // TODO: ViewModel의 sortBy와 연동
             items: const ['최신순', '인기순'],
             onChanged: (value) => viewModel.setSortBy(value),
