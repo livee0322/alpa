@@ -22,4 +22,9 @@ class ModelUseCase {
   Future<void> deleteModel(String id) {
     return _repository.deleteModel(id);
   }
+
+  /// ID로 특정 모델의 상세 정보를 조회
+  Future<Model> getModelById(String id) {
+    return _repository.getModelById(id);
+  }
 }

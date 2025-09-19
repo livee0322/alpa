@@ -89,9 +89,7 @@ class ModelScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
       borderRadius: BorderRadius.zero, // 직각 모서리
-      onTap: () {
-        // TODO: 모델 상세 페이지로 이동
-      },
+      onTap: () => GoRouter.of(context).go('/models/${model.id}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

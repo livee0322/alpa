@@ -4,6 +4,7 @@ import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
+import 'package:livee/presentation/screens/model/model_detail_screen.dart';
 import 'package:livee/presentation/screens/model/model_edit_screen.dart';
 import 'package:livee/presentation/screens/model/model_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
@@ -138,6 +139,19 @@ GoRouter createRouter(AuthProvider authProvider) {
           GoRoute(
             path: '/portfolio-edit',
             builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
+          ),
+          GoRoute(
+            path: '/models',
+            builder: (context, state) => const ModelScreen(),
+            routes: [
+              GoRoute(
+                path: ':id', // 예: /models/123
+                builder: (context, state) {
+                  final modelId = state.pathParameters['id']!;
+                  return ModelDetailScreen(modelId: modelId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/my-portfolios',
