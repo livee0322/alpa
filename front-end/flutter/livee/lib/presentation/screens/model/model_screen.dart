@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/model/vm/model_list_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
@@ -16,17 +18,35 @@ class ModelScreen extends StatelessWidget {
       create: (_) => ModelListViewModel(),
       child: Consumer<ModelListViewModel>(
         builder: (context, viewModel, child) {
+          final authProvider = context.watch<AuthProvider>();
           return Scaffold(
             // [수정] LoadingOverlay를 사용하여 전체 화면 로딩 상태를 표시
             body: LoadingOverlay(
               isLoading: viewModel.isLoading,
               child: _buildModelList(context, viewModel),
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => GoRouter.of(context).go('/model-edit'),
-              backgroundColor: AppColors.primary,
-              child: const Icon(Icons.add, color: Colors.white),
-            ),
+            // 사용자의 역할이 'showhost'일 때만 플로팅 버튼을 표시
+            floatingActionButton: authProvider.role == 'showhost'
+                ? FloatingActionButton(
+                    onPressed: () async {
+                      if (!authProvider.isLoggedIn) {
+                        final result = await showCommonPromptDialog(
+                          context: context,
+                          title: '로그인이 필요합니다',
+                          content: '모델 프로필을 등록하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
+                          confirmText: '로그인',
+                        );
+                        if (result == true) {
+                          GoRouter.of(context).go('/login');
+                        }
+                      } else {
+                        GoRouter.of(context).go('/model-edit');
+                      }
+                    },
+                    backgroundColor: AppColors.primary,
+                    child: const Icon(Icons.add, color: Colors.white),
+                  )
+                : null, // 'showhost'가 아니면 버튼을 표시 X
           );
         },
       ),
