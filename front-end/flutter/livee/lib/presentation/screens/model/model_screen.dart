@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 
 class ModelScreen extends StatelessWidget {
@@ -14,9 +15,7 @@ class ModelScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: 모델 또는 포트폴리오 추가 기능 구현
-        },
+        onPressed: () => GoRouter.of(context).go('/model-edit'),
         backgroundColor: AppColors.primary, // '퍼스트 컬러' (기본색)를 배경색으로 지정합니다.
         child: const Icon(
           Icons.add,

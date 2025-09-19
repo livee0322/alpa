@@ -4,6 +4,7 @@ import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
+import 'package:livee/presentation/screens/model/model_edit_screen.dart';
 import 'package:livee/presentation/screens/model/model_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
@@ -153,6 +154,10 @@ GoRouter createRouter(AuthProvider authProvider) {
           GoRoute(
             path: '/account-edit',
             builder: (context, state) => const AccountEditScreen(),
+          ),
+          GoRoute(
+            path: '/model-edit',
+            builder: (context, state) => const ModelEditScreen(),
           ),
           GoRoute(
             path: '/my-applications',
