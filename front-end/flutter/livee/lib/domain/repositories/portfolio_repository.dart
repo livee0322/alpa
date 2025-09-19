@@ -56,10 +56,11 @@ class PortfolioRepository {
 
   // 공개된 모든 쇼호스트 포트폴리오 목록을 가져오기
   Future<List<Portfolio>> getAllPublicPortfolios() async {
-    final response = await _apiClient.get('/portfolio/all');
+    final response = await _apiClient.get('/portfolios');
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(utf8.decode(response.bodyBytes));
+      final json = jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> jsonList = json['items'] ?? json['data'] ?? json;
       return jsonList.map((json) => Portfolio.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load portfolios');
