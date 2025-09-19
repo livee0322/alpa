@@ -88,7 +88,17 @@ GoRouter createRouter(AuthProvider authProvider) {
               GoRoute(
                 path: '/portfolios',
                 builder: (context, state) => const PortfolioScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) {
+                      final portfolioId = state.pathParameters['id']!;
+                      return PortfolioDetailScreen(portfolioId: portfolioId);
+                    },
+                  ),
+                ],
               ),
+// ...
             ],
           ),
           // 상단 바는 없지만 하단 바는 필요한 페이지들을 여기에 배치

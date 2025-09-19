@@ -123,9 +123,7 @@ class PortfolioScreen extends StatelessWidget {
   // 개별 포트폴리오 정보를 표시하는 카드
   Widget _buildPortfolioCard(BuildContext context, Portfolio portfolio) {
     return StandardContentCard(
-      onTap: () {
-        // TODO: 포트폴리오 상세 페이지로 이동
-      },
+      onTap: () => GoRouter.of(context).go('/portfolios/${portfolio.id}'),
       child: Row(
         children: [
           // 프로필 이미지
