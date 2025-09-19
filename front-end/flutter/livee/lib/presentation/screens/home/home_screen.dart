@@ -96,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                   blackText: '컨셉에 맞는 ',
                   purpleText: '모델 찾기',
                 ),
-                // onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                onMorePressed: () => GoRouter.of(context).go('/models'),
                 child: ConceptModelSection(models: viewModel.conceptModels),
               ),
 
