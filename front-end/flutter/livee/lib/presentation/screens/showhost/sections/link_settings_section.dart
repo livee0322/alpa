@@ -41,6 +41,7 @@ class LinkSettingsSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         CustomDropdown(
+          menuOffset: Offset(0, 54),
           label: '공개 범위',
           value: viewModel.publicScope,
           items: const ['전체공개', '링크 공개', '비공개'],

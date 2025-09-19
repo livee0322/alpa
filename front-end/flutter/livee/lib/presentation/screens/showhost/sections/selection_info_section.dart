@@ -84,6 +84,7 @@ class SelectionInfoSection extends StatelessWidget {
         // 성별
         _buildPublicSettingRow(
           inputField: CustomDropdown(
+            menuOffset: Offset(0, 54),
             label: '성별',
             value: viewModel.gender ?? '선택 안함',
             items: const ['선택 안함', '남성', '여성'],
