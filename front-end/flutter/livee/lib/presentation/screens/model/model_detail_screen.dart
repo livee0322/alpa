@@ -6,6 +6,7 @@ import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class ModelDetailScreen extends StatelessWidget {
   final String modelId;
@@ -38,7 +39,9 @@ class ModelDetailScreen extends StatelessWidget {
       return Center(child: Text(viewModel.errorMessage!));
     }
     if (viewModel.model == null) {
-      return const Center(child: Text('모델 정보를 찾을 수 없습니다.'));
+      return const Center(
+        child: CircularProgressIndicator() 
+      );
     }
 
     final model = viewModel.model!;
@@ -75,7 +78,7 @@ class ModelDetailScreen extends StatelessWidget {
       shadowColor: Colors.black12,
       leading: IconButton(
         icon: const Icon(CupertinoIcons.back),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => html.window.history.go(-1),
       ),
       actions: [
         IconButton(icon: const Icon(Icons.share_outlined), onPressed: () {}),
