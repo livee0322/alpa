@@ -25,7 +25,6 @@ class MypageScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            CommonHeader(isLoggedIn: authProvider.isLoggedIn),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
