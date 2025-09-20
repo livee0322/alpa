@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/vm/profile_edit_view_model_base.dart';
+import 'package:livee/presentation/screens/portfolio/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
 class BasicInfoSection extends StatelessWidget {

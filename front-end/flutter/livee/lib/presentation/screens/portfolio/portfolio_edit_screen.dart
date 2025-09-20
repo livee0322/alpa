@@ -5,7 +5,7 @@ import 'package:livee/presentation/screens/showhost/sections/preview_section.dar
 import 'package:livee/presentation/screens/showhost/sections/recent_live_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/selection_info_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
-import 'package:livee/presentation/screens/showhost/vm/portfolio_edit_view_model.dart';
+import 'package:livee/presentation/screens/portfolio/vm/portfolio_edit_view_model.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/section_title.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
@@ -64,12 +64,18 @@ class PortfolioEditScreen extends StatelessWidget {
 
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
-                    child: SubThumbnailSection(
-                      sources: viewModel.subThumbnailSources,
-                      onAddImage: () => viewModel.pickImage(
-                        onImageSelected: (source) => viewModel.subThumbnailSources.add(source),
-                      ),
-                      onRemoveImage: (index) => viewModel.removeSubThumbnail(index),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '갤러리 이미지(최대 5개)'),
+                        SubThumbnailSection(
+                          sources: viewModel.subThumbnailSources,
+                          onAddImage: () => viewModel.pickImage(
+                            onImageSelected: (source) => viewModel.subThumbnailSources.add(source),
+                          ),
+                          onRemoveImage: (index) => viewModel.removeSubThumbnail(index),
+                        ),
+                      ],
                     ),
                   ),
 

@@ -21,7 +21,7 @@ import 'package:livee/presentation/screens/home/home_screen.dart';
 import 'package:livee/presentation/screens/recruit/my_applications_screen.dart';
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
 import 'package:livee/presentation/screens/news/news_screen.dart';
-import 'package:livee/presentation/screens/showhost/portfolio_edit_screen.dart';
+import 'package:livee/presentation/screens/portfolio/portfolio_edit_screen.dart';
 import 'package:livee/presentation/screens/recruit/received_offers_screen.dart';
 import 'package:livee/presentation/screens/recruit/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/service/service_screen.dart';

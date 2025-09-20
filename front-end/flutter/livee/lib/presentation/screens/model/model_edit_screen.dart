@@ -40,10 +40,12 @@ class ModelEditScreen extends StatelessWidget {
   }
 
   /// 화면의 본문(Body) UI
-  Widget _buildBody(BuildContext context, ModelEditViewModel viewModel) => Stack(
+  Widget _buildBody(BuildContext context, ModelEditViewModel viewModel) =>
+      Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Form(
               key: viewModel.formKey,
               child: Column(
@@ -53,21 +55,31 @@ class ModelEditScreen extends StatelessWidget {
                     backgroundImageSource: viewModel.backgroundImageSource,
                     nicknameController: viewModel.nicknameController,
                     onPickMainThumbnail: () => viewModel.pickImage(
-                      onImageSelected: (source) => viewModel.mainThumbnailSource = source,
+                      onImageSelected: (source) =>
+                          viewModel.mainThumbnailSource = source,
                     ),
                     onPickBackgroundImage: () => viewModel.pickImage(
-                      onImageSelected: (source) => viewModel.backgroundImageSource = source,
+                      onImageSelected: (source) =>
+                          viewModel.backgroundImageSource = source,
                     ),
                   ),
                   const SizedBox(height: 32),
                   StandardContentCard(
                     padding: const EdgeInsets.all(16),
-                    child: SubThumbnailSection(
-                      sources: viewModel.subThumbnailSources,
-                      onAddImage: () => viewModel.pickImage(
-                        onImageSelected: (source) => viewModel.subThumbnailSources.add(source),
-                      ),
-                      onRemoveImage: (index) => viewModel.removeSubThumbnail(index),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '갤러리 이미지(최대 5개)'),
+                        SubThumbnailSection(
+                          sources: viewModel.subThumbnailSources,
+                          onAddImage: () => viewModel.pickImage(
+                            onImageSelected: (source) =>
+                                viewModel.subThumbnailSources.add(source),
+                          ),
+                          onRemoveImage: (index) =>
+                              viewModel.removeSubThumbnail(index),
+                        ),
+                      ],
                     ),
                   ),
                   // 리팩토링된 공통 섹션 위젯들을 사용합니다.

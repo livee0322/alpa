@@ -8,7 +8,7 @@ import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
-import 'package:livee/presentation/screens/showhost/vm/profile_edit_view_model_base.dart';
+import 'package:livee/presentation/screens/portfolio/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
