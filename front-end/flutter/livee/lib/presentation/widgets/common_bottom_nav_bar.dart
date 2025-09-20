@@ -98,7 +98,9 @@ Widget _buildNavItem(
   return Expanded(
     child: InkWell(
       onTap: () async {
-        // ... (onTap 로직은 동일)
+        // 현재 경로와 이동할 경로가 같으면 아무것도 하지 않음 (불필요한 이동 방지)
+        if (currentPath == itemPath) return;
+
         final isLoggedIn = authProvider.isLoggedIn;
         final authRequiredRoutes = ['/mypage']; // 라이브러리 제거
         if (authRequiredRoutes.contains(itemPath) && !isLoggedIn) {
@@ -112,7 +114,7 @@ Widget _buildNavItem(
             GoRouter.of(context).go('/login');
           }
         } else {
-          GoRouter.of(context).go(itemPath);
+          GoRouter.of(context).replace(itemPath);
         }
       },
       borderRadius: BorderRadius.circular(8),
