@@ -16,22 +16,26 @@ class SelectionInfoSection extends StatelessWidget {
     required ValueChanged<bool?> onPublicChanged, // 체크박스 값 변경 콜백
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
-          flex: 3,
+          flex: 5,
           child: inputField,
         ),
+        Spacer(),
         Expanded(
-          flex: 1,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 24.0), // 라벨이 있는 필드와의 높이를 맞추기 위함
-            child: CheckboxListTile(
-              title: const Text('공개'),
-              value: isPublic,
-              onChanged: onPublicChanged,
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.zero,
+          flex: 3,
+          child: InkWell(
+            // 전체 영역을 탭 가능하게 만듦
+            onTap: () => onPublicChanged(!isPublic),
+            child: Row(
+              children: [
+                Checkbox(
+                  value: isPublic,
+                  onChanged: onPublicChanged,
+                ),
+                const Text('공개'),
+              ],
             ),
           ),
         ),
@@ -108,7 +112,8 @@ class SelectionInfoSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // 치수
-        const Text('치수', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+        const Text('치수',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
         const SizedBox(height: 8),
         CustomTextFormField(
           controller: viewModel.topSizeController,
