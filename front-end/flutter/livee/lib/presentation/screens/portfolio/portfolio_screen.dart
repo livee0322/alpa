@@ -4,6 +4,7 @@ import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/portfolio/vm/portfolio_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
+import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
@@ -31,7 +32,8 @@ class PortfolioScreen extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '카드를 누르면 상세 프로필을 보실 수 있어요.',
-                        style: TextStyle(color: AppColors.textGrey, fontSize: 13),
+                        style:
+                            TextStyle(color: AppColors.textGrey, fontSize: 13),
                       ),
                     ),
                   ),
@@ -42,14 +44,32 @@ class PortfolioScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // 쇼호스트 역할일 때만 포트폴리오 등록 버튼 활성화
-            floatingActionButton: authProvider.role == 'showhost'
+            // 버튼 노출 조건을 '브랜드 회원이 아닐 때'로 변경 (쇼호스트 or 비회원)
+            floatingActionButton: authProvider.role != 'brand'
                 ? FloatingActionButton(
-                    onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
+                    onPressed: () async {
+                      // 버튼 클릭 시 로그인 상태를 먼저 확인
+                      if (!authProvider.isLoggedIn) {
+                        // 비회원이면 로그인 유도 팝업을
+                        final result = await showCommonPromptDialog(
+                          context: context,
+                          title: '로그인이 필요합니다',
+                          content:
+                              '포트폴리오를 등록하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
+                          confirmText: '로그인',
+                        );
+                        if (result == true && context.mounted) {
+                          GoRouter.of(context).replace('/login');
+                        }
+                      } else {
+                        // 로그인 상태(쇼호스트)이면 등록 페이지로 이동
+                        GoRouter.of(context).go('/portfolio-edit');
+                      }
+                    },
                     backgroundColor: AppColors.primary,
                     child: const Icon(Icons.add, color: Colors.white),
                   )
-                : null,
+                : null, // 브랜드 회원이면 버튼을 표시 X
           );
         },
       ),
@@ -96,7 +116,8 @@ class PortfolioScreen extends StatelessWidget {
   }
 
   // 포트폴리오 목록을 표시하는 UI
-  Widget _buildPortfolioList(BuildContext context, PortfolioViewModel viewModel) {
+  Widget _buildPortfolioList(
+      BuildContext context, PortfolioViewModel viewModel) {
     if (viewModel.portfolios.isEmpty && !viewModel.isLoading) {
       return const Center(
         child: Column(
@@ -130,11 +151,13 @@ class PortfolioScreen extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              portfolio.mainThumbnailUrl ?? 'https://picsum.photos/seed/${portfolio.id}/100/100',
+              portfolio.mainThumbnailUrl ??
+                  'https://picsum.photos/seed/${portfolio.id}/100/100',
               width: 80,
               height: 80,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(width: 80, height: 80, color: AppColors.disabled),
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(width: 80, height: 80, color: AppColors.disabled),
             ),
           ),
           const SizedBox(width: 16),
@@ -145,24 +168,29 @@ class PortfolioScreen extends StatelessWidget {
               children: [
                 Text(
                   portfolio.nickname ?? '이름 없음',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   portfolio.oneLineIntro ?? '소개 준비 중',
-                  style: const TextStyle(color: AppColors.textGrey, fontSize: 14),
+                  style:
+                      const TextStyle(color: AppColors.textGrey, fontSize: 14),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 if (portfolio.age != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.disabled,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text('만 ${portfolio.age}세', style: const TextStyle(fontSize: 12, color: AppColors.textGrey)),
+                    child: Text('만 ${portfolio.age}세',
+                        style: const TextStyle(
+                            fontSize: 12, color: AppColors.textGrey)),
                   ),
               ],
             ),
