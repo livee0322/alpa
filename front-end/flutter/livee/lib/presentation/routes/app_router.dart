@@ -28,6 +28,7 @@ import 'package:livee/presentation/screens/service/service_screen.dart';
 import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
 import 'package:livee/presentation/screens/clips/short_clips_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
+import 'package:livee/presentation/screens/studio/studio_edit_screen.dart';
 import 'package:livee/presentation/screens/studio/studio_screen.dart';
 
 // GoRouter 인스턴스를 생성
@@ -42,6 +43,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: '/studio',
         builder: (context, state) => const StudioScreen(),
+      ),
+      GoRoute(
+        path: '/studio-edit',
+        builder: (context, state) => const StudioEditScreen(),
       ),
       // 네비게이션 포함한 앱 전체를 감싸는 최상위 하단 ShellRoute
       ShellRoute(

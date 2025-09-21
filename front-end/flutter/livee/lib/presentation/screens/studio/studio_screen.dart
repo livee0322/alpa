@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/studio/widgets/booking_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
@@ -41,7 +42,9 @@ class _StudioScreenState extends State<StudioScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-              icon: const Icon(CupertinoIcons.settings), onPressed: () {}),
+            icon: const Icon(CupertinoIcons.settings),
+            onPressed: () => GoRouter.of(context).go('/studio-edit'),
+          ),
         ],
       ),
       // --- Body (스크롤) ---
