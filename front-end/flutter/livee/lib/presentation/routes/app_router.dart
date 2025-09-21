@@ -28,6 +28,7 @@ import 'package:livee/presentation/screens/service/service_screen.dart';
 import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
 import 'package:livee/presentation/screens/clips/short_clips_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
+import 'package:livee/presentation/screens/studio/studio_screen.dart';
 
 // GoRouter 인스턴스를 생성
 // AuthProvider를 인자로 받아서 refreshListenable에 연결
@@ -121,7 +122,8 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/campaign-form',
-            builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+            builder: (context, state) =>
+                CampaignFormScreen(campaignId: state.extra as String?),
           ),
           GoRoute(
             path: '/campaign/:campaignId',
@@ -148,7 +150,8 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/portfolio-edit',
-            builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
+            builder: (context, state) =>
+                PortfolioEditScreen(portfolioId: state.extra as String?),
           ),
           GoRoute(
             path: '/models',
@@ -193,6 +196,10 @@ GoRouter createRouter(AuthProvider authProvider) {
               final showhostId = state.extra as String;
               return CastingRequestScreen(showhostId: showhostId);
             },
+          ),
+          GoRoute(
+            path: '/studio',
+            builder: (context, state) => const StudioScreen(),
           ),
         ],
       ),
