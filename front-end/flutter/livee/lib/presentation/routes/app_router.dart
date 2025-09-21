@@ -39,6 +39,10 @@ GoRouter createRouter(AuthProvider authProvider) {
     // refreshListenable에 외부에서 생성된 AuthProvider 인스턴스를 전달받아 사용
     refreshListenable: authProvider,
     routes: [
+      GoRoute(
+        path: '/studio',
+        builder: (context, state) => const StudioScreen(),
+      ),
       // 네비게이션 포함한 앱 전체를 감싸는 최상위 하단 ShellRoute
       ShellRoute(
         builder: (context, state, child) => RootShellScreen(
@@ -196,10 +200,6 @@ GoRouter createRouter(AuthProvider authProvider) {
               final showhostId = state.extra as String;
               return CastingRequestScreen(showhostId: showhostId);
             },
-          ),
-          GoRoute(
-            path: '/studio',
-            builder: (context, state) => const StudioScreen(),
           ),
         ],
       ),
