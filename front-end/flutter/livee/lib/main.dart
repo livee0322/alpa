@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
@@ -9,9 +10,15 @@ import 'package:livee/presentation/routes/app_router.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   // 웹 주소(URL)에서 '#' 문자를 제거하여 깨끗한 경로를 사용
   usePathUrlStrategy();
+
+  // runApp 전에 다른 작업을 수행하므로, Flutter 위젯 바인딩을 초기화
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 한국어 날짜 형식을 초기화
+  await initializeDateFormatting();
 
   // 앱 시작 전 서비스 로케이터 설정 실행
   setupLocator();
