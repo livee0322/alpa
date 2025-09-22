@@ -7,7 +7,9 @@ import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:remixicon/remixicon.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:universal_html/html.dart' as html;
 
 /// '스튜디오' 정보를 등록하고 관리하는 페이지
 class StudioEditScreen extends StatefulWidget {
@@ -22,14 +24,20 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const IconButton(icon: Icon(CupertinoIcons.home), onPressed: null),
-        title: const Text('BYHEN・관리자'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: PrimaryActionButton(text: '발행', onPressed: () {}, isFullWidth: false),
+        leading: IconButton(
+          icon: Icon(RemixIcons.arrow_left_line),
+          onPressed: () => html.window.history.go(-1),
+        ),
+        centerTitle: true, // 가운데 정렬
+        title: const Text(
+          'BYHEN・관리자',
+          style: TextStyle(
+            color: AppColors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-        ],
+        ),
+        backgroundColor: AppColors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -44,6 +52,15 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
             _buildGallerySection(),
             const SizedBox(height: 16),
             _buildScheduleSection(),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerRight,
+              child: PrimaryActionButton(
+                text: '저장',
+                onPressed: () => html.window.history.go(-1),
+                isFullWidth: false, // 버튼이 전체 너비를 차지하지 않도록 설정
+              ),
+            ),
           ],
         ),
       ),
@@ -57,14 +74,18 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
         children: [
           CustomTextFormField(controller: TextEditingController(), label: '브랜드명 *', hintText: '예) BYHEN'),
           const SizedBox(height: 16),
-          CustomTextFormField(controller: TextEditingController(), label: '슬러그 *', hintText: '예) byhen',),
+          CustomTextFormField(
+            controller: TextEditingController(),
+            label: '슬러그 *',
+            hintText: '예) byhen',
+          ),
           const SizedBox(height: 16),
           // TODO: 이미지 삽입 위젯 공통화
           const Text('메인 썸네일 *'),
-          OutlinedButton.icon(onPressed: (){}, icon: const Icon(Icons.image), label: const Text('이미지 삽입')),
+          OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.image), label: const Text('이미지 삽입')),
           const SizedBox(height: 16),
           const Text('서브 썸네일(최대 5장)'),
-          OutlinedButton(onPressed: (){}, child: const Text('추가')),
+          OutlinedButton(onPressed: () {}, child: const Text('추가')),
         ],
       ),
     );
@@ -78,14 +99,16 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
           const SizedBox(height: 16),
           CustomTextFormField(controller: TextEditingController(), label: '상세 소개', hintText: '스튜디오 상세 설명', maxLines: 5),
           const SizedBox(height: 16),
-          CustomTextFormField(controller: TextEditingController(), label: '이용 안내', hintText: '예약/환불/주의사항 등', maxLines: 5),
+          CustomTextFormField(
+              controller: TextEditingController(), label: '이용 안내', hintText: '예약/환불/주의사항 등', maxLines: 5),
           const SizedBox(height: 16),
-          CustomTextFormField(controller: TextEditingController(), label: '금액 안내', hintText: '패키지/옵션/부가세 등', maxLines: 5),
+          CustomTextFormField(
+              controller: TextEditingController(), label: '금액 안내', hintText: '패키지/옵션/부가세 등', maxLines: 5),
         ],
       ),
     );
   }
-  
+
   Widget _buildContactSection() {
     return StandardContentCard(
       child: Column(
@@ -107,7 +130,7 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
   Widget _buildGallerySection() {
     return StandardContentCard(
       child: OutlinedButton.icon(
-        onPressed: (){},
+        onPressed: () {},
         icon: const Icon(Icons.add_photo_alternate_outlined),
         label: const Text('갤러리 추가'),
       ),
@@ -121,9 +144,9 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
           // 시작/마감 시간 설정 버튼
           Row(
             children: [
-              OutlinedButton.icon(onPressed: (){}, icon: const Icon(Icons.schedule), label: const Text('시작시간')),
+              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.schedule), label: const Text('시작시간')),
               const SizedBox(width: 8),
-              OutlinedButton.icon(onPressed: (){}, icon: const Icon(Icons.schedule), label: const Text('마감시간')),
+              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.schedule), label: const Text('마감시간')),
             ],
           ),
           TableCalendar(
@@ -136,9 +159,13 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
           // 휴무/초기화 버튼
           Row(
             children: [
-              Expanded(child: OutlinedButton.icon(onPressed: (){}, icon: const Icon(Icons.toggle_off_outlined), label: const Text('휴무 토글'))),
+              Expanded(
+                  child: OutlinedButton.icon(
+                      onPressed: () {}, icon: const Icon(Icons.toggle_off_outlined), label: const Text('휴무 토글'))),
               const SizedBox(width: 8),
-              Expanded(child: OutlinedButton.icon(onPressed: (){}, icon: const Icon(Icons.refresh), label: const Text('초기화'))),
+              Expanded(
+                  child:
+                      OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.refresh), label: const Text('초기화'))),
             ],
           ),
           const SizedBox(height: 16),
@@ -154,14 +181,6 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
           const SizedBox(height: 16),
           _buildTimeSettingRow('마감 시간 설정'),
           const SizedBox(height: 16),
-          // 저장 버튼
-          Row(
-            children: [
-              Expanded(child: OutlinedButton(onPressed: (){}, child: const Text('임시저장'))),
-              const SizedBox(width: 8),
-              Expanded(child: ElevatedButton(onPressed: (){}, child: const Text('저장'))),
-            ],
-          )
         ],
       ),
     );
@@ -174,15 +193,12 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
         Row(
           children: [
             Text(title),
-            IconButton(onPressed: (){}, icon: const Icon(Icons.close, size: 16)),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.close, size: 16)),
           ],
         ),
         TextFormField(
           readOnly: true,
-          decoration: const InputDecoration(
-            hintText: '-- : --',
-            suffixIcon: Icon(Icons.schedule)
-          ),
+          decoration: const InputDecoration(hintText: '-- : --', suffixIcon: Icon(Icons.schedule)),
           onTap: () {
             showModalBottomSheet(
               context: context,
