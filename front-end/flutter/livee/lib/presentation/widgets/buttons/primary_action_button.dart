@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 
 // 앱의 주요 액션(로그인, 저장 등)을 위한 공통 버튼 위젯
 class PrimaryActionButton extends StatelessWidget {
@@ -20,17 +21,17 @@ class PrimaryActionButton extends StatelessWidget {
     final buttonStyle = ElevatedButton.styleFrom(
       minimumSize: isFullWidth ? const Size(double.infinity, 54) : null,
       padding: isFullWidth ? null : const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      backgroundColor: const Color(0xFF6C63FF),
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.primary,
+      foregroundColor: AppColors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(isFullWidth ? 14 : 8), // 작은 버튼일 때 더 작은 radius
       ),
-      disabledBackgroundColor: const Color(0xFFE5E7EB),
+      disabledBackgroundColor: AppColors.disabled,
     );
 
     final textStyle = TextStyle(
       fontSize: isFullWidth ? 18 : 14,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.bold,
     );
 
     return ElevatedButton(
@@ -42,7 +43,7 @@ class PrimaryActionButton extends StatelessWidget {
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2.5,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             )
           : Text(text, style: textStyle),

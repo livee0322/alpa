@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/studio/widgets/booking_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:remixicon/remixicon.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 /// '스튜디오 상세' 및 '예약' UI를 표시하는 화면입니다. (데이터는 목업)
@@ -36,8 +38,7 @@ class _StudioScreenState extends State<StudioScreen> {
     return Scaffold(
       // --- AppBar ---
       appBar: AppBar(
-        leading:
-            const IconButton(icon: Icon(CupertinoIcons.back), onPressed: null),
+        leading: const IconButton(icon: Icon(CupertinoIcons.back), onPressed: null),
         title: const Text('BYHEN'),
         centerTitle: true,
         actions: [
@@ -56,8 +57,7 @@ class _StudioScreenState extends State<StudioScreen> {
             const SizedBox(height: 16),
             _buildInfoCard('스튜디오 정보', '소개', '대전 스튜디오'),
             const SizedBox(height: 16),
-            _buildInfoCard(
-                '연락처', '전화\n이메일\n카카오', '12345677\nhahha@jsjsis.com\n-'),
+            _buildInfoCard('연락처', '전화\n이메일\n카카오', '12345677\nhahha@jsjsis.com\n-'),
             const SizedBox(height: 16),
             _buildInfoCard('이용 안내', '금액 안내\n주소', '테스트입니다\n-'),
             const SizedBox(height: 16),
@@ -77,8 +77,7 @@ class _StudioScreenState extends State<StudioScreen> {
         // 큰 대표 이미지
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(_selectedMainImage,
-              fit: BoxFit.cover, height: 250, width: double.infinity),
+          child: Image.network(_selectedMainImage, fit: BoxFit.cover, height: 250, width: double.infinity),
         ),
         const SizedBox(height: 8),
         // 작은 썸네일 리스트
@@ -90,8 +89,7 @@ class _StudioScreenState extends State<StudioScreen> {
             separatorBuilder: (context, index) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final imageUrl = _galleryImages[index];
-              final isSelected =
-                  _selectedMainImage == imageUrl; // 썸네일 선택 상태 확인 (임시)
+              final isSelected = _selectedMainImage == imageUrl; // 썸네일 선택 상태 확인 (임시)
               return GestureDetector(
                 onTap: () => setState(() => _selectedMainImage = imageUrl),
                 child: Container(
@@ -99,12 +97,10 @@ class _StudioScreenState extends State<StudioScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color:
-                          isSelected ? AppColors.primary : Colors.transparent,
+                      color: isSelected ? AppColors.primary : Colors.transparent,
                       width: 2,
                     ),
-                    image: DecorationImage(
-                        image: NetworkImage(imageUrl), fit: BoxFit.cover),
+                    image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover),
                   ),
                 ),
               );
@@ -121,9 +117,7 @@ class _StudioScreenState extends State<StudioScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,8 +138,7 @@ class _StudioScreenState extends State<StudioScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('스케줄',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('스케줄', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TableCalendar(
             locale: 'ko_KR', // 한글 설정
@@ -169,10 +162,7 @@ class _StudioScreenState extends State<StudioScreen> {
               if (day.weekday == DateTime.monday ||
                   day.weekday == DateTime.wednesday ||
                   day.weekday == DateTime.friday) {
-                return [
-                  const Text('●',
-                      style: TextStyle(color: Colors.green, fontSize: 8))
-                ];
+                return [const Text('●', style: TextStyle(color: Colors.green, fontSize: 8))];
               }
               return [];
             },
@@ -201,29 +191,20 @@ class _StudioScreenState extends State<StudioScreen> {
   /// [위젯] 하단 고정 액션 바
   Widget _buildBottomActionBar() {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, -2)),
+          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, -2)),
         ],
       ),
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton.icon(
-              icon: const Icon(CupertinoIcons.chat_bubble),
-              label: const Text('문의하기'),
+            child: SecondaryActionButton(
+              text: '문의하기',
+              icon: RemixIcons.chat_3_line,
               onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                foregroundColor: AppColors.textBlack,
-                side: const BorderSide(color: AppColors.border),
-              ),
             ),
           ),
           const SizedBox(width: 8),
