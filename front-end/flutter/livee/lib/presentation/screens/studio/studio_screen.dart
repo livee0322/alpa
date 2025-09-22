@@ -210,6 +210,7 @@ class _StudioScreenState extends State<StudioScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: PrimaryActionButton(
+              icon: RemixIcons.calendar_check_line,
               text: '예약/결제',
               onPressed: () => showModalBottomSheet(
                 context: context,

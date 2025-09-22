@@ -7,6 +7,7 @@ class PrimaryActionButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isFullWidth;
+  final IconData? icon;
 
   const PrimaryActionButton({
     super.key,
@@ -14,6 +15,7 @@ class PrimaryActionButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.isFullWidth = true,
+    this.icon,
   });
 
   @override
@@ -34,19 +36,31 @@ class PrimaryActionButton extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
 
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: buttonStyle,
-      child: isLoading
-          ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                color: AppColors.white,
-              ),
-            )
-          : Text(text, style: textStyle),
+    final loadingIndicator = const SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(
+        strokeWidth: 2.5,
+        color: Colors.white,
+      ),
     );
+
+    // [수정] icon 파라미터의 유무에 따라 다른 버튼 위젯을 반환합니다.
+    if (icon != null) {
+      // 아이콘이 있을 경우: ElevatedButton.icon 사용
+      return ElevatedButton.icon(
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        icon: isLoading ? const SizedBox.shrink() : Icon(icon, size: isFullWidth ? 20 : 16),
+        label: isLoading ? loadingIndicator : Text(text, style: textStyle),
+      );
+    } else {
+      // 아이콘이 없을 경우: 기존 ElevatedButton 사용
+      return ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        child: isLoading ? loadingIndicator : Text(text, style: textStyle),
+      );
+    }
   }
 }
