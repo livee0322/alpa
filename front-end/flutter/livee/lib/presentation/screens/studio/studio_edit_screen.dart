@@ -1,109 +1,112 @@
-// [파일] lib/presentation/screens/studio/studio_edit_screen.dart
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
+import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
+import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart';
 import 'package:livee/presentation/screens/studio/widgets/custom_time_picker.dart';
+import 'package:livee/presentation/screens/studio/widgets/studio_description_section.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/widgets/section_title.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:universal_html/html.dart' as html;
 
 /// '스튜디오' 정보를 등록하고 관리하는 페이지
-class StudioEditScreen extends StatefulWidget {
+class StudioEditScreen extends StatelessWidget {
   const StudioEditScreen({super.key});
 
-  @override
-  State<StudioEditScreen> createState() => _StudioEditScreenState();
-}
+  // 이미지 선택 로직을 위한 헬퍼 함수
+  Future<void> _pickImage(BuildContext context, {required Function(PortfolioImage) onImageSelected}) async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+    final bytes = await pickedFile.readAsBytes();
+    onImageSelected(PortfolioImage(localBytes: bytes));
+  }
 
-class _StudioEditScreenState extends State<StudioEditScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(RemixIcons.arrow_left_line),
-          onPressed: () => html.window.history.go(-1),
-        ),
-        centerTitle: true, // 가운데 정렬
-        title: const Text(
-          'BYHEN・관리자',
-          style: TextStyle(
-            color: AppColors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        backgroundColor: AppColors.white,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildBasicInfoSection(),
-            const SizedBox(height: 16),
-            _buildDescriptionSection(),
-            const SizedBox(height: 16),
-            _buildContactSection(),
-            const SizedBox(height: 16),
-            _buildGallerySection(),
-            const SizedBox(height: 16),
-            _buildScheduleSection(),
-            const SizedBox(height: 24),
-            Align(
-              alignment: Alignment.centerRight,
-              child: PrimaryActionButton(
-                text: '저장',
+    return ChangeNotifierProvider(
+      create: (_) => StudioEditViewModel(),
+      child: Consumer<StudioEditViewModel>(
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(CupertinoIcons.back),
                 onPressed: () => html.window.history.go(-1),
-                isFullWidth: false, // 버튼이 전체 너비를 차지하지 않도록 설정
+              ),
+              title: const Text('BYHEN・관리자'),
+              centerTitle: true,
+              backgroundColor: AppColors.white,
+              actions: const [],
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // 1. 프리뷰 섹션 (재사용)
+                  PreviewSection(
+                    mainThumbnailSource: viewModel.mainThumbnailSource,
+                    backgroundImageSource: viewModel.backgroundImageSource,
+                    nicknameController: viewModel.brandNameController, // 브랜드명을 닉네임처럼 표시
+                    onPickMainThumbnail: () => _pickImage(context, onImageSelected: viewModel.setMainThumbnail),
+                    onPickBackgroundImage: () => _pickImage(context, onImageSelected: viewModel.setBackgroundImage),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 2. 서브 썸네일 섹션 (재사용)
+                  StandardContentCard(
+                    child: SubThumbnailSection(
+                      sources: viewModel.subThumbnailSources,
+                      onAddImage: () => _pickImage(context, onImageSelected: viewModel.addSubThumbnail),
+                      onRemoveImage: viewModel.removeSubThumbnail,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 3. 스튜디오 정보 섹션 (새로운 구성)
+                  _buildStudioInfoSection(viewModel),
+                  const SizedBox(height: 16),
+
+                  _buildContactSection(),
+                  const SizedBox(height: 16),
+                  _buildGallerySection(),
+                  const SizedBox(height: 16),
+                  _buildScheduleSection(context),
+                  const SizedBox(height: 24),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: PrimaryActionButton(
+                      text: '저장',
+                      onPressed: () => html.window.history.go(-1),
+                      isFullWidth: false,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  // 각 섹션을 구성하는 헬퍼 메소드들
-  Widget _buildBasicInfoSection() {
+  /// [위젯] 기본 정보 + 상세 소개를 포함하는 새로운 정보 섹션
+  Widget _buildStudioInfoSection(StudioEditViewModel viewModel) {
     return StandardContentCard(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomTextFormField(controller: TextEditingController(), label: '브랜드명 *', hintText: '예) BYHEN'),
+           const SectionTitle(title: '기본 정보'),
+          CustomTextFormField(controller: viewModel.brandNameController, label: '브랜드명 *', hintText: '예) BYHEN'),
           const SizedBox(height: 16),
-          CustomTextFormField(
-            controller: TextEditingController(),
-            label: '슬러그 *',
-            hintText: '예) byhen',
-          ),
-          const SizedBox(height: 16),
-          // TODO: 이미지 삽입 위젯 공통화
-          const Text('메인 썸네일 *'),
-          OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.image), label: const Text('이미지 삽입')),
-          const SizedBox(height: 16),
-          const Text('서브 썸네일(최대 5장)'),
-          OutlinedButton(onPressed: () {}, child: const Text('추가')),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDescriptionSection() {
-    return StandardContentCard(
-      child: Column(
-        children: [
-          CustomTextFormField(controller: TextEditingController(), label: '한 줄 소개', hintText: '예) 성수동 다목적 촬영 스튜디오'),
-          const SizedBox(height: 16),
-          CustomTextFormField(controller: TextEditingController(), label: '상세 소개', hintText: '스튜디오 상세 설명', maxLines: 5),
-          const SizedBox(height: 16),
-          CustomTextFormField(
-              controller: TextEditingController(), label: '이용 안내', hintText: '예약/환불/주의사항 등', maxLines: 5),
-          const SizedBox(height: 16),
-          CustomTextFormField(
-              controller: TextEditingController(), label: '금액 안내', hintText: '패키지/옵션/부가세 등', maxLines: 5),
+          StudioDescriptionSection(viewModel: viewModel), // 새로 만든 상세 정보 섹션 위젯
         ],
       ),
     );
@@ -137,7 +140,7 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
     );
   }
 
-  Widget _buildScheduleSection() {
+  Widget _buildScheduleSection(BuildContext context) {
     return StandardContentCard(
       child: Column(
         children: [
@@ -177,16 +180,16 @@ class _StudioEditScreenState extends State<StudioEditScreen> {
           ),
           const SizedBox(height: 16),
           // 시간 설정 입력 필드
-          _buildTimeSettingRow('시작 시간 설정'),
+          _buildTimeSettingRow('시작 시간 설정', context),
           const SizedBox(height: 16),
-          _buildTimeSettingRow('마감 시간 설정'),
+          _buildTimeSettingRow('마감 시간 설정', context),
           const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildTimeSettingRow(String title) {
+  Widget _buildTimeSettingRow(String title, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
