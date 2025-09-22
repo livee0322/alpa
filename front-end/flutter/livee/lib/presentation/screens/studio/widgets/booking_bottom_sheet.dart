@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/screens/studio/widgets/custom_date_picker_dialog.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
@@ -73,11 +74,10 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
           onTap: () async {
-            final pickedDate = await showDatePicker(
+            // [수정] showDatePicker 대신 showDialog로 커스텀 위젯을 띄웁니다.
+            final pickedDate = await showDialog<DateTime>(
               context: context,
-              initialDate: _selectedDate,
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
+              builder: (context) => CustomDatePickerDialog(initialDate: _selectedDate),
             );
             if (pickedDate != null && pickedDate != _selectedDate) {
               setState(() => _selectedDate = pickedDate);
