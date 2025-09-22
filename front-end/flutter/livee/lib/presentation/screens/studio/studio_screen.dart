@@ -1,5 +1,3 @@
-// [파일] lib/presentation/screens/studio/studio_screen.dart
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,8 +8,9 @@ import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart'
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:universal_html/html.dart' as html;
 
-/// '스튜디오 상세' 및 '예약' UI를 표시하는 화면입니다. (데이터는 목업)
+/// '스튜디오 상세' 및 '예약'
 class StudioScreen extends StatefulWidget {
   const StudioScreen({super.key});
 
@@ -36,14 +35,26 @@ class _StudioScreenState extends State<StudioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.footerColor,
       // --- AppBar ---
       appBar: AppBar(
-        leading: const IconButton(icon: Icon(CupertinoIcons.back), onPressed: null),
-        title: const Text('BYHEN'),
+        backgroundColor: AppColors.white,
+        leading: IconButton(
+          icon: Icon(RemixIcons.arrow_left_line),
+          onPressed: () => html.window.history.go(-1),
+        ),
+        title: Text(
+          'BYHEN',
+          style: TextStyle(
+            color: AppColors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(CupertinoIcons.settings),
+            icon: const Icon(RemixIcons.settings_3_line),
             onPressed: () => GoRouter.of(context).go('/studio-edit'),
           ),
         ],
