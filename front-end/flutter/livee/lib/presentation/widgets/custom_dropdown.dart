@@ -64,6 +64,14 @@ class _CustomDropdownState extends State<CustomDropdown> {
   OverlayEntry _createOverlayEntry() {
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
+    // [추가] 1. 버튼의 화면상 절대 위치를 가져옵니다.
+    final offset = renderBox.localToGlobal(Offset.zero);
+
+    // [추가] 2. 전체 화면의 높이를 가져옵니다.
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // [추가] 3. 버튼 하단부터 화면 끝까지의 남은 공간을 계산합니다. (약간의 여백 20px 추가)
+    final availableHeight = screenHeight - offset.dy - size.height - 20;
 
     return OverlayEntry(
       builder: (context) => Stack(
@@ -92,30 +100,33 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     borderRadius: _borderRadius,
                     border: Border.all(color: Colors.grey.shade300, width: 1.0),
                   ),
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    shrinkWrap: true,
-                    itemCount: widget.items.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          widget.onChanged(widget.items[index]);
-                          _removeOverlay();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          child: Text(
-                            widget.items[index],
-                            style: TextStyle(
-                              color: widget.items[index] == widget.value ? const Color(0xFF6C63FF) : Colors.black,
-                              fontWeight: widget.items[index] == widget.value ? FontWeight.bold : FontWeight.normal,
-                              fontSize: widget.fontSize,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: availableHeight),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      shrinkWrap: true,
+                      itemCount: widget.items.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            widget.onChanged(widget.items[index]);
+                            _removeOverlay();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            child: Text(
+                              widget.items[index],
+                              style: TextStyle(
+                                color: widget.items[index] == widget.value ? const Color(0xFF6C63FF) : Colors.black,
+                                fontWeight: widget.items[index] == widget.value ? FontWeight.bold : FontWeight.normal,
+                                fontSize: widget.fontSize,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(height: 1, indent: 8, endIndent: 8),
+                        );
+                      },
+                      separatorBuilder: (context, index) => const Divider(height: 1, indent: 8, endIndent: 8),
+                    ),
                   ),
                 ),
               ),

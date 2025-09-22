@@ -51,6 +51,7 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
               lastDay: DateTime.now().add(const Duration(days: 365)),
               // 달력의 행(week) 개수를 항상 6개로 고정하여 높이 변화를 방지
               sixWeekMonthsEnforced: true,
+              rowHeight: 52,
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,

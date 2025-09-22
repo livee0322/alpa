@@ -91,6 +91,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   /// [위젯] 시간 선택 드롭다운 (공통 위젯 사용)
   Widget _buildTimePicker() {
     return CustomDropdown(
+      menuOffset: Offset(0, 54),
       label: '시간 선택',
       value: _selectedTime,
       items: const ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
@@ -103,6 +104,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   /// [위젯] 결제 수단 선택 드롭다운 (공통 위젯 사용)
   Widget _buildPaymentPicker() {
     return CustomDropdown(
+      menuOffset: Offset(0, 54),
       label: '결제 수단',
       value: _selectedPaymentMethod,
       items: const ['신용/체크카드', '무통장입금', '카카오페이'],
