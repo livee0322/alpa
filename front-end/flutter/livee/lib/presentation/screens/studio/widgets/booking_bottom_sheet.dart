@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 
 /// '스튜디오 예약/결제' 정보를 입력받는 바텀시트 위젯
@@ -21,8 +23,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   Widget build(BuildContext context) {
     // 키보드가 올라올 때 UI가 가려지지 않도록 처리합니다.
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         padding: const EdgeInsets.all(24.0),
         decoration: const BoxDecoration(
@@ -48,8 +49,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('예약/결제',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('예약/결제', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -67,8 +67,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
         const SizedBox(height: 8),
         TextFormField(
           readOnly: true,
-          controller: TextEditingController(
-              text: "${_selectedDate.toLocal()}".split(' ')[0]),
+          controller: TextEditingController(text: "${_selectedDate.toLocal()}".split(' ')[0]),
           decoration: InputDecoration(
             suffixIcon: const Icon(Icons.calendar_today),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -94,16 +93,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     return CustomDropdown(
       label: '시간 선택',
       value: _selectedTime,
-      items: const [
-        '10:00',
-        '11:00',
-        '12:00',
-        '13:00',
-        '14:00',
-        '15:00',
-        '16:00',
-        '17:00'
-      ],
+      items: const ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
       onChanged: (value) {
         if (value != null) setState(() => _selectedTime = value);
       },
@@ -127,14 +117,9 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              foregroundColor: AppColors.textBlack,
-              side: const BorderSide(color: AppColors.border),
-            ),
-            child: const Text('취소'),
+          child: SecondaryActionButton(
+            text: '취소',
+            onPressed: () => context.pop(),
           ),
         ),
         const SizedBox(width: 8),
@@ -144,6 +129,8 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
             onPressed: () {
               // TODO: 결제 로직 연동
             },
+            // [수정] isFullWidth를 true로 명시하여 Expanded 내에서 꽉 차도록 합니다.
+            isFullWidth: true,
           ),
         ),
       ],

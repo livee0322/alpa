@@ -43,7 +43,7 @@ class SecondaryActionButton extends StatelessWidget {
         : OutlinedButton(
             onPressed: onPressed,
             style: style,
-            child: Text(text),
+            child: Text(text, style: textStyle),
           );
   }
 }
