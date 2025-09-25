@@ -41,8 +41,11 @@ GoRouter createRouter(AuthProvider authProvider) {
     refreshListenable: authProvider,
     routes: [
       GoRoute(
-        path: '/studio',
-        builder: (context, state) => const StudioScreen(),
+        path: '/studio/:studioId',
+        builder: (context, state) {
+          final studioId = state.pathParameters['studioId']!;
+          return StudioScreen(studioId: studioId);
+        },
       ),
       GoRoute(
         path: '/studio-edit',

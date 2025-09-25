@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:livee/data/core/api_client.dart';
+import 'package:livee/domain/models/studio.dart';
 
 /// 스튜디오 관련 API 호출을 담당하는 저장소
 class StudioRepository {
@@ -14,5 +15,14 @@ class StudioRepository {
     }
   }
 
-  // TODO: 스튜디오 수정 및 조회 Repository 메소드 추가 예정
+  // ID로 특정 스튜디오 정보 조회 (GET /studios/:id)
+  Future<Studio> getStudioById(String id) async {
+    final response = await _apiClient.get('/studios/$id');
+    if (response.statusCode == 200) {
+      final json = jsonDecode(utf8.decode(response.bodyBytes));
+      return Studio.fromJson(json['data'] ?? json);
+    } else {
+      throw Exception('Failed to load studio by id');
+    }
+  }
 }
