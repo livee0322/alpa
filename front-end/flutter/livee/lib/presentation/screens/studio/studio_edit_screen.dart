@@ -7,6 +7,7 @@ import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_secti
 import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart';
 import 'package:livee/presentation/screens/studio/widgets/custom_time_picker.dart';
 import 'package:livee/presentation/screens/studio/widgets/studio_description_section.dart';
+import 'package:livee/presentation/screens/studio/widgets/weekly_schedule_section.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
@@ -87,7 +88,7 @@ class StudioEditScreen extends StatelessWidget {
                   // 3x3 갤러리 섹션
                   _buildGallerySection(context, viewModel),
                   const SizedBox(height: 16),
-                  _buildScheduleSection(context),
+                  _buildScheduleSection(viewModel),
                   const SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
@@ -157,76 +158,26 @@ class StudioEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScheduleSection(BuildContext context) {
+  Widget _buildScheduleSection(StudioEditViewModel viewModel) {
     return StandardContentCard(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 시작/마감 시간 설정 버튼
-          Row(
-            children: [
-              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.schedule), label: const Text('시작시간')),
-              const SizedBox(width: 8),
-              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.schedule), label: const Text('마감시간')),
-            ],
-          ),
-          TableCalendar(
-            focusedDay: DateTime.now(),
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
-          ),
+          const SectionTitle(title: '스케줄'),
+          const SizedBox(height: 12),
+          // WeeklyScheduleSection 위젯을 사용하고, viewModel을 전달
+          WeeklyScheduleSection(viewModel: viewModel),
           const SizedBox(height: 16),
-          // 휴무/초기화 버튼
-          Row(
-            children: [
-              Expanded(
-                  child: OutlinedButton.icon(
-                      onPressed: () {}, icon: const Icon(Icons.toggle_off_outlined), label: const Text('휴무 토글'))),
-              const SizedBox(width: 8),
-              Expanded(
-                  child:
-                      OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.refresh), label: const Text('초기화'))),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // 시간 설정 안내
           Container(
             padding: const EdgeInsets.all(12),
-            color: Colors.grey[100],
-            child: const Text('시간 설정\n달력에서 날짜를 선택하면 1시간 단위 버튼이 생성됩니다.\n・검은색: 예약 가능 / 회색: 마감 / 휴무일은 전체 비활성화'),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Text('안내\n・시간 버튼을 눌러 예약 가능한 시간을 설정하세요.\n・파란색은 예약 가능, 회색은 예약 불가능 상태입니다.'),
           ),
-          const SizedBox(height: 16),
-          // 시간 설정 입력 필드
-          _buildTimeSettingRow('시작 시간 설정', context),
-          const SizedBox(height: 16),
-          _buildTimeSettingRow('마감 시간 설정', context),
-          const SizedBox(height: 16),
         ],
       ),
-    );
-  }
-
-  Widget _buildTimeSettingRow(String title, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(title),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.close, size: 16)),
-          ],
-        ),
-        TextFormField(
-          readOnly: true,
-          decoration: const InputDecoration(hintText: '-- : --', suffixIcon: Icon(Icons.schedule)),
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => const CustomTimePicker(),
-            );
-          },
-        ),
-      ],
     );
   }
 }
