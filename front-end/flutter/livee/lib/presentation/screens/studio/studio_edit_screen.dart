@@ -76,8 +76,6 @@ class StudioEditScreen extends StatelessWidget {
 
                   _buildContactSection(),
                   const SizedBox(height: 16),
-                  _buildGallerySection(),
-                  const SizedBox(height: 16),
                   _buildScheduleSection(context),
                   const SizedBox(height: 24),
                   Align(
