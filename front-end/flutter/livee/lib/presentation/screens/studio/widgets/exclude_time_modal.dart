@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
+import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 
 /// 영업 시간 내에서 특정 시간 블록을 제외하기 위한 모달
 class ExcludeTimeModal extends StatefulWidget {
@@ -101,13 +103,10 @@ class _ExcludeTimeModalState extends State<ExcludeTimeModal> {
               }).toList(),
             ),
           // 확인 버튼
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(_selectedTimes.toList()),
-              child: const Text('확인'),
-            ),
-          )
+          PrimaryActionButton(
+            text: '확인',
+            onPressed: () => context.pop(_selectedTimes.toList()),
+          ),
         ],
       ),
     );
