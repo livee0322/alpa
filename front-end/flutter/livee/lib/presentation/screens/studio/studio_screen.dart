@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:livee/domain/models/studio.dart';
+import 'package:livee/presentation/screens/studio/models/day_schedule.dart';
 import 'package:livee/presentation/screens/studio/vm/studio_view_model.dart';
+import 'package:livee/presentation/screens/studio/widgets/available_times_bottom_sheet.dart';
 import 'package:livee/presentation/screens/studio/widgets/booking_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
@@ -80,11 +83,17 @@ class StudioScreen extends StatelessWidget {
         children: [
           _buildImageGallery(studio),
           const SizedBox(height: 16),
-          _buildStudioInfoSection(studio), // 스튜디오 정보 섹션
+
+          // 스튜디오 정보 섹션
+          _buildStudioInfoSection(studio),
           const SizedBox(height: 16),
-          _buildGuidanceSection(studio), // 안내 섹션
+
+          // 안내 섹션
+          _buildGuidanceSection(studio),
           const SizedBox(height: 16),
-          _buildScheduleCard(), // 스케줄 캘린더 카드
+          // 스케줄 캘린더 카드
+
+          _buildScheduleCard(context, studio),
         ],
       ),
     );
@@ -197,8 +206,7 @@ class StudioScreen extends StatelessWidget {
   }
 
   // 스케줄 캘린더 카드
-  Widget _buildScheduleCard() {
-    // TODO: API 데이터와 연동 필요
+  Widget _buildScheduleCard(BuildContext context, Studio studio) {
     return StandardContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -213,10 +221,96 @@ class StudioScreen extends StatelessWidget {
             lastDay: DateTime.utc(2030, 12, 31),
             headerStyle: const HeaderStyle(
                 formatButtonVisible: false, titleCentered: true),
+            // 오늘 이전 날짜를 선택할 수 없도록 설정
+            enabledDayPredicate: (day) {
+              return !day.isBefore(DateTime.now().subtract(const Duration(days: 1)));
+            },
+            
+            // 캘린더의 각 날짜 UI를 커스텀
+            calendarBuilders: CalendarBuilders(
+              // 비활성화된 날짜(과거)를 회색으로 표시
+              disabledBuilder: (context, day, focusedDay) {
+                return Center(
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(color: Colors.grey[400]),
+                  ),
+                );
+              },
+              // 기본 날짜를 렌더링할 때 예약 가능 여부를 확인
+              defaultBuilder: (context, day, focusedDay) {
+                final dayOfWeek = DateFormat('E', 'ko_KR').format(day);
+                final scheduleTemplate = studio.weeklySchedule[dayOfWeek];
+
+                // 휴무일이거나 스케줄 정보가 없으면 회색으로 표시
+                if (scheduleTemplate == null || !scheduleTemplate.isOpen) {
+                  return Center(
+                    child: Text(
+                      '${day.day}',
+                      style: TextStyle(color: Colors.grey[400]),
+                    ),
+                  );
+                }
+                
+                // 모든 시간이 예약되었는지 확인 (임시 로직)
+                final startHour = int.parse(scheduleTemplate.startTime.split(':')[0]);
+                final endHour = int.parse(scheduleTemplate.endTime.split(':')[0]);
+                if (startHour >= endHour) {
+                  return Center(child: Text('${day.day}', style: TextStyle(color: Colors.grey[400])));
+                }
+                final allSlots = List.generate(endHour - startHour, (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
+                final bookedTimes = {'10:00', '15:00'}; 
+                final excludedTimes = Set.from(scheduleTemplate.excludedTimes);
+                final availableTimes = allSlots.where((time) => !bookedTimes.contains(time) && !excludedTimes.contains(time)).toList();
+
+                // 예약 가능한 시간이 없으면 회색으로 표시
+                if (availableTimes.isEmpty) {
+                  return Center(
+                    child: Text(
+                      '${day.day}',
+                      style: TextStyle(color: Colors.grey[400]),
+                    ),
+                  );
+                }
+                
+                return null; // 위 조건에 해당하지 않으면 기본 스타일 사용
+              },
+            ),
+            
+            onDaySelected: (selectedDay, focusedDay) {
+              final dayOfWeek = DateFormat('E', 'ko_KR').format(selectedDay);
+              final DaySchedule? scheduleTemplate = studio.weeklySchedule[dayOfWeek];
+
+              if (scheduleTemplate == null || !scheduleTemplate.isOpen) {
+                return;
+              }
+
+              final startHour = int.parse(scheduleTemplate.startTime.split(':')[0]);
+              final endHour = int.parse(scheduleTemplate.endTime.split(':')[0]);
+              final allSlots = List.generate(endHour - startHour, (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
+              
+              final bookedTimes = {'10:00', '15:00'};
+              final excludedTimes = Set.from(scheduleTemplate.excludedTimes);
+              
+              final availableTimes = allSlots.where((time) {
+                return !bookedTimes.contains(time) && !excludedTimes.contains(time);
+              }).toList();
+
+              // 예약 가능한 시간이 없는 날은 바텀시트를 띄우지 않음
+              if (availableTimes.isEmpty) {
+                return;
+              }
+
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (_) => AvailableTimesBottomSheet(
+                  selectedDate: selectedDay,
+                  availableTimes: availableTimes,
+                ),
+              );
+            },
           ),
-          const SizedBox(height: 8),
-          const Text('● 초록: 예약 가능, 회색: 휴무, 빨강: 마감',
-              style: TextStyle(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
