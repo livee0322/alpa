@@ -11,7 +11,8 @@ class WeeklyScheduleSection extends StatelessWidget {
   const WeeklyScheduleSection({super.key, required this.viewModel});
 
   // 00:00 부터 23:00 까지 1시간 단위의 시간 목록을 생성하는 헬퍼 함수
-  List<String> get _timeOptions => List.generate(24, (i) => '${i.toString().padLeft(2, '0')}:00');
+  List<String> get _timeOptions =>
+      List.generate(24, (i) => '${i.toString().padLeft(2, '0')}:00');
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,8 @@ class WeeklyScheduleSection extends StatelessWidget {
   }
 
   /// 각 요일별 UI를 구성하는 위젯
-  Widget _buildDayScheduleRow(BuildContext context, String day, dynamic schedule) {
+  Widget _buildDayScheduleRow(
+      BuildContext context, String day, dynamic schedule) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -36,7 +38,9 @@ class WeeklyScheduleSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(day, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(day,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   const Text('영업', style: TextStyle(fontSize: 14)),
@@ -44,7 +48,23 @@ class WeeklyScheduleSection extends StatelessWidget {
                   Switch(
                     value: schedule.isOpen,
                     onChanged: (value) => viewModel.setDayOpen(day, value),
-                    activeColor: AppColors.primary,
+                    thumbColor: WidgetStateProperty.resolveWith<Color?>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColors.primary; // 스위치가 켜졌을 때의 동그라미 색상
+                        }
+                        return null; // 기본값 사용
+                      },
+                    ),
+                    trackColor: WidgetStateProperty.resolveWith<Color?>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColors.primary
+                              .withAlpha(128); // 스위치가 켜졌을 때의 배경 트랙 색상
+                        }
+                        return null; // 기본값 사용
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -53,64 +73,61 @@ class WeeklyScheduleSection extends StatelessWidget {
           const SizedBox(height: 12),
 
           // 2. 시작시간 / 마감시간 드롭다운 (영업 토글이 꺼지면 비활성화)
-          Opacity(
-            opacity: schedule.isOpen ? 1.0 : 0.5,
-            child: AbsorbPointer(
-              absorbing: !schedule.isOpen,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                      value: schedule.startTime,
-                      items: _timeOptions,
-                      onChanged: (value) {
-                        if (value != null) viewModel.setStartTime(day, value);
-                      },
-                    ),
+          AbsorbPointer(
+            absorbing: !schedule.isOpen,
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomDropdown(
+                    value: schedule.startTime,
+                    items: _timeOptions,
+                    onChanged: (value) {
+                      if (value != null) viewModel.setStartTime(day, value);
+                    },
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('~'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text('~'),
+                ),
+                Expanded(
+                  child: CustomDropdown(
+                    value: schedule.endTime,
+                    items: _timeOptions,
+                    onChanged: (value) {
+                      if (value != null) viewModel.setEndTime(day, value);
+                    },
                   ),
-                  Expanded(
-                    child: CustomDropdown(
-                      value: schedule.endTime,
-                      items: _timeOptions,
-                      onChanged: (value) {
-                        if (value != null) viewModel.setEndTime(day, value);
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 12),
 
           // 3. '영업시간 제외' 버튼
-          Opacity(
-            opacity: schedule.isOpen ? 1.0 : 0.5,
-            child: AbsorbPointer(
-              absorbing: !schedule.isOpen,
-              child: TextButton.icon(
-                icon: const Icon(Icons.remove_circle_outline, size: 16),
-                label: const Text('영업시간 제외'),
-                onPressed: () async {
-                  final List<String>? result = await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (_) => ExcludeTimeModal(
-                      startTime: schedule.startTime,
-                      endTime: schedule.endTime,
-                      alreadyExcluded: schedule.excludedTimes,
-                    ),
-                  );
-                  if (result != null) {
-                    viewModel.setExcludedTimes(day, result);
-                  }
-                },
-              ),
+          TextButton.icon(
+            icon: const Icon(Icons.remove_circle_outline, size: 16),
+            label: const Text('영업시간 제외'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.textBlack,
             ),
+            // schedule.isOpen 값에 따라 onPressed 콜백을 null로 설정하여 버튼을 비활성화
+            onPressed: schedule.isOpen
+                ? () async {
+                    final List<String>? result = await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => ExcludeTimeModal(
+                        startTime: schedule.startTime,
+                        endTime: schedule.endTime,
+                        alreadyExcluded: schedule.excludedTimes,
+                      ),
+                    );
+                    if (result != null) {
+                      viewModel.setExcludedTimes(day, result);
+                    }
+                  }
+                : null,
           ),
 
           // 4. 제외된 시간들을 표시하는 칩(Chip) 목록
@@ -122,14 +139,27 @@ class WeeklyScheduleSection extends StatelessWidget {
                 runSpacing: 4.0,
                 children: schedule.excludedTimes.map<Widget>((time) {
                   return Chip(
-                    label: Text(time),
-                    backgroundColor: Colors.grey[200],
-                    deleteIcon: const Icon(Icons.close, size: 14),
-                    onDeleted: () {
-                      // 기존 목록을 복사한 후 해당 시간만 제거하여 ViewModel에 업데이트
-                      final updatedList = List<String>.from(schedule.excludedTimes)..remove(time);
-                      viewModel.setExcludedTimes(day, updatedList);
-                    },
+                    label: Text(
+                      time,
+                      style: TextStyle(
+                        color: schedule.isOpen ? Colors.black87 : Colors.grey,
+                      ),
+                    ),
+                    backgroundColor:
+                        schedule.isOpen ? Colors.grey[200] : Colors.grey[100],
+                    deleteIcon: Icon(
+                      Icons.close,
+                      size: 14,
+                      color: schedule.isOpen ? Colors.grey[700] : Colors.grey,
+                    ),
+                    onDeleted: schedule.isOpen
+                        ? () {
+                            final updatedList =
+                                List<String>.from(schedule.excludedTimes)
+                                  ..remove(time);
+                            viewModel.setExcludedTimes(day, updatedList);
+                          }
+                        : null, // 영업 토글이 꺼지면 삭제 기능도 비활성화
                   );
                 }).toList(),
               ),
