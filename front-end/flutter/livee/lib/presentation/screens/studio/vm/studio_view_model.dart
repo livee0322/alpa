@@ -12,13 +12,28 @@ class StudioViewModel with ChangeNotifier {
     fetchStudioDetail();
   }
 
+  // --- 상태 변수 ---
   bool _isLoading = true;
   Studio? _studio;
   String? _errorMessage;
 
+  // 캘린더의 UI 상태를 관리하는 변수
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+
+  // --- Getter ---
   bool get isLoading => _isLoading;
   Studio? get studio => _studio;
   String? get errorMessage => _errorMessage;
+  DateTime get focusedDay => _focusedDay;
+  DateTime? get selectedDay => _selectedDay;
+
+  // 캘린더에서 날짜가 선택되었을 때 호출
+  void onDateSelected(DateTime selectedDay, DateTime focusedDay) {
+    _selectedDay = selectedDay;
+    _focusedDay = focusedDay;
+    notifyListeners(); // UI에게 상태 변경을 알림
+  }
 
   Future<void> fetchStudioDetail() async {
     _isLoading = true;
