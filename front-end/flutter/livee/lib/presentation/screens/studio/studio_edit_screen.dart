@@ -66,7 +66,7 @@ class StudioEditScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SectionTitle(title: '갤러리 (최대 5개)'),
+                        const SectionTitle(title: '서브 썸네일(최대 5장)'),
                         const SizedBox(height: 12),
                         SubThumbnailSection(
                           sources: viewModel.subThumbnailSources,
@@ -145,7 +145,7 @@ class StudioEditScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(title: '갤러리 (최대 9개)'),
+          const SectionTitle(title: '갤러리(최대 9장)'),
           const SizedBox(height: 12),
           SubThumbnailSection(
             sources: viewModel.galleryImageSources,
