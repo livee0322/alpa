@@ -132,7 +132,8 @@ class HomeScreen extends StatelessWidget {
               // [추가] 5:1 비율의 광고 배너를 추가합니다.
               const SizedBox(height: 24), // 상담 섹션과의 간격
               InkWell(
-                onTap: () => GoRouter.of(context).go('/studio'),
+                onTap: () =>
+                    GoRouter.of(context).go('/studio/68d5496374657fbb21213e7b'),
                 borderRadius: BorderRadius.circular(12.0), // 물결 효과를 위해 추가
                 child: AspectRatio(
                   aspectRatio: 5 / 1,
