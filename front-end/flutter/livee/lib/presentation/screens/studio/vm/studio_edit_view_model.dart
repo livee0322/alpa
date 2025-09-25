@@ -7,6 +7,8 @@ class StudioEditViewModel with ChangeNotifier {
   PortfolioImage? mainThumbnailSource;
   PortfolioImage? backgroundImageSource;
   final List<PortfolioImage> subThumbnailSources = [];
+  //  3x3 그리드 갤러리를 위한 새로운 이미지 목록
+  final List<PortfolioImage> galleryImageSources = [];
 
   // --- 텍스트 입력 필드 컨트롤러 ---
   final brandNameController = TextEditingController();
@@ -37,6 +39,20 @@ class StudioEditViewModel with ChangeNotifier {
 
   void removeSubThumbnail(int index) {
     subThumbnailSources.removeAt(index);
+    notifyListeners();
+  }
+
+  // 3x3 그리드 갤러리 이미지 추가
+  void addGalleryImage(PortfolioImage source) {
+    if (galleryImageSources.length < 9) {
+      galleryImageSources.add(source);
+      notifyListeners();
+    }
+  }
+
+  // 3x3 그리드 갤러리 이미지 삭제
+  void removeGalleryImage(int index) {
+    galleryImageSources.removeAt(index);
     notifyListeners();
   }
 

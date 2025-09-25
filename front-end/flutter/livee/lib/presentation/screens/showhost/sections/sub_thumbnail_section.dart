@@ -6,12 +6,14 @@ class SubThumbnailSection extends StatelessWidget {
   final List<PortfolioImage> sources;
   final VoidCallback onAddImage;
   final Function(int) onRemoveImage;
+  final int maxImages; // 최대 이미지 개수
 
   const SubThumbnailSection({
     super.key,
     required this.sources,
     required this.onAddImage,
     required this.onRemoveImage,
+    this.maxImages = 5,
   });
 
   @override
@@ -19,14 +21,14 @@ class SubThumbnailSection extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: sources.length + (sources.length < 5 ? 1 : 0),
+      itemCount: sources.length + (sources.length < maxImages ? 1 : 0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
       itemBuilder: (context, index) {
-        if (index == sources.length && sources.length < 5) {
+        if (index == sources.length && sources.length < maxImages) {
           // 점선 테두리 적용
           return DottedBorder(
             color: Colors.grey.shade400,
@@ -65,8 +67,7 @@ class SubThumbnailSection extends StatelessWidget {
                       color: Colors.black54,
                       shape: BoxShape.circle,
                     ),
-                    child:
-                        const Icon(Icons.close, size: 14, color: Colors.white),
+                    child: const Icon(Icons.close, size: 14, color: Colors.white),
                   ),
                 ),
               ),

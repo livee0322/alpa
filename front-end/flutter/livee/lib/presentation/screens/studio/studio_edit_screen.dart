@@ -62,10 +62,18 @@ class StudioEditScreen extends StatelessWidget {
 
                   // 2. 서브 썸네일 섹션 (재사용)
                   StandardContentCard(
-                    child: SubThumbnailSection(
-                      sources: viewModel.subThumbnailSources,
-                      onAddImage: () => _pickImage(context, onImageSelected: viewModel.addSubThumbnail),
-                      onRemoveImage: viewModel.removeSubThumbnail,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionTitle(title: '갤러리 (최대 5개)'),
+                        const SizedBox(height: 12),
+                        SubThumbnailSection(
+                          sources: viewModel.subThumbnailSources,
+                          onAddImage: () => _pickImage(context, onImageSelected: viewModel.addSubThumbnail),
+                          onRemoveImage: viewModel.removeSubThumbnail,
+                          maxImages: 5, // 최대 5개로 설정 (기본값이지만 명시)
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -75,6 +83,9 @@ class StudioEditScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   _buildContactSection(),
+                  const SizedBox(height: 16),
+                  // 3x3 갤러리 섹션
+                  _buildGallerySection(context, viewModel),
                   const SizedBox(height: 16),
                   _buildScheduleSection(context),
                   const SizedBox(height: 24),
@@ -95,13 +106,13 @@ class StudioEditScreen extends StatelessWidget {
     );
   }
 
-  /// [위젯] 기본 정보 + 상세 소개를 포함하는 새로운 정보 섹션
+  // 기본 정보 + 상세 소개를 포함하는 새로운 정보 섹션
   Widget _buildStudioInfoSection(StudioEditViewModel viewModel) {
     return StandardContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           const SectionTitle(title: '기본 정보'),
+          const SectionTitle(title: '기본 정보'),
           CustomTextFormField(controller: viewModel.brandNameController, label: '브랜드명 *', hintText: '예) BYHEN'),
           const SizedBox(height: 16),
           StudioDescriptionSection(viewModel: viewModel), // 새로 만든 상세 정보 섹션 위젯
@@ -128,12 +139,20 @@ class StudioEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGallerySection() {
+  Widget _buildGallerySection(BuildContext context, StudioEditViewModel viewModel) {
     return StandardContentCard(
-      child: OutlinedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.add_photo_alternate_outlined),
-        label: const Text('갤러리 추가'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionTitle(title: '갤러리 (최대 9개)'),
+          const SizedBox(height: 12),
+          SubThumbnailSection(
+            sources: viewModel.galleryImageSources,
+            onAddImage: () => _pickImage(context, onImageSelected: viewModel.addGalleryImage),
+            onRemoveImage: viewModel.removeGalleryImage,
+            maxImages: 9, // 최대 이미지 개수를 9개로 설정
+          ),
+        ],
       ),
     );
   }
