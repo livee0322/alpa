@@ -9,6 +9,7 @@ import 'package:livee/presentation/screens/model/model_edit_screen.dart';
 import 'package:livee/presentation/screens/model/model_screen.dart';
 import 'package:livee/presentation/screens/news/news_detail_screen.dart';
 import 'package:livee/presentation/screens/news/news_form_screen.dart';
+import 'package:livee/presentation/screens/portfolio/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
@@ -16,7 +17,6 @@ import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.da
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
-import 'package:livee/presentation/screens/showhost/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/event/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
 import 'package:livee/presentation/screens/home/home_screen.dart';
