@@ -93,6 +93,20 @@ class ShortClipsScreen extends StatelessWidget {
 
   // [메소드] 개별 숏클립 카드 UI를 생성합니다.
   Widget _buildClipCard(BuildContext context, Clip clip, ShortClipsViewModel viewModel) {
+    // [추가] 로고를 보여주는 에러 위젯을 별도로 정의하여 재사용합니다.
+    final Widget errorWidget = Container(
+      color: AppColors.white,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Image.asset(
+            'assets/images/liveelogo.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+
     // [리팩토링] Card 위젯을 StandardContentCard 공통 컴포넌트로 교체합니다.
     return StandardContentCard(
       padding: EdgeInsets.zero, // 이미지가 카드에 꽉 차도록 패딩을 제거합니다.
@@ -107,26 +121,16 @@ class ShortClipsScreen extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              clip.thumbnailUrl ?? 'https://picsum.photos/seed/${clip.id}/300/400',
-              fit: BoxFit.cover,
-              // errorBuilder 부분을 로고 이미지를 표시하도록 변경
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: AppColors.white,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0), // 로고 주변에 여백을 주기
-                      // 로컬 asset에 있는 라이비 로고를 불러오기
-                      child: Image.asset(
-                        'assets/images/liveelogo.png',
-                        fit: BoxFit.contain, // 로고가 잘리지 않도록 설정
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+            // [수정] 썸네일 URL이 유효한지 먼저 확인합니다.
+            (clip.thumbnailUrl != null && clip.thumbnailUrl!.isNotEmpty)
+                // URL이 있으면 Image.network 시도
+                ? Image.network(
+                    clip.thumbnailUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => errorWidget,
+                  )
+                // URL이 없으면 바로 에러 위젯(로고) 표시
+                : errorWidget,
             // isMine이 true일 경우에만 삭제 아이콘을 표시
             if (clip.isMine == true)
               Positioned(

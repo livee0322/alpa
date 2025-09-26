@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/clip.dart' as model;
 import 'package:livee/presentation/screens/clips/widgets/clip_player_modal.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 
 /// 메인 화면의 'HOT clip' 섹션을 표시하는 위젯
@@ -41,6 +42,20 @@ class HotClipSection extends StatelessWidget {
 
   /// 개별 클립 카드를 구성하는 위젯
   Widget _buildClipCard(BuildContext context, model.Clip clip) {
+    // [추가] 로고를 보여주는 에러 위젯을 별도로 정의합니다.
+    final Widget errorWidget = Container(
+      color: AppColors.white,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Image.asset(
+            'assets/images/liveelogo.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+
     return StandardContentCard(
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
@@ -59,25 +74,16 @@ class HotClipSection extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // 썸네일 이미지
-              Image.network(
-                // [수정] 실제 데이터의 thumbnailUrl을 사용하고, 없을 경우 picsum 포토를 사용합니다.
-                clip.thumbnailUrl ??
-                    'https://picsum.photos/seed/${clip.id}/300/400',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Icon(Icons.error),
-                ),
-              ),
+              // [수정] 썸네일 URL 유무에 따라 조건부로 위젯을 렌더링합니다.
+              (clip.thumbnailUrl != null && clip.thumbnailUrl!.isNotEmpty)
+                  ? Image.network(
+                      clip.thumbnailUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => errorWidget,
+                    )
+                  : errorWidget,
               // 어두운 Gradient 오버레이
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                  ),
-                ),
-              ),
+
               // 재생 버튼 아이콘
               const Center(
                 child: CircleAvatar(
