@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/clip.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
-import 'package:livee/presentation/screens/main/widgets/add_clip_bottom_sheet.dart';
+import 'package:livee/presentation/screens/clips/widgets/add_clip_bottom_sheet.dart';
 import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';

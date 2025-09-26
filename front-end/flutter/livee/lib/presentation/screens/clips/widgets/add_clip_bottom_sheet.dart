@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:livee/presentation/screens/clips/vm/add_clip_view_model.dart';
 import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
@@ -11,8 +13,8 @@ Future<bool?> showAddClipBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => ChangeNotifierProvider.value(
-      value: context.read<ShortClipsViewModel>(),
+    builder: (_) => ChangeNotifierProvider(
+      create: (_) => AddClipViewModel(),
       child: const AddClipBottomSheet(),
     ),
   );
@@ -24,7 +26,7 @@ class AddClipBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<ShortClipsViewModel>();
+    final viewModel = context.watch<AddClipViewModel>();
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
@@ -85,17 +87,17 @@ class AddClipBottomSheet extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('+ 숏클립 추가', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('숏클립 추가', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ],
     );
   }
 
   // 제목 입력 필드와 정보 가져오기 버튼 UI
-  Widget _buildTitleField(ShortClipsViewModel viewModel) {
+  Widget _buildTitleField(AddClipViewModel viewModel) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,7 +109,7 @@ class AddClipBottomSheet extends StatelessWidget {
           padding: const EdgeInsets.only(top: 28.0), // 라벨 높이에 맞춰 패딩 추가
           child: OutlinedButton.icon(
             icon: Icon(Icons.public, size: 18),
-            label: const Text('알 수 없음'),
+            label: const Text('정보 가져오기'),
             onPressed: viewModel.isScraping ? null : viewModel.scrapeUrl,
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
