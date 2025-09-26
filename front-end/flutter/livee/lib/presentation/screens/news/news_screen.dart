@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/news/vm/news_list_view_model.dart';
 import 'package:livee/presentation/screens/news/widgets/news_list_item.dart';
+import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +24,8 @@ class NewsScreen extends StatelessWidget {
             ),
             // '쇼호스트' 역할일 때만 글쓰기 버튼 표시
             floatingActionButton: authProvider.role == 'showhost'
-                ? FloatingActionButton(
+                ? CommonFloatingActionButton(
                     onPressed: () => GoRouter.of(context).go('/news-form'),
-                    child: const Icon(Icons.edit),
                   )
                 : null,
           );

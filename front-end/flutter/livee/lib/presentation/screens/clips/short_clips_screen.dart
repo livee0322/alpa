@@ -4,6 +4,7 @@ import 'package:livee/domain/models/clip.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
 import 'package:livee/presentation/screens/main/widgets/add_clip_bottom_sheet.dart';
+import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
@@ -38,8 +39,7 @@ class ShortClipsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            floatingActionButton:
-                _buildFloatingActionButton(context, authProvider, viewModel),
+            floatingActionButton: _buildFloatingActionButton(context, authProvider, viewModel),
           );
         },
       ),
@@ -90,8 +90,7 @@ class ShortClipsScreen extends StatelessWidget {
   }
 
   // [메소드] 개별 숏클립 카드 UI를 생성합니다.
-  Widget _buildClipCard(
-      BuildContext context, Clip clip, ShortClipsViewModel viewModel) {
+  Widget _buildClipCard(BuildContext context, Clip clip, ShortClipsViewModel viewModel) {
     // [리팩토링] Card 위젯을 StandardContentCard 공통 컴포넌트로 교체합니다.
     return StandardContentCard(
       padding: EdgeInsets.zero, // 이미지가 카드에 꽉 차도록 패딩을 제거합니다.
@@ -106,11 +105,9 @@ class ShortClipsScreen extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.network(
-              clip.thumbnailUrl ??
-                  'https://picsum.photos/seed/${clip.id}/300/400',
+              clip.thumbnailUrl ?? 'https://picsum.photos/seed/${clip.id}/300/400',
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Center(child: Icon(Icons.error)),
+              errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error)),
             ),
             // isMine이 true일 경우에만 삭제 아이콘을 표시합니다.
             if (clip.isMine == true)
@@ -119,14 +116,10 @@ class ShortClipsScreen extends StatelessWidget {
                 right: 4,
                 child: IconButton(
                   icon: const Icon(Icons.delete_forever,
-                      color: Colors.white,
-                      shadows: [Shadow(blurRadius: 4, color: Colors.black54)]),
+                      color: Colors.white, shadows: [Shadow(blurRadius: 4, color: Colors.black54)]),
                   onPressed: () async {
                     final confirm = await showCommonPromptDialog(
-                        context: context,
-                        title: '삭제 확인',
-                        content: '정말로 이 숏클립을 삭제하시겠습니까?',
-                        confirmText: '삭제');
+                        context: context, title: '삭제 확인', content: '정말로 이 숏클립을 삭제하시겠습니까?', confirmText: '삭제');
                     if (confirm == true) {
                       await viewModel.deleteClip(clip.id);
                     }
@@ -145,15 +138,11 @@ class ShortClipsScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.play_arrow_rounded,
-                        color: Colors.white, size: 14),
+                    const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 14),
                     const SizedBox(width: 2),
                     Text(
                       clip.provider ?? 'video',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -180,10 +169,9 @@ class ShortClipsScreen extends StatelessWidget {
     );
   }
 
-  // [메소드] 플로팅 액션 버튼 UI를 생성합니다.
-  Widget _buildFloatingActionButton(BuildContext context,
-      AuthProvider authProvider, ShortClipsViewModel viewModel) {
-    return FloatingActionButton(
+  // 플로팅 액션 버튼 UI를 생성
+  Widget _buildFloatingActionButton(BuildContext context, AuthProvider authProvider, ShortClipsViewModel viewModel) {
+    return CommonFloatingActionButton(
       onPressed: () async {
         if (!authProvider.isLoggedIn) {
           final result = await showCommonPromptDialog(
@@ -200,8 +188,6 @@ class ShortClipsScreen extends StatelessWidget {
           viewModel.fetchClips();
         }
       },
-      backgroundColor: Colors.blueAccent,
-      child: const Icon(Icons.add, color: Colors.white),
     );
   }
 }

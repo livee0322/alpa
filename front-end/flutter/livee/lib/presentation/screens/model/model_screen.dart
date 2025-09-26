@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/model/vm/model_list_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
+import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
@@ -27,7 +28,7 @@ class ModelScreen extends StatelessWidget {
             ),
             // 사용자의 역할이 'showhost'일 때만 플로팅 버튼을 표시
             floatingActionButton: authProvider.role == 'showhost'
-                ? FloatingActionButton(
+                ? CommonFloatingActionButton(
                     onPressed: () async {
                       if (!authProvider.isLoggedIn) {
                         final result = await showCommonPromptDialog(
@@ -43,8 +44,6 @@ class ModelScreen extends StatelessWidget {
                         GoRouter.of(context).go('/model-edit');
                       }
                     },
-                    backgroundColor: AppColors.primary,
-                    child: const Icon(Icons.add, color: Colors.white),
                   )
                 : null, // 'showhost'가 아니면 버튼을 표시 X
           );
