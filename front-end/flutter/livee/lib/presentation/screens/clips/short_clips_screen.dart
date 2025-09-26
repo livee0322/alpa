@@ -4,6 +4,7 @@ import 'package:livee/domain/models/clip.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
 import 'package:livee/presentation/screens/clips/widgets/add_clip_bottom_sheet.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
@@ -107,9 +108,24 @@ class ShortClipsScreen extends StatelessWidget {
             Image.network(
               clip.thumbnailUrl ?? 'https://picsum.photos/seed/${clip.id}/300/400',
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error)),
+              // errorBuilder 부분을 로고 이미지를 표시하도록 변경
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: AppColors.white,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0), // 로고 주변에 여백을 주기
+                      // 로컬 asset에 있는 라이비 로고를 불러오기
+                      child: Image.asset(
+                        'assets/images/liveelogo.png',
+                        fit: BoxFit.contain, // 로고가 잘리지 않도록 설정
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            // isMine이 true일 경우에만 삭제 아이콘을 표시합니다.
+            // isMine이 true일 경우에만 삭제 아이콘을 표시
             if (clip.isMine == true)
               Positioned(
                 top: 4,
