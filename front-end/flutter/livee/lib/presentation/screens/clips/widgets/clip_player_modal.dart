@@ -20,17 +20,32 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
   @override
   void initState() {
     super.initState();
-    // 클립의 플랫폼(provider)에 따라 적절한 컨트롤러를 초기화
+    // [복원] 클립의 플랫폼에 따라 컨트롤러를 초기화하는 로직으로 복원합니다.
     switch (widget.clip.provider) {
       case 'youtube':
+        // URL에서 '?' 이후의 파라미터를 제거합니다.
+        final cleanUrl = widget.clip.url.split('?').first;
+        final videoId = YoutubePlayerController.convertUrlToId(cleanUrl);
+        if (videoId != null) {
+          _youtubeController = YoutubePlayerController.fromVideoId(
+            videoId: videoId,
+            autoPlay: true,
+            // [복원] 컨트롤러 파라미터를 다시 설정합니다.
+            params: const YoutubePlayerParams(
+              showFullscreenButton: true,
+              showControls: false, // 컨트롤 바를 숨겨서 더 깔끔하게 보이도록 합니다.
+            ),
+          );
+        }
+        break;
       case 'instagram':
-        // 인스타그램의 경우, URL 끝에 /embed 를 추가하여 임베드 전용 주소를 사용
+        // 인스타그램은 embed URL을 사용합니다.
         _webViewController = WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..loadRequest(Uri.parse('${widget.clip.url}/embed'));
         break;
       case 'tiktok':
-        // 인스타그램, 틱톡은 웹뷰로 재생
+        // 틱톡은 원본 URL을 사용합니다.
         _webViewController = WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..loadRequest(Uri.parse(widget.clip.url));
@@ -46,29 +61,32 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
 
   @override
   Widget build(BuildContext context) {
+    // [복원] 9:16 비율의 팝업 모달 UI로 복원합니다.
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(16),
       child: AspectRatio(
-        aspectRatio: 9 / 16, // 세로 영상 비율
+        aspectRatio: 9 / 16,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Scaffold(
             backgroundColor: Colors.black,
             body: Stack(
               children: [
-                // --- 1. 비디오 플레이어 영역 ---
-                _buildPlayer(),
-
-                // --- 2. 상단 정보 (제목 등) ---
+                // [복원] FittedBox를 사용하여 영상을 세로로 꽉 채웁니다.
+                SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: _buildPlayer(),
+                  ),
+                ),
                 _buildHeader(),
-
-                // --- 3. 닫기 버튼 ---
                 Positioned(
                   top: 10,
                   right: 10,
                   child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                    icon:
+                        const Icon(Icons.close, color: Colors.white, size: 30),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
@@ -80,20 +98,24 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
     );
   }
 
-  /// [수정] 플레이어 위젯을 반환하는 헬퍼 메소드
+  /// [복원] 각 플랫폼에 맞는 플레이어를 반환하는 헬퍼 메소드
   Widget _buildPlayer() {
-    // 이제 모든 케이스가 _webViewController를 사용하므로 로직을 단순화합니다.
-    if (_webViewController != null) {
-      return WebViewWidget(controller: _webViewController!);
-    }
-    // 혹시 모를 예외 상황에 대비하여 YoutubePlayer 로직은 남겨둡니다.
     if (_youtubeController != null) {
-      return Center(child: YoutubePlayer(controller: _youtubeController!));
+      return SizedBox(
+        width: 16 * 100, // 16:9 비율
+        height: 9 * 100,
+        child: YoutubePlayer(controller: _youtubeController!),
+      );
+    }
+    if (_webViewController != null) {
+      return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: WebViewWidget(controller: _webViewController!));
     }
     return _buildErrorView();
   }
 
-  /// 영상 재생 실패 시 보여줄 화면
   Widget _buildErrorView() {
     return const Center(
       child: Column(
@@ -110,19 +132,17 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
     );
   }
 
-  /// 모달 상단의 헤더 UI
   Widget _buildHeader() {
-    // 현재 Clip 모델에는 사용자 정보가 없으므로 임시 데이터를 사용합니다.
     return Positioned(
       top: 20,
       left: 20,
-      right: 60, // 닫기 버튼 영역 확보
+      right: 60,
       child: Row(
         children: [
           const CircleAvatar(
             radius: 20,
-            // TODO: 실제 사용자 프로필 이미지로 교체 필요
-            backgroundImage: NetworkImage('https://picsum.photos/seed/user/100/100'),
+            backgroundImage:
+                NetworkImage('https://picsum.photos/seed/user/100/100'),
           ),
           const SizedBox(width: 12),
           Expanded(
