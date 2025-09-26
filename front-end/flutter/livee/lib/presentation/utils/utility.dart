@@ -16,4 +16,27 @@ class Utility {
       return '미정'; // 날짜 파싱 실패 시
     }
   }
+
+  // 상대 시간을 계산하여 문자열로 반환하는 함수
+  /// (예: "방금 전", "5분 전", "3일 전", "2주 전", "3개월 전", "1년 전")
+  static String formatRelativeTime(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays >= 365) {
+      return '${(difference.inDays / 365).floor()}년 전';
+    } else if (difference.inDays >= 30) {
+      return '${(difference.inDays / 30).floor()}개월 전';
+    } else if (difference.inDays >= 7) {
+      return '${(difference.inDays / 7).floor()}주 전';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}일 전';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}분 전';
+    } else {
+      return '방금 전';
+    }
+  }
 }

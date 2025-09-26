@@ -15,7 +15,6 @@ class NewsDetailScreen extends StatelessWidget {
       child: Consumer<NewsDetailViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
-            appBar: AppBar(title: const Text('뉴스')),
             body: LoadingOverlay(
               isLoading: viewModel.isLoading,
               child: _buildBody(viewModel),
