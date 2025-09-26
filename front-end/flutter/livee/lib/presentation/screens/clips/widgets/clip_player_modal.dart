@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/clip.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -20,32 +21,31 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
   @override
   void initState() {
     super.initState();
-    // [복원] 클립의 플랫폼에 따라 컨트롤러를 초기화하는 로직으로 복원합니다.
     switch (widget.clip.provider) {
       case 'youtube':
-        // URL에서 '?' 이후의 파라미터를 제거합니다.
         final cleanUrl = widget.clip.url.split('?').first;
         final videoId = YoutubePlayerController.convertUrlToId(cleanUrl);
         if (videoId != null) {
           _youtubeController = YoutubePlayerController.fromVideoId(
             videoId: videoId,
             autoPlay: true,
-            // [복원] 컨트롤러 파라미터를 다시 설정합니다.
+            // 유튜브 기본 컨트롤러 UI를 모두 숨깁
             params: const YoutubePlayerParams(
-              showFullscreenButton: true,
-              showControls: false, // 컨트롤 바를 숨겨서 더 깔끔하게 보이도록 합니다.
+              showControls: false,
+              showFullscreenButton: false,
+              strictRelatedVideos: true,
             ),
           );
         }
         break;
       case 'instagram':
-        // 인스타그램은 embed URL을 사용합니다.
+        // 인스타그램은 embed URL을 사용
         _webViewController = WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..loadRequest(Uri.parse('${widget.clip.url}/embed'));
         break;
       case 'tiktok':
-        // 틱톡은 원본 URL을 사용합니다.
+        // 틱톡은 원본 URL을 사용
         _webViewController = WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..loadRequest(Uri.parse(widget.clip.url));
@@ -81,15 +81,15 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
                   ),
                 ),
                 _buildHeader(),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: IconButton(
-                    icon:
-                        const Icon(Icons.close, color: Colors.white, size: 30),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
+                // Positioned(
+                //   top: 10,
+                //   right: 10,
+                //   child: IconButton(
+                //     icon:
+                //         const Icon(Icons.close, color: Colors.white, size: 30),
+                //     onPressed: () => context.pop(),
+                //   ),
+                // ),
               ],
             ),
           ),
