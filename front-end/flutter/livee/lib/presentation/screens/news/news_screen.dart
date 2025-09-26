@@ -25,7 +25,7 @@ class NewsScreen extends StatelessWidget {
             // '쇼호스트' 역할일 때만 글쓰기 버튼 표시
             floatingActionButton: authProvider.role == 'showhost'
                 ? CommonFloatingActionButton(
-                    onPressed: () => GoRouter.of(context).go('/news-form'),
+                    onPressed: () => GoRouter.of(context).go('/news/form'),
                   )
                 : null,
           );
