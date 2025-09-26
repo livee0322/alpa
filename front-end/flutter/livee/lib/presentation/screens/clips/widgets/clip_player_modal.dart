@@ -23,17 +23,12 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
     // 클립의 플랫폼(provider)에 따라 적절한 컨트롤러를 초기화
     switch (widget.clip.provider) {
       case 'youtube':
-        // 유튜브 URL에서 영상 ID를 추출합니다.
-        final videoId = YoutubePlayerController.convertUrlToId(widget.clip.url);
-        if (videoId != null) {
-          _youtubeController = YoutubePlayerController.fromVideoId(
-            videoId: videoId,
-            autoPlay: true,
-            params: const YoutubePlayerParams(showFullscreenButton: true),
-          );
-        }
-        break;
       case 'instagram':
+        // 인스타그램의 경우, URL 끝에 /embed 를 추가하여 임베드 전용 주소를 사용
+        _webViewController = WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..loadRequest(Uri.parse('${widget.clip.url}/embed'));
+        break;
       case 'tiktok':
         // 인스타그램, 틱톡은 웹뷰로 재생
         _webViewController = WebViewController()
@@ -63,12 +58,7 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
             body: Stack(
               children: [
                 // --- 1. 비디오 플레이어 영역 ---
-                if (_youtubeController != null)
-                  Center(child: YoutubePlayer(controller: _youtubeController!))
-                else if (_webViewController != null)
-                  WebViewWidget(controller: _webViewController!)
-                else
-                  _buildErrorView(), // 지원하지 않는 URL 처리
+                _buildPlayer(),
 
                 // --- 2. 상단 정보 (제목 등) ---
                 _buildHeader(),
@@ -88,6 +78,19 @@ class _ClipPlayerModalState extends State<ClipPlayerModal> {
         ),
       ),
     );
+  }
+
+  /// [수정] 플레이어 위젯을 반환하는 헬퍼 메소드
+  Widget _buildPlayer() {
+    // 이제 모든 케이스가 _webViewController를 사용하므로 로직을 단순화합니다.
+    if (_webViewController != null) {
+      return WebViewWidget(controller: _webViewController!);
+    }
+    // 혹시 모를 예외 상황에 대비하여 YoutubePlayer 로직은 남겨둡니다.
+    if (_youtubeController != null) {
+      return Center(child: YoutubePlayer(controller: _youtubeController!));
+    }
+    return _buildErrorView();
   }
 
   /// 영상 재생 실패 시 보여줄 화면
