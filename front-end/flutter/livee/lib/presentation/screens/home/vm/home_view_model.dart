@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
+import 'package:livee/domain/models/clip.dart';
 import 'package:livee/domain/models/model.dart';
 import 'package:livee/domain/models/news.dart';
 import 'package:livee/domain/models/paginated_response.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/domain/usecases/clip_use_case.dart';
 import 'package:livee/domain/usecases/model_use_case.dart';
 import 'package:livee/domain/usecases/news_use_case.dart';
 import 'package:livee/service_locator.dart';
@@ -18,6 +20,7 @@ class HomeViewModel with ChangeNotifier {
       locator<PortfolioRepository>();
   final ModelUseCase _modelUseCase = locator<ModelUseCase>();
   final NewsUseCase _newsUseCase = locator<NewsUseCase>();
+  final ClipUseCase _clipUseCase = locator<ClipUseCase>();
 
   // 상태 변수
   bool _isLoading = true;
@@ -26,6 +29,7 @@ class HomeViewModel with ChangeNotifier {
   List<Portfolio> _featuredShowhosts = [];
   List<Model> _conceptModels = [];
   List<News> _news = [];
+  List<Clip> _hotClips = [];
   String? _errorMessage;
 
   // Getter
@@ -35,6 +39,7 @@ class HomeViewModel with ChangeNotifier {
   List<Portfolio> get featuredShowhosts => _featuredShowhosts;
   List<Model> get conceptModels => _conceptModels;
   List<News> get news => _news;
+  List<Clip> get hotClips => _hotClips;
   String? get errorMessage => _errorMessage;
 
   // 생성자
@@ -55,6 +60,7 @@ class HomeViewModel with ChangeNotifier {
         _portfolioRepository.getPublicPortfolios(limit: 2),
         _modelUseCase.getAllModels(limit: 5),
         _newsUseCase.getNewsList(limit: 2),
+        _clipUseCase.getClips(),
         // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
       ]);
 
@@ -63,6 +69,7 @@ class HomeViewModel with ChangeNotifier {
       _featuredShowhosts = results[2] as List<Portfolio>;
       _conceptModels = (results[3] as PaginatedResponse<Model>).items;
       _news = (results[4] as PaginatedResponse<News>).items;
+      _hotClips = (results[5] as List<Clip>).take(3).toList();
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();

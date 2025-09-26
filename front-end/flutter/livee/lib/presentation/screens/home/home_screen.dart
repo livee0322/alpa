@@ -123,7 +123,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/clips'),
-                child: const HotClipSection(),
+                child: HotClipSection(clips: viewModel.hotClips),
               ),
 
               // '무료 상담' 섹션 (별도 디자인이므로 SectionContainer 미적용)
