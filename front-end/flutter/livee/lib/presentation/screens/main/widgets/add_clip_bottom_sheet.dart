@@ -26,8 +26,7 @@ class AddClipBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<ShortClipsViewModel>();
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         padding: const EdgeInsets.all(24.0),
         decoration: const BoxDecoration(
@@ -56,19 +55,24 @@ class AddClipBottomSheet extends StatelessWidget {
             PrimaryActionButton(
               text: '저장',
               isLoading: viewModel.isSaving,
-              onPressed: () async {
-                final success = await viewModel.submitClip();
-                if (context.mounted) {
-                  if (success) {
-                    Navigator.pop(context, true); // 성공 시 true 반환
-                    showCustomToast(context, '숏클립이 추가되었습니다.',
-                        type: ToastType.success);
-                  } else {
-                    showCustomToast(context, '저장에 실패했습니다. URL을 확인해주세요.',
-                        type: ToastType.error);
-                  }
-                }
-              },
+              // [수정] 버튼 활성화 조건을 ViewModel의 isSubmitButtonEnabled 상태와 연결합니다.
+              // 로딩 중일 때도 비활성화 처리합니다.
+              onPressed: viewModel.isSubmitButtonEnabled && !viewModel.isSaving
+                  ? () async {
+                      // [수정] submitClip 메소드의 반환값(에러 메시지 또는 null)을 확인합니다.
+                      final errorMessage = await viewModel.submitClip();
+                      if (context.mounted) {
+                        if (errorMessage == null) {
+                          // 성공(null) 시: 성공 토스트와 함께 창을 닫습니다.
+                          Navigator.pop(context, true);
+                          showCustomToast(context, '숏클립이 추가되었습니다.', type: ToastType.success);
+                        } else {
+                          // 실패(에러 메시지) 시: 받은 메시지로 에러 토스트를 표시합니다.
+                          showCustomToast(context, errorMessage, type: ToastType.error);
+                        }
+                      }
+                    }
+                  : null, // 조건이 맞지 않으면 버튼을 비활성화합니다.
             ),
           ],
         ),
@@ -81,8 +85,7 @@ class AddClipBottomSheet extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('+ 숏클립 추가',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('+ 숏클립 추가', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -97,8 +100,7 @@ class AddClipBottomSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: CustomTextFormField(
-              controller: viewModel.titleController, label: '제목 (선택)'),
+          child: CustomTextFormField(controller: viewModel.titleController, label: '제목 (선택)'),
         ),
         const SizedBox(width: 8),
         Padding(
