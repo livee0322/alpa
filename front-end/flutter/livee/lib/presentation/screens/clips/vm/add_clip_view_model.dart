@@ -11,8 +11,7 @@ class AddClipViewModel with ChangeNotifier {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
 
-  bool _isScraping = false;
-  bool get isScraping => _isScraping;
+  String? _thumbnailUrl;
 
   bool _isSaving = false;
   bool get isSaving => _isSaving;
@@ -45,22 +44,6 @@ class AddClipViewModel with ChangeNotifier {
 
   // --- 메소드: 숏클립 추가 ---
 
-  /// URL을 스크래핑하여 영상 제목을 자동으로 채우기
-  Future<void> scrapeUrl() async {
-    if (urlController.text.trim().isEmpty) return;
-    _isScraping = true;
-    notifyListeners();
-    try {
-      final videoInfo = await _clipUseCase.scrapeVideoInfo(urlController.text);
-      titleController.text = videoInfo['title'] ?? '';
-    } catch (e) {
-      debugPrint('Scraping failed: $e');
-    } finally {
-      _isScraping = false;
-      notifyListeners();
-    }
-  }
-
   /// 입력된 정보로 숏클립을 생성
   Future<String?> submitClip() async {
     final url = urlController.text.trim();
@@ -73,14 +56,32 @@ class AddClipViewModel with ChangeNotifier {
     _isSaving = true;
     notifyListeners();
     try {
+      // [추가] 1. 저장 직전에 스크래핑 로직을 실행하여 제목과 썸네일 URL을 가져옵니다.
+      final videoInfo = await _clipUseCase.scrapeVideoInfo(url);
+
+      final scrapedTitle = videoInfo['title'] ?? '';
+      final scrapedThumbnailUrl = videoInfo['image'];
+
+      // [추가] 2. 사용자가 제목을 직접 입력하지 않은 경우에만 스크래핑된 제목으로 덮어씁니다.
+      if (titleController.text.isEmpty) {
+        titleController.text = scrapedTitle;
+      }
+
+      // [추가] 3. 썸네일 URL을 업데이트합니다.
+      _thumbnailUrl = scrapedThumbnailUrl;
+
+      // [수정] 4. 스크래핑된 정보를 포함하여 클립 생성을 요청합니다.
       await _clipUseCase.createClip(
         url: url,
         title: titleController.text,
         description: descriptionController.text,
+        thumbnailUrl: _thumbnailUrl,
       );
+
       urlController.clear();
       titleController.clear();
       descriptionController.clear();
+      _thumbnailUrl = null; // 초기화
       return null;
     } catch (e) {
       debugPrint('Clip creation failed: $e');

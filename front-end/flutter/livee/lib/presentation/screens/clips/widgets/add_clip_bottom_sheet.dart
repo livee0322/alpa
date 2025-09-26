@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/clips/vm/add_clip_view_model.dart';
-import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
@@ -48,7 +47,11 @@ class AddClipBottomSheet extends StatelessWidget {
                 hintText: 'YouTube / Instagram / TikTok 링크를 붙여넣기',
               ),
               const SizedBox(height: 16),
-              _buildTitleField(viewModel),
+              CustomTextFormField(
+                controller: viewModel.titleController,
+                label: '제목 (선택)',
+                hintText: '입력하지 않으면 자동 스크래핑됩니다.',
+              ),
               const SizedBox(height: 16),
               CustomTextFormField(
                 controller: viewModel.descriptionController,
@@ -93,30 +96,6 @@ class AddClipBottomSheet extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
-        ),
-      ],
-    );
-  }
-
-  // 제목 입력 필드와 정보 가져오기 버튼 UI
-  Widget _buildTitleField(AddClipViewModel viewModel) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: CustomTextFormField(controller: viewModel.titleController, label: '제목 (선택)'),
-        ),
-        const SizedBox(width: 8),
-        Padding(
-          padding: const EdgeInsets.only(top: 28.0), // 라벨 높이에 맞춰 패딩 추가
-          child: OutlinedButton.icon(
-            icon: Icon(Icons.public, size: 18),
-            label: const Text('정보 가져오기'),
-            onPressed: viewModel.isScraping ? null : viewModel.scrapeUrl,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            ),
-          ),
         ),
       ],
     );

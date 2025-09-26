@@ -12,10 +12,8 @@ class ClipUseCase {
   }
 
   // 숏클립을 생성
-  Future<Clip> createClip(
-      {required String url, String? title, String? description}) {
-    return _repository.createClip(
-        url: url, title: title, description: description);
+  Future<Clip> createClip({required String url, String? title, String? description, String? thumbnailUrl}) {
+    return _repository.createClip(url: url, title: title, description: description, thumbnailUrl: thumbnailUrl);
   }
 
   // 숏클립을 삭제

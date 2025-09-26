@@ -19,14 +19,14 @@ class ClipRepository {
   }
 
   // 숏클립 생성 API를 호출 (POST /clips)
-  Future<Clip> createClip(
-      {required String url, String? title, String? description}) async {
+  Future<Clip> createClip({required String url, String? title, String? description, String? thumbnailUrl}) async {
     final response = await _apiClient.post(
       '/clips',
       body: {
         'url': url,
         'title': title,
         'description': description,
+        'thumbnailUrl': thumbnailUrl,
       },
     );
 
@@ -48,8 +48,7 @@ class ClipRepository {
 
   // URL 스크래핑 API를 호출하여 영상 정보를 가져오기 (GET /scrape)
   Future<Map<String, dynamic>> scrapeVideoInfo(String videoUrl) async {
-    final response =
-        await _apiClient.get('/scrape?url=${Uri.encodeComponent(videoUrl)}');
+    final response = await _apiClient.get('/scrape?url=${Uri.encodeComponent(videoUrl)}');
     if (response.statusCode == 200) {
       final json = jsonDecode(utf8.decode(response.bodyBytes));
       return json['data'] as Map<String, dynamic>;
