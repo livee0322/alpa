@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                   purpleText: '뉴스',
                 ),
                 onMorePressed: () => GoRouter.of(context).go('/news'),
-                child: const NewsSection(),
+                child: NewsSection(news: viewModel.news),
               ),
 
               // "이런 쇼호스트는 어떠세요?" 섹션

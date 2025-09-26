@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/models/model.dart';
+import 'package:livee/domain/models/news.dart';
 import 'package:livee/domain/models/paginated_response.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/domain/usecases/model_use_case.dart';
+import 'package:livee/domain/usecases/news_use_case.dart';
 import 'package:livee/service_locator.dart';
 
 /// 홈 화면의 상태와 비즈니스 로직을 관리하는 ViewModel
 class HomeViewModel with ChangeNotifier {
   // 의존성 주입
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
-  final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
+  final PortfolioRepository _portfolioRepository =
+      locator<PortfolioRepository>();
   final ModelUseCase _modelUseCase = locator<ModelUseCase>();
+  final NewsUseCase _newsUseCase = locator<NewsUseCase>();
 
   // 상태 변수
   bool _isLoading = true;
@@ -21,6 +25,7 @@ class HomeViewModel with ChangeNotifier {
   List<Campaign> _recruits = [];
   List<Portfolio> _featuredShowhosts = [];
   List<Model> _conceptModels = [];
+  List<News> _news = [];
   String? _errorMessage;
 
   // Getter
@@ -29,6 +34,7 @@ class HomeViewModel with ChangeNotifier {
   List<Campaign> get recruits => _recruits;
   List<Portfolio> get featuredShowhosts => _featuredShowhosts;
   List<Model> get conceptModels => _conceptModels;
+  List<News> get news => _news;
   String? get errorMessage => _errorMessage;
 
   // 생성자
@@ -48,6 +54,7 @@ class HomeViewModel with ChangeNotifier {
         _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
         _portfolioRepository.getPublicPortfolios(limit: 2),
         _modelUseCase.getAllModels(limit: 5),
+        _newsUseCase.getNewsList(limit: 2),
         // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
       ]);
 
@@ -55,6 +62,7 @@ class HomeViewModel with ChangeNotifier {
       _recruits = (results[1] as PaginatedResponse<Campaign>).items;
       _featuredShowhosts = results[2] as List<Portfolio>;
       _conceptModels = (results[3] as PaginatedResponse<Model>).items;
+      _news = (results[4] as PaginatedResponse<News>).items;
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();

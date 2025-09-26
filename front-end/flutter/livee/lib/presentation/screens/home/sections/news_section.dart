@@ -1,44 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:livee/domain/models/news.dart';
+import 'package:livee/presentation/utils/utility.dart';
 import 'package:livee/presentation/widgets/divided_list_view.dart';
-
-// 뉴스 기사 데이터를 담기 위한 임시 내부 클래스
-class _NewsArticle {
-  final String title;
-  final String description;
-  final String publishedAt;
-  _NewsArticle(
-      {required this.title,
-      required this.description,
-      required this.publishedAt});
-}
 
 // 메인 화면의 '라이비 뉴스' 섹션 UI
 class NewsSection extends StatelessWidget {
-  const NewsSection({super.key});
+  final List<News> news;
+  const NewsSection({
+    super.key,
+    required this.news,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // API 대신 사용할 임시 데이터
-    final dummyArticles = [
-      _NewsArticle(
-        title: '[테스트] LT텔레콤 쇼핑라이브 최예나, 누적 3천·동시 50만',
-        description: '장단점 ‘있는 그대로’ 전달…“7년 차 베테랑 진행 감탄”',
-        publishedAt: '2025-09-07',
-      ),
-      _NewsArticle(
-        title: '라이브 커머스, 이제 AI가 진행한다…업계 패러다임 변화 예고',
-        description: '가상 쇼호스트를 활용한 24시간 방송 시대 열리나',
-        publishedAt: '2025-09-06',
-      ),
-    ];
-
+    // [추가] 전달받은 뉴스 데이터가 비어있을 경우 안내 문구를 표시합니다.
+    if (news.isEmpty) {
+      return const Center(child: Text('등록된 뉴스가 없습니다.'));
+    }
     // DividedListView와 DividedListItem을 사용하여 UI를 구성
     return DividedListView(
-      children: dummyArticles.map((article) {
+      children: news.map((article) {
+        // 날짜 데이터를 'O일 전'과 같은 상대 시간으로 변환합니다.
+        final relativeTime = Utility.formatRelativeTime(article.createdAt);
         return DividedListItem(
-          onTap: () {
-            // TODO: 외부 링크로 이동하는 기능 구현
-          },
+          onTap: () => GoRouter.of(context).go('/news/${article.id}'),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -53,7 +39,7 @@ class NewsSection extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${article.publishedAt} · ${article.description}',
+                '$relativeTime · ${article.content}',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
