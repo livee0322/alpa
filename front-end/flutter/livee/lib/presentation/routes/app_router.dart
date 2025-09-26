@@ -7,6 +7,8 @@ import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
 import 'package:livee/presentation/screens/model/model_detail_screen.dart';
 import 'package:livee/presentation/screens/model/model_edit_screen.dart';
 import 'package:livee/presentation/screens/model/model_screen.dart';
+import 'package:livee/presentation/screens/news/news_detail_screen.dart';
+import 'package:livee/presentation/screens/news/news_form_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
@@ -81,6 +83,19 @@ GoRouter createRouter(AuthProvider authProvider) {
               GoRoute(
                 path: '/news',
                 builder: (context, state) => const NewsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'form',
+                    builder: (context, state) => NewsFormScreen(newsId: state.extra as String?),
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) {
+                      final newsId = state.pathParameters['id']!;
+                      return NewsDetailScreen(newsId: newsId);
+                    },
+                  ),
+                ],
               ),
               GoRoute(
                 path: '/event',
@@ -134,8 +149,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/campaign-form',
-            builder: (context, state) =>
-                CampaignFormScreen(campaignId: state.extra as String?),
+            builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
           ),
           GoRoute(
             path: '/campaign/:campaignId',
@@ -162,8 +176,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/portfolio-edit',
-            builder: (context, state) =>
-                PortfolioEditScreen(portfolioId: state.extra as String?),
+            builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
           ),
           GoRoute(
             path: '/models',
