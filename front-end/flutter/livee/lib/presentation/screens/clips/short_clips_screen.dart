@@ -4,6 +4,7 @@ import 'package:livee/domain/models/clip.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/clips/vm/short_clips_view_model.dart';
 import 'package:livee/presentation/screens/clips/widgets/add_clip_bottom_sheet.dart';
+import 'package:livee/presentation/screens/clips/widgets/clip_player_modal.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
@@ -96,9 +97,10 @@ class ShortClipsScreen extends StatelessWidget {
     return StandardContentCard(
       padding: EdgeInsets.zero, // 이미지가 카드에 꽉 차도록 패딩을 제거합니다.
       margin: EdgeInsets.zero, // GridView가 간격을 관리하므로 마진을 제거합니다.
-      onTap: () {
-        // TODO: 숏클립 상세 보기 또는 재생 기능 구현
-      },
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => ClipPlayerModal(clip: clip),
+      ),
       child: ClipRRect(
         // StandardContentCard의 둥근 모서리(14)에 맞춰 이미지를 잘라줍니다.
         borderRadius: BorderRadius.circular(14.0),
