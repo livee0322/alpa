@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/models/portfolio.dart';
+import 'package:livee/domain/usecases/proposal_use_case.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/service_locator.dart';
 
 /// '제안 보내기' 바텀시트의 상태와 비즈니스 로직을 관리
 class ProposalViewModel with ChangeNotifier {
+  // UseCase 인스턴스를 주입
+  final ProposalUseCase _proposalUseCase = locator<ProposalUseCase>();
+
   /// 제안을 받을 대상의 포트폴리오 정보
   final Portfolio portfolio;
 
+  // API 호출 시 context가 필요하므로 생성자에서 받기
+  final BuildContext context;
+
   /// 생성자: 제안 대상의 정보를 필수로 받기
-  ProposalViewModel({required this.portfolio});
+  ProposalViewModel({
+    required this.portfolio,
+    required this.context,
+  });
 
   // --- 상태 변수 ---
 
@@ -96,13 +110,19 @@ class ProposalViewModel with ChangeNotifier {
         'content': contentController.text,
       };
 
-      // 3. TODO: 4단계에서 UseCase를 통해 서버 API를 호출
-      print('서버로 전송될 데이터: $proposalData');
-      await Future.delayed(const Duration(seconds: 1)); // 임시 비동기 처리
+      // UseCase를 통해 실제 서버 API를 호출
+      await _proposalUseCase.createProposal(proposalData);
 
-      // 4. 성공 처리 (예: 바텀시트 닫기, 성공 토스트 메시지)
+      // 성공 시 바텀시트를 닫고 성공 토스트 메시지를 표시
+      if (context.mounted) {
+        context.pop(); // 바텀시트 닫기
+        showCustomToast(context, '성공적으로 제안을 보냈습니다.', type: ToastType.success);
+      }
     } catch (e) {
-      // 5. 실패 처리 (예: 에러 토스트 메시지)
+      // 실패 시 에러 메시지를 파싱하여 토스트로 보여주기
+      if (context.mounted) {
+        showCustomToast(context, parseApiError(e), type: ToastType.error);
+      }
     } finally {
       _setLoading(false);
     }

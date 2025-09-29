@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
+import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/proposal/proposal_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 
 // '이런 쇼호스트는 어떠세요?' 섹션
@@ -30,6 +32,9 @@ class FeaturedShowhostListSection extends StatelessWidget {
 
   // 개별 모델 정보를 표시하는 카드 위젯
   Widget _buildModelCard(BuildContext context, Portfolio model) {
+    // AuthProvider를 사용하여 현재 사용자 정보를 가져오기
+    final authProvider = context.watch<AuthProvider>();
+
     return StandardContentCard(
       padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
       child: Column(
@@ -66,25 +71,26 @@ class FeaturedShowhostListSection extends StatelessWidget {
           // 3. '제안', '프로필 보기' 버튼
           Row(
             children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  icon: const Icon(RemixIcons.send_plane_line, size: 16),
-                  label: const Text(
-                    '제안',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+              if (authProvider.role == 'brand')
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(RemixIcons.send_plane_line, size: 16),
+                    label: const Text(
+                      '제안',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () => showProposalBottomSheet(context, portfolio: model),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonDark,
+                      foregroundColor: AppColors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
-                  onPressed: () => showProposalBottomSheet(context, portfolio: model),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonDark,
-                    foregroundColor: AppColors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
+              if (authProvider.role == 'brand') const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(RemixIcons.user_line, size: 16),

@@ -15,7 +15,7 @@ void showProposalBottomSheet(BuildContext context, {required Portfolio portfolio
     isScrollControlled: true, // 키보드가 올라와도 UI가 가려지지 않도록 설정
     backgroundColor: Colors.transparent,
     builder: (_) => ChangeNotifierProvider(
-      create: (_) => ProposalViewModel(portfolio: portfolio),
+      create: (_) => ProposalViewModel(portfolio: portfolio, context: context),
       child: const ProposalBottomSheet(), // portfolio를 직접 전달하지 않음
     ),
   );
