@@ -17,6 +17,15 @@ class SentProposalsViewModel with ChangeNotifier {
   int _currentPage = 1;
   int _totalPages = 1;
 
+  // 필터의 key와 UI에 표시될 이름을 매핑하는 Map을 추가
+  final Map<String, String> filterOptions = {
+    'all': '전체',
+    'pending': '대기',
+    'accepted': '수락',
+    'rejected': '거절',
+    'withdrawn': '철회'
+  };
+
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
   List<Proposal> get proposals => _proposals;
@@ -57,9 +66,10 @@ class SentProposalsViewModel with ChangeNotifier {
     }
   }
 
-  void setFilter(String filter) {
-    if (_currentFilter != filter) {
-      _currentFilter = filter;
+  void setFilter(String filterKey) {
+    // Map에 키가 존재하는지 확인하는 방어 코드 추가
+    if (_currentFilter != filterKey && filterOptions.containsKey(filterKey)) {
+      _currentFilter = filterKey;
       _fetchProposals();
     }
   }
