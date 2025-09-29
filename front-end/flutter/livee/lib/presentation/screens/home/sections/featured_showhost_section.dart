@@ -3,6 +3,7 @@ import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/proposal/proposal_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
@@ -71,26 +72,31 @@ class FeaturedShowhostListSection extends StatelessWidget {
           // 3. '제안', '프로필 보기' 버튼
           Row(
             children: [
-              if (authProvider.role == 'brand')
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(RemixIcons.send_plane_line, size: 16),
-                    label: const Text(
-                      '제안',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () => showProposalBottomSheet(context, portfolio: model),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonDark,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(RemixIcons.send_plane_line, size: 16),
+                  label: const Text(
+                    '제안',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  onPressed: () => authProvider.role == 'brand'
+                      ? showProposalBottomSheet(context, portfolio: model)
+                      : showCustomToast(
+                          context,
+                          '브랜드 회원만 제안하기가 가능합니다.',
+                          type: ToastType.info,
+                        ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.buttonDark,
+                    foregroundColor: AppColors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                 ),
-              if (authProvider.role == 'brand') const SizedBox(width: 8),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(RemixIcons.user_line, size: 16),
