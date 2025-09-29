@@ -37,8 +37,8 @@ class BrandSection extends StatelessWidget {
         ),
         MyPageMenuItem(
           icon: CupertinoIcons.paperplane,
-          title: '제안하기',
-          subtitle: '쇼호스트에게 직접 제안',
+          title: '보낸 제안',
+          subtitle: '쇼호스트에게 보낸 제안 목록',
           onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
         ),
       ],
