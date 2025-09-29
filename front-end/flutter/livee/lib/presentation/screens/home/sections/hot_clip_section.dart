@@ -24,7 +24,7 @@ class HotClipSection extends StatelessWidget {
       );
     }
     return SizedBox(
-      height: 300,
+      height: 330,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         // itemCount를 전달받은 clips 리스트의 길이로 설정
