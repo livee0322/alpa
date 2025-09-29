@@ -66,11 +66,13 @@ class RecruitSection extends StatelessWidget {
           children: [
             // 공고 썸네일 이미지
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(14)),
               child: AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Image.network(
-                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/recruit${campaign.id}/400/225',
+                  campaign.coverImageUrl ??
+                      'https://picsum.photos/seed/recruit${campaign.id}/400/225',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[200],
@@ -97,7 +99,8 @@ class RecruitSection extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       campaign.title ?? '공고 제목',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.normal),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -116,8 +119,8 @@ class RecruitSection extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         icon: const Icon(RemixIcons.send_plane_line, size: 18),
-                        label: const Text(
-                          '지원하기',
+                        label: Text(
+                          authProvider.recruitButtonText,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -127,7 +130,8 @@ class RecruitSection extends StatelessWidget {
                             final confirm = await showCommonPromptDialog(
                               context: context,
                               title: '로그인이 필요합니다',
-                              content: '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
+                              content:
+                                  '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
                               confirmText: '로그인',
                             );
                             if (confirm == true && context.mounted) {
@@ -138,17 +142,21 @@ class RecruitSection extends StatelessWidget {
                           switch (authProvider.role) {
                             case 'showhost':
                               if (campaign.isApplied == true) {
-                                showCustomToast(context, '이미 지원한 공고입니다.', type: ToastType.info);
+                                showCustomToast(context, '이미 지원한 공고입니다.',
+                                    type: ToastType.info);
                               } else {
-                                final result = await showApplyBottomSheet(context, campaign);
+                                final result = await showApplyBottomSheet(
+                                    context, campaign);
                                 if (result == true) mainViewModel.loadData();
                               }
                               break;
                             case 'brand':
-                              GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
+                              GoRouter.of(context)
+                                  .go('/campaign/${campaign.id}/applicants');
                               break;
                             default:
-                              final result = await showApplyBottomSheet(context, campaign);
+                              final result =
+                                  await showApplyBottomSheet(context, campaign);
                               if (result == true) mainViewModel.loadData();
                               break;
                           }
@@ -156,7 +164,8 @@ class RecruitSection extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1F2937),
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                       ),
