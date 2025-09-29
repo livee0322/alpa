@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
+import 'package:livee/presentation/screens/proposal/proposal_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:remixicon/remixicon.dart';
@@ -74,9 +75,7 @@ class FeaturedShowhostListSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onPressed: () {
-                    // TODO: 제안하기 기능 구현
-                  },
+                  onPressed: () => showProposalBottomSheet(context, portfolio: model),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonDark,
                     foregroundColor: AppColors.white,
