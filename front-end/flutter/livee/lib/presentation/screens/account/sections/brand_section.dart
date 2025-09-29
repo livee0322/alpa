@@ -39,7 +39,7 @@ class BrandSection extends StatelessWidget {
           icon: CupertinoIcons.paperplane,
           title: '보낸 제안',
           subtitle: '쇼호스트에게 보낸 제안 목록',
-          onTap: () => showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info),
+           onTap: () => GoRouter.of(context).go('/sent-proposals'),
         ),
       ],
     );

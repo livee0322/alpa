@@ -11,6 +11,7 @@ import 'package:livee/presentation/screens/news/news_detail_screen.dart';
 import 'package:livee/presentation/screens/news/news_form_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
+import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.dart';
@@ -86,7 +87,8 @@ GoRouter createRouter(AuthProvider authProvider) {
                 routes: [
                   GoRoute(
                     path: 'form',
-                    builder: (context, state) => NewsFormScreen(newsId: state.extra as String?),
+                    builder: (context, state) =>
+                        NewsFormScreen(newsId: state.extra as String?),
                   ),
                   GoRoute(
                     path: ':id',
@@ -149,7 +151,8 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/campaign-form',
-            builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+            builder: (context, state) =>
+                CampaignFormScreen(campaignId: state.extra as String?),
           ),
           GoRoute(
             path: '/campaign/:campaignId',
@@ -176,7 +179,8 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/portfolio-edit',
-            builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
+            builder: (context, state) =>
+                PortfolioEditScreen(portfolioId: state.extra as String?),
           ),
           GoRoute(
             path: '/models',
@@ -214,6 +218,10 @@ GoRouter createRouter(AuthProvider authProvider) {
           GoRoute(
             path: '/my-applications',
             builder: (context, state) => const MyApplicationsScreen(),
+          ),
+          GoRoute(
+            path: '/sent-proposals',
+            builder: (context, state) => const SentProposalsScreen(),
           ),
           GoRoute(
             path: '/casting-request',
