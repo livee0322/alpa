@@ -87,8 +87,7 @@ GoRouter createRouter(AuthProvider authProvider) {
                 routes: [
                   GoRoute(
                     path: 'form',
-                    builder: (context, state) =>
-                        NewsFormScreen(newsId: state.extra as String?),
+                    builder: (context, state) => NewsFormScreen(newsId: state.extra as String?),
                   ),
                   GoRoute(
                     path: ':id',
@@ -128,6 +127,10 @@ GoRouter createRouter(AuthProvider authProvider) {
                   ),
                 ],
               ),
+              GoRoute(
+                path: '/mypage',
+                builder: (context, state) => const MypageScreen(),
+              ),
 // ...
             ],
           ),
@@ -140,10 +143,7 @@ GoRouter createRouter(AuthProvider authProvider) {
             path: '/signup',
             builder: (context, state) => const SignupScreen(),
           ),
-          GoRoute(
-            path: '/mypage',
-            builder: (context, state) => const MypageScreen(),
-          ),
+
           // 상세 페이지들도 모두 RootShellRoute의 자식으로 두기
           GoRoute(
             path: '/campaigns',
@@ -151,8 +151,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/campaign-form',
-            builder: (context, state) =>
-                CampaignFormScreen(campaignId: state.extra as String?),
+            builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
           ),
           GoRoute(
             path: '/campaign/:campaignId',
@@ -179,8 +178,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/portfolio-edit',
-            builder: (context, state) =>
-                PortfolioEditScreen(portfolioId: state.extra as String?),
+            builder: (context, state) => PortfolioEditScreen(portfolioId: state.extra as String?),
           ),
           GoRoute(
             path: '/models',
