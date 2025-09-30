@@ -3,10 +3,11 @@ import 'package:livee/domain/models/proposal.dart';
 import 'package:livee/domain/usecases/proposal_use_case.dart';
 import 'package:livee/service_locator.dart';
 
-class SentProposalsViewModel with ChangeNotifier {
+// '보낸 제안' ViewModel과 거의 동일한 구조
+class ReceivedProposalsViewModel with ChangeNotifier {
   final ProposalUseCase _useCase = locator<ProposalUseCase>();
 
-  SentProposalsViewModel() {
+  ReceivedProposalsViewModel() {
     _fetchProposals();
   }
 
@@ -43,9 +44,8 @@ class SentProposalsViewModel with ChangeNotifier {
       _currentPage = 1;
     }
     notifyListeners();
-
     try {
-      final response = await _useCase.getSentProposals(
+      final response = await _useCase.getReceivedProposals(
         status: _currentFilter,
         page: _currentPage,
       );

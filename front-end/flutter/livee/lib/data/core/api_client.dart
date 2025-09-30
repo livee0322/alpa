@@ -39,6 +39,12 @@ class ApiClient {
     return http.put(uri, headers: headers, body: jsonEncode(body));
   }
 
+  Future<http.Response> patch(String path, {Map<String, dynamic>? body}) async {
+    final uri = Uri.parse('$_apiBase$path');
+    final headers = await _getAuthHeaders();
+    return http.patch(uri, headers: headers, body: jsonEncode(body));
+  }
+
   Future<http.Response> delete(String path) async {
     final uri = Uri.parse('$_apiBase$path');
     final headers = await _getAuthHeaders();

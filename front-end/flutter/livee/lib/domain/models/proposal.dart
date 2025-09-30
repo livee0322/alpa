@@ -1,7 +1,8 @@
 /// '제안' 정보의 구조를 정의하는 데이터 모델
 class Proposal {
   final String id;
-  final Recipient recipient;
+  final Recipient? recipient;
+  final Sender? sender;
   final String? content;
   final String status;
   final DateTime sentAt;
@@ -12,7 +13,8 @@ class Proposal {
 
   Proposal({
     required this.id,
-    required this.recipient,
+    this.recipient,
+    this.sender,
     this.content,
     required this.status,
     required this.sentAt,
@@ -26,7 +28,8 @@ class Proposal {
     final replyDeadlineString = json['replyDeadline'] as String?;
     return Proposal(
       id: json['id'] as String,
-      recipient: Recipient.fromJson(json['recipient']),
+      recipient: json['recipient'] != null ? Recipient.fromJson(json['recipient']) : null,
+      sender: json['sender'] != null ? Sender.fromJson(json['sender']) : null,
       content: json['content'] as String?,
       status: json['status'] as String,
       sentAt: DateTime.parse(json['sentAt'] as String),
@@ -49,6 +52,19 @@ class Recipient {
     return Recipient(
       name: json['name'] as String,
       portfolioId: json['portfolioId'] as String,
+    );
+  }
+}
+
+// 제안 보낸 사람(브랜드)의 정보를 담는 보조 모델
+class Sender {
+  final String brandName;
+
+  Sender({required this.brandName});
+
+  factory Sender.fromJson(Map<String, dynamic> json) {
+    return Sender(
+      brandName: json['brandName'] as String,
     );
   }
 }

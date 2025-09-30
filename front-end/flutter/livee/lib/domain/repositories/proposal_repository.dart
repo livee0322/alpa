@@ -30,14 +30,42 @@ class ProposalRepository {
       queryParams['status'] = status;
     }
 
-    final response = await _apiClient
-        .get('/proposals/sent?${Uri(queryParameters: queryParams).query}');
+    final response = await _apiClient.get('/proposals/sent?${Uri(queryParameters: queryParams).query}');
 
     if (response.statusCode == 200) {
       final json = jsonDecode(utf8.decode(response.bodyBytes));
-      return PaginatedResponse.fromJson(
-          json, (itemJson) => Proposal.fromJson(itemJson));
+      return PaginatedResponse.fromJson(json, (itemJson) => Proposal.fromJson(itemJson));
     } else {
+      throw Exception(utf8.decode(response.bodyBytes));
+    }
+  }
+
+// 받은 제안 목록 조회 (GET /proposals/received)
+  Future<PaginatedResponse<Proposal>> getReceivedProposals({
+    String? status,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    final Map<String, dynamic> queryParams = {
+      'page': page.toString(),
+      'limit': limit.toString(),
+    };
+    if (status != null && status != 'all') {
+      queryParams['status'] = status;
+    }
+    final response = await _apiClient.get('/proposals/received?${Uri(queryParameters: queryParams).query}');
+    if (response.statusCode == 200) {
+      final json = jsonDecode(utf8.decode(response.bodyBytes));
+      return PaginatedResponse.fromJson(json, (itemJson) => Proposal.fromJson(itemJson));
+    } else {
+      throw Exception(utf8.decode(response.bodyBytes));
+    }
+  }
+
+  // 제안 철회 (PATCH /proposals/:id/withdraw)
+  Future<void> withdrawProposal(String proposalId) async {
+    final response = await _apiClient.patch('/proposals/$proposalId/withdraw');
+    if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(utf8.decode(response.bodyBytes));
     }
   }

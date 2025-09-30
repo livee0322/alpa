@@ -20,4 +20,14 @@ class ProposalUseCase {
   }) {
     return _repository.getSentProposals(status: status, page: page);
   }
+
+  // 받은 제안 목록 조회 로직
+  Future<PaginatedResponse<Proposal>> getReceivedProposals({String? status, int page = 1}) {
+    return _repository.getReceivedProposals(status: status, page: page);
+  }
+
+  // 제안 철회 로직
+  Future<void> withdrawProposal(String proposalId) {
+    return _repository.withdrawProposal(proposalId);
+  }
 }

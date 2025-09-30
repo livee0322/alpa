@@ -11,6 +11,7 @@ import 'package:livee/presentation/screens/news/news_detail_screen.dart';
 import 'package:livee/presentation/screens/news/news_form_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_detail_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
+import 'package:livee/presentation/screens/proposal/received_proposals_screen.dart';
 import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
@@ -25,7 +26,6 @@ import 'package:livee/presentation/screens/recruit/my_applications_screen.dart';
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
 import 'package:livee/presentation/screens/news/news_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_edit_screen.dart';
-import 'package:livee/presentation/screens/recruit/received_offers_screen.dart';
 import 'package:livee/presentation/screens/recruit/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/service/service_screen.dart';
 import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
@@ -203,7 +203,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/received-offers',
-            builder: (context, state) => const ReceivedOffersScreen(),
+            builder: (context, state) => const ReceivedProposalsScreen(),
           ),
           GoRoute(
             path: '/account-edit',
