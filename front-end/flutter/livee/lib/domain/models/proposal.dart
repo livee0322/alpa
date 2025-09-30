@@ -23,6 +23,7 @@ class Proposal {
   });
 
   factory Proposal.fromJson(Map<String, dynamic> json) {
+    final replyDeadlineString = json['replyDeadline'] as String?;
     return Proposal(
       id: json['id'] as String,
       recipient: Recipient.fromJson(json['recipient']),
@@ -32,9 +33,7 @@ class Proposal {
       fee: json['fee'] as int?,
       isFeeNegotiable: json['isFeeNegotiable'] as bool,
       schedule: json['schedule'] as String?,
-      replyDeadline: json['replyDeadline'] != null
-          ? DateTime.parse(json['replyDeadline'] as String)
-          : null,
+      replyDeadline: replyDeadlineString != null ? DateTime.parse(replyDeadlineString.replaceAll('.', '-')) : null,
     );
   }
 }
