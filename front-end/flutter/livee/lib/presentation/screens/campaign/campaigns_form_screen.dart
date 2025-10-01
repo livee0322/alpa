@@ -125,14 +125,27 @@ class CampaignsFormScreen extends StatelessWidget {
                 // --- 미디어 및 링크 ---
                 _buildSectionTitle('미디어 및 링크'),
                 _buildImagePicker(
-                    label: '대표 이미지 (16:9)',
-                    controller: viewModel.coverImageUrlController,
-                    aspectRatio: 16 / 9),
+                  context: context,
+                  viewModel: viewModel,
+                  label: '대표 이미지 (16:9)',
+                  controller: viewModel.coverImageUrlController,
+                  imageBytes: viewModel.tempCoverImageBytes,
+                  imageType: ImageType.cover,
+                  aspectRatio: 16 / 9,
+                  hintText: '대표 이미지를 넣어주세요',
+                ),
                 const SizedBox(height: 16),
+
                 _buildImagePicker(
-                    label: '쇼핑라이브 세로 커버 (9:16)',
-                    controller: viewModel.liveVerticalCoverUrlController,
-                    aspectRatio: 9 / 16),
+                  context: context,
+                  viewModel: viewModel,
+                  label: '쇼핑라이브 세로 커버 (2:3)',
+                  controller: viewModel.liveVerticalCoverUrlController,
+                  imageBytes: viewModel.tempVerticalCoverImageBytes,
+                 imageType: ImageType.verticalCover,
+                  aspectRatio: 2 / 3,
+                  hintText: '이미지를 넣어주세요',
+                ),
                 const SizedBox(height: 16),
                 // [수정] hintText 추가
                 CustomTextFormField(
@@ -140,10 +153,18 @@ class CampaignsFormScreen extends StatelessWidget {
                     label: '쇼핑라이브 링크',
                     hintText: '예) www.naver.com/live/...'),
                 const SizedBox(height: 16),
+
                 _buildImagePicker(
-                    label: '상품 썸네일 (정사각형)',
-                    controller: viewModel.productThumbnailUrlController,
-                    aspectRatio: 1 / 1),
+                  context: context,
+                  viewModel: viewModel,
+                  label: '상품 썸네일 (정사각형)',
+                  controller: viewModel.productThumbnailUrlController,
+                  imageBytes: viewModel.tempProductThumbnailBytes,
+                  imageType: ImageType.productThumbnail,
+                  aspectRatio: 1 / 1,
+                  hintText: '이미지를 넣어주세요',
+                ),
+
                 const SizedBox(height: 16),
                 // [수정] hintText 추가
                 CustomTextFormField(
@@ -259,78 +280,76 @@ class CampaignsFormScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePicker(
-      {required String label,
-      required TextEditingController controller,
-      required double aspectRatio}) {
-    return Consumer<CampaignFormViewModel>(
-        builder: (context, viewModel, child) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 16)),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: AspectRatio(
-                        aspectRatio: aspectRatio,
-                        child: Container(
-                          width: 100, // 너비 고정
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.border),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: controller.text.isNotEmpty
-                              ? Image.network(controller.text,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (c, e, s) =>
-                                      const Icon(Icons.error))
-                              : const Center(child: Text('미리보기')),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        // [추가] 파일 선택 버튼과 설명 텍스트를 Column으로 묶습니다.
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          OutlinedButton(
-                            onPressed: () async {
-                              try {
-                                // controller를 직접 넘겨주어 어떤 이미지를 업데이트할지 알려줍니다.
-                                await viewModel.pickAndUploadImage(controller);
-                              } catch (e) {
-                                if (ScaffoldMessenger.of(context).mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text('이미지 업로드 실패: $e')));
-                                }
-                              }
-                            },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.textBlack,
-                              side: const BorderSide(color: AppColors.border),
-                            ),
-                            child: const Text('파일 선택'),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '이미지 선택 시 Cloudinary로 업로드됩니다.',
-                            style: TextStyle(
-                                fontSize: 12, color: AppColors.textGrey),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ));
+  Widget _buildImagePicker({
+    required BuildContext context,
+    required CampaignFormViewModel viewModel,
+    required String label,
+    required TextEditingController controller,
+    required Uint8List? imageBytes,
+    required ImageType imageType,
+    required double aspectRatio,
+    required String hintText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const SizedBox(height: 8),
+        // [수정] 이미지 미리보기 영역 전체를 InkWell로 감싸 클릭 가능하게 만듭니다.
+        InkWell(
+          // [수정] onTap에서 ViewModel의 pickImage를 호출하며 imageType을 전달
+          onTap: () async {
+            try {
+              await viewModel.pickImage(imageType);
+            } catch (e) {
+              if (ScaffoldMessenger.of(context).mounted) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('이미지 선택 실패: $e')));
+              }
+            }
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: AspectRatio(
+            aspectRatio: aspectRatio,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.white, // 회색 배경
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              // [수정] 이미지가 있을 때 모서리를 자르기 위해 ClipRRect를 추가합니다.
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(11), // 테두리 안쪽으로 살짝- 둥글게
+                child: _buildImagePreview(controller, imageBytes, hintText),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 이미지 미리보기 내부 UI를 결정하는 헬퍼 위젯
+  Widget _buildImagePreview(TextEditingController controller,
+      Uint8List? imageBytes, String hintText) {
+    // 1. 새로 선택한 임시 이미지가 있으면 보여줌
+    if (imageBytes != null) {
+      return Image.memory(imageBytes, fit: BoxFit.cover);
+    }
+    // 2. 기존에 업로드된 네트워크 이미지가 있으면 보여줌 (수정 모드)
+    if (controller.text.isNotEmpty) {
+      return Image.network(controller.text,
+          fit: BoxFit.cover,
+          errorBuilder: (c, e, s) => const Icon(Icons.error));
+    }
+    // 3. 아무 이미지도 없으면 힌트 텍스트를 보여줌
+    return Center(
+      child: Text(
+        hintText,
+        style: TextStyle(color: AppColors.textGrey),
+      ),
+    );
   }
 
   Widget _buildActionButtons(
