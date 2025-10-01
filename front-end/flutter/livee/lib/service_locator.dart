@@ -56,5 +56,4 @@ void setupLocator() {
   locator.registerFactory(() => AuthProvider());
   locator.registerFactory(() => RecruitListProvider());
   locator.registerFactory(() => ShowhostListProvider());
-  locator.registerFactory(() => CampaignFormViewModel());
 }

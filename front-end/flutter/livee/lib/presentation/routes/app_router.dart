@@ -3,6 +3,7 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_form_screen.dart';
+import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
 import 'package:livee/presentation/screens/model/model_detail_screen.dart';
@@ -33,6 +34,7 @@ import 'package:livee/presentation/screens/clips/short_clips_screen.dart';
 import 'package:livee/presentation/screens/auth/signup_screen.dart';
 import 'package:livee/presentation/screens/studio/studio_edit_screen.dart';
 import 'package:livee/presentation/screens/studio/studio_screen.dart';
+import 'package:provider/provider.dart';
 
 // GoRouter 인스턴스를 생성
 // AuthProvider를 인자로 받아서 refreshListenable에 연결
@@ -139,7 +141,14 @@ GoRouter createRouter(AuthProvider authProvider) {
               ),
               GoRoute(
                 path: '/campaign-form',
-                builder: (context, state) => CampaignsFormScreen(campaignId: state.extra as String?),
+                // [수정] builder에서 ChangeNotifierProvider를 사용하여 ViewModel을 생성하고 주입합니다.
+                builder: (context, state) {
+                  final campaignId = state.extra as String?;
+                  return ChangeNotifierProvider(
+                    create: (_) => CampaignFormViewModel(campaignId: campaignId),
+                    child: CampaignsFormScreen(campaignId: campaignId),
+                  );
+                },
               ),
               GoRoute(
                 path: '/campaign/:campaignId',

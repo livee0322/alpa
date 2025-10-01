@@ -6,7 +6,6 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/providers/showhost_list_provider.dart';
 import 'package:livee/presentation/routes/app_router.dart';
-import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +33,6 @@ Future<void> main() async {
       providers: [
         // 각 Provider를 GetIt을 통해 생성하도록 변경
         ChangeNotifierProvider(create: (_) => locator<AuthProvider>()),
-        ChangeNotifierProvider(create: (_) => locator<CampaignFormViewModel>()),
         ChangeNotifierProvider(create: (_) => locator<RecruitListProvider>()),
         ChangeNotifierProvider(create: (_) => locator<ShowhostListProvider>()),
 

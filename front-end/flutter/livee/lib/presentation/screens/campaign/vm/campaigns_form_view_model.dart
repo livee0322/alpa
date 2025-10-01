@@ -12,12 +12,17 @@ import 'package:livee/service_locator.dart';
 class CampaignFormViewModel with ChangeNotifier {
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
   final ApiClient _apiClient = locator<ApiClient>();
+  final String? campaignId;
 
-  CampaignFormViewModel() {
+  CampaignFormViewModel({this.campaignId}) {
     feeController.addListener(_updatePayWanPreview);
     startTimeController.addListener(_updateDuration);
     endTimeController.addListener(_updateDuration);
+    if (campaignId != null) loadCampaignForEdit(campaignId!); // 수정 모드일 경우 데이터 로딩 시작
   }
+
+  // FormKey를 ViewModel에서 관리
+  final formKey = GlobalKey<FormState>();
 
   // --- 상태 변수 정의 ---
   String _campaignType = 'product';
@@ -25,6 +30,10 @@ class CampaignFormViewModel with ChangeNotifier {
   String? _editCampaignId;
   Campaign? _editingCampaign;
   List<String> _tags = [];
+
+  // 드롭다운 선택 값을 관리할 상태 변수
+  String? selectedPrefix;
+  String? selectedCategory;
 
   // 공통 필드
   final TextEditingController internalTitleController = TextEditingController();
@@ -74,6 +83,20 @@ class CampaignFormViewModel with ChangeNotifier {
   List<String> get tags => _tags;
 
   // --- 상태 변경 메소드 ---
+
+  // 드롭다운 값 변경 메소드
+  void setPrefix(String? value) {
+    selectedPrefix = value == '선택 안 함' ? null : value;
+    prefixController.text = selectedPrefix ?? '';
+    notifyListeners();
+  }
+
+  void setCategory(String? value) {
+    selectedCategory = value == '선택' ? null : value;
+    categoryController.text = selectedCategory ?? '';
+    notifyListeners();
+  }
+
   void setCampaignType(String type) {
     if (_campaignType != type) {
       _campaignType = type;
@@ -163,7 +186,6 @@ class CampaignFormViewModel with ChangeNotifier {
   // [수정] 수정 모드 시, 새로운 스키마에 맞춰 컨트롤러를 채우도록 수정
   Future<void> loadCampaignForEdit(String id) async {
     setLoading(true);
-    _editCampaignId = id;
     try {
       final campaign = await _campaignUseCase.getCampaignById(id);
       _editingCampaign = campaign;
@@ -175,6 +197,10 @@ class CampaignFormViewModel with ChangeNotifier {
       prefixController.text = campaign.prefix ?? '';
       liveVerticalCoverUrlController.text = campaign.liveVerticalCoverUrl ?? '';
       liveStreamUrlController.text = campaign.liveStreamUrl ?? '';
+
+      // 드롭다운 상태 변수도 업데이트
+      selectedPrefix = campaign.prefix;
+      selectedCategory = campaign.category;
 
       if (campaign.type == 'product') {
         titleController.text = campaign.title ?? '';
