@@ -236,33 +236,47 @@ class _CampaignsFormScreenState extends State<CampaignsFormScreen> {
         Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: aspectRatio,
-              child: Container(
-                width: 100, // 너비 고정
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+            SizedBox(
+              width: 100,
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child: Container(
+                  width: 100, // 너비 고정
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: controller.text.isNotEmpty
+                      ? Image.network(controller.text,
+                          fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error))
+                      : const Center(child: Text('미리보기')),
                 ),
-                child: controller.text.isNotEmpty
-                    ? Image.network(controller.text,
-                        fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error))
-                    : const Center(child: Text('미리보기')),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: OutlinedButton.icon(
-                icon: const Icon(Icons.file_upload_outlined),
-                label: const Text('파일 선택'),
-                onPressed: () => _pickImage(context.read<CampaignFormViewModel>(), (url) {
-                  setState(() => controller.text = url);
-                }),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.textBlack,
-                  side: const BorderSide(color: AppColors.border),
-                ),
+              child: Column(
+                // [추가] 파일 선택 버튼과 설명 텍스트를 Column으로 묶습니다.
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  OutlinedButton(
+                    onPressed: () => _pickImage(context.read<CampaignFormViewModel>(), (url) {
+                      setState(() => controller.text = url);
+                    }),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textBlack,
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    child: const Text('파일 선택'),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '이미지 선택 시 Cloudinary로 업로드됩니다.',
+                    style: TextStyle(fontSize: 12, color: AppColors.textGrey),
+                  )
+                ],
               ),
             ),
           ],

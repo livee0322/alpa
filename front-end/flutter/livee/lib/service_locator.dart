@@ -20,6 +20,7 @@ import 'package:livee/domain/usecases/studio_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/providers/showhost_list_provider.dart';
+import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
 
 // 전역으로 사용할 GetIt 인스턴스 생성
 final locator = GetIt.instance;
@@ -55,4 +56,5 @@ void setupLocator() {
   locator.registerFactory(() => AuthProvider());
   locator.registerFactory(() => RecruitListProvider());
   locator.registerFactory(() => ShowhostListProvider());
+  locator.registerFactory(() => CampaignFormViewModel());
 }
