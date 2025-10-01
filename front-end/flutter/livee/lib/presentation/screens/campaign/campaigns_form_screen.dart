@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
@@ -35,16 +34,6 @@ class _CampaignsFormScreenState extends State<CampaignsFormScreen> {
     }
   }
 
-  // --- 이미지 선택 로직 ---
-  Future<void> _pickImage(CampaignFormViewModel viewModel, Function(String) onUrlReady) async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
-
-    // TODO: 이미지 업로드 로직을 ViewModel로 이동하는 것을 고려해볼 수 있습니다.
-    // final url = await viewModel.uploadImage(await pickedFile.readAsBytes());
-    // onUrlReady(url);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,18 +57,48 @@ class _CampaignsFormScreenState extends State<CampaignsFormScreen> {
                     _buildSectionTitle('기본 정보'),
                     CustomTextFormField(controller: viewModel.brandController, label: '브랜드명', isRequired: true),
                     const SizedBox(height: 16),
-                    CustomDropdown(label: '말머리 (선택)', value: '선택 안 함', items: const ['선택 안 함'], onChanged: (val) {}),
+                    CustomDropdown(
+                      menuOffset: Offset(0, 54),
+                      label: '말머리 (선택)',
+                      // ViewModel의 prefixController 값이 비어있으면 '선택 안 함'을, 아니면 해당 값을 표시
+                      value: viewModel.prefixController.text.isEmpty ? '선택 안 함' : viewModel.prefixController.text,
+                      // 이미지에 나온 리스트 항목들을 추가
+                      items: const ['선택 안 함', '쇼호스트모집', '촬영스태프', '모델모집', '기타모집'],
+                      onChanged: (value) {
+                        setState(() {
+                          // '선택 안 함'을 고르면 컨트롤러 값을 비우고, 다른 값을 고르면 해당 값으로 설정
+                          if (value == '선택 안 함') {
+                            viewModel.prefixController.clear();
+                          } else {
+                            viewModel.prefixController.text = value ?? '';
+                          }
+                        });
+                      },
+                    ),
                     const SizedBox(height: 16),
                     CustomTextFormField(controller: viewModel.titleController, label: '제목', isRequired: true),
                     const SizedBox(height: 16),
                     CustomTextFormField(controller: viewModel.descController, label: '내용', maxLines: 5),
                     const SizedBox(height: 16),
                     CustomDropdown(
-                        label: '카테고리',
-                        value: '선택',
-                        items: const ['선택', '뷰티', '패션'],
-                        onChanged: (val) {},
-                        isRequired: true),
+                      menuOffset: Offset(0, 54),
+                      label: '카테고리',
+                      isRequired: true,
+                      // ViewModel의 categoryController 값이 비어있으면 '선택'을, 아니면 해당 값을 표시
+                      value: viewModel.categoryController.text.isEmpty ? '선택' : viewModel.categoryController.text,
+                      // 전체 카테고리 리스트
+                      items: const ['선택', '뷰티', '패션', '식품', '가전', '생활/리빙'],
+                      onChanged: (value) {
+                        setState(() {
+                          // '선택'을 고르면 컨트롤러 값을 비우고, 다른 값을 고르면 해당 값으로 설정
+                          if (value == '선택') {
+                            viewModel.categoryController.clear();
+                          } else {
+                            viewModel.categoryController.text = value ?? '';
+                          }
+                        });
+                      },
+                    ),
                     const SizedBox(height: 16),
                     CustomTextFormField(controller: viewModel.locationController, label: '장소(선택)'),
 
@@ -230,59 +249,67 @@ class _CampaignsFormScreenState extends State<CampaignsFormScreen> {
 
   Widget _buildImagePicker(
       {required String label, required TextEditingController controller, required double aspectRatio}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 100,
-              child: AspectRatio(
-                aspectRatio: aspectRatio,
-                child: Container(
-                  width: 100, // 너비 고정
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: controller.text.isNotEmpty
-                      ? Image.network(controller.text,
-                          fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error))
-                      : const Center(child: Text('미리보기')),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                // [추가] 파일 선택 버튼과 설명 텍스트를 Column으로 묶습니다.
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  OutlinedButton(
-                    onPressed: () => _pickImage(context.read<CampaignFormViewModel>(), (url) {
-                      setState(() => controller.text = url);
-                    }),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textBlack,
-                      side: const BorderSide(color: AppColors.border),
+    return Consumer<CampaignFormViewModel>(
+        builder: (context, viewModel, child) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: AspectRatio(
+                        aspectRatio: aspectRatio,
+                        child: Container(
+                          width: 100, // 너비 고정
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.border),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: controller.text.isNotEmpty
+                              ? Image.network(controller.text,
+                                  fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error))
+                              : const Center(child: Text('미리보기')),
+                        ),
+                      ),
                     ),
-                    child: const Text('파일 선택'),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '이미지 선택 시 Cloudinary로 업로드됩니다.',
-                    style: TextStyle(fontSize: 12, color: AppColors.textGrey),
-                  )
-                ],
-              ),
-            ),
-          ],
-        )
-      ],
-    );
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        // [추가] 파일 선택 버튼과 설명 텍스트를 Column으로 묶습니다.
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () async {
+                              try {
+                                // controller를 직접 넘겨주어 어떤 이미지를 업데이트할지 알려줍니다.
+                                await viewModel.pickAndUploadImage(controller);
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
+                                }
+                              }
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.textBlack,
+                              side: const BorderSide(color: AppColors.border),
+                            ),
+                            child: const Text('파일 선택'),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '이미지 선택 시 Cloudinary로 업로드됩니다.',
+                            style: TextStyle(fontSize: 12, color: AppColors.textGrey),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ));
   }
 
   Widget _buildActionButtons(CampaignFormViewModel viewModel) {

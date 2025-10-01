@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:livee/data/core/api_client.dart';
+import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/models/product.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
@@ -308,6 +310,29 @@ class CampaignFormViewModel with ChangeNotifier {
       } catch (parseError) {
         rethrow;
       }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // [추가] 이미지 선택 및 업로드를 처리하는 공통 메소드
+  /// 이미지를 선택하고 Cloudinary에 업로드한 후, 전달받은 컨트롤러의 텍스트를 결과 URL로 업데이트합니다.
+  Future<void> pickAndUploadImage(TextEditingController controller) async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+
+    setLoading(true);
+    try {
+      final bytes = await pickedFile.readAsBytes();
+      // CloudinaryUploader를 사용하여 이미지 업로드
+      final url = await CloudinaryUploader().uploadFile(bytes, fileName: pickedFile.name);
+      controller.text = url;
+      // notifyListeners()를 호출하여 UI를 즉시 갱신
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Image upload failed: $e');
+      // 에러가 발생하면 호출한 쪽으로 다시 던져서 UI단에서 처리하도록 함
+      rethrow;
     } finally {
       setLoading(false);
     }
