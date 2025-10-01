@@ -131,6 +131,32 @@ GoRouter createRouter(AuthProvider authProvider) {
                 path: '/mypage',
                 builder: (context, state) => const MypageScreen(),
               ),
+
+              // 상세 페이지들도 모두 RootShellRoute의 자식으로 두기
+              GoRoute(
+                path: '/campaigns',
+                builder: (context, state) => const CampaignsScreen(),
+              ),
+              GoRoute(
+                path: '/campaign-form',
+                builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+              ),
+              GoRoute(
+                path: '/campaign/:campaignId',
+                builder: (context, state) {
+                  final campaignId = state.pathParameters['campaignId']!;
+                  return CampaignDetailScreen(campaignId: campaignId);
+                },
+                routes: [
+                  GoRoute(
+                    path: 'applicants',
+                    builder: (context, state) {
+                      final campaignId = state.pathParameters['campaignId']!;
+                      return ApplicantListScreen(campaignId: campaignId);
+                    },
+                  ),
+                ],
+              ),
 // ...
             ],
           ),
@@ -144,31 +170,6 @@ GoRouter createRouter(AuthProvider authProvider) {
             builder: (context, state) => const SignupScreen(),
           ),
 
-          // 상세 페이지들도 모두 RootShellRoute의 자식으로 두기
-          GoRoute(
-            path: '/campaigns',
-            builder: (context, state) => const CampaignsScreen(),
-          ),
-          GoRoute(
-            path: '/campaign-form',
-            builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
-          ),
-          GoRoute(
-            path: '/campaign/:campaignId',
-            builder: (context, state) {
-              final campaignId = state.pathParameters['campaignId']!;
-              return CampaignDetailScreen(campaignId: campaignId);
-            },
-            routes: [
-              GoRoute(
-                path: 'applicants',
-                builder: (context, state) {
-                  final campaignId = state.pathParameters['campaignId']!;
-                  return ApplicantListScreen(campaignId: campaignId);
-                },
-              ),
-            ],
-          ),
           GoRoute(
             path: '/portfolios/:id',
             builder: (context, state) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/campaign/form/widgets/campaign_type_selector.dart';
 import 'package:livee/presentation/screens/campaign/form/widgets/form_section_container.dart';
 import 'package:livee/presentation/screens/campaign/form/widgets/image_picker_section.dart';
@@ -9,8 +8,6 @@ import 'package:livee/presentation/screens/campaign/form/widgets/recruit_form_se
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:provider/provider.dart';
 import 'package:livee/presentation/providers/campaign_form_provider.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/common_header.dart';
 
 class CampaignFormScreen extends StatefulWidget {
   final String? campaignId;
@@ -45,91 +42,80 @@ class _CampaignFormScreenState extends State<CampaignFormScreen> {
       body: Consumer<CampaignFormProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                // 공통 헤더
-                Consumer<AuthProvider>(
-                  builder: (context, authProvider, child) => CommonHeader(isLoggedIn: authProvider.isLoggedIn),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 페이지 제목
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: Text(
-                            provider.editingCampaign == null ? '공고 등록' : '공고 수정',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 페이지 제목
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      provider.editingCampaign == null ? '공고 등록' : '공고 수정',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  FormSectionContainer(
+                    title: '공고 제목',
+                    children: [
+                      TextFormField(
+                        controller: provider.internalTitleController,
+                        decoration: const InputDecoration(
+                          labelText: '공고 제목',
+                          hintText: '예) 9월 2주차 뷰티 런칭',
+                          helperText: '본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
                             ),
                           ),
                         ),
-                        FormSectionContainer(
-                          title: '공고 제목',
-                          children: [
-                            TextFormField(
-                              controller: provider.internalTitleController,
-                              decoration: const InputDecoration(
-                                labelText: '공고 제목',
-                                hintText: '예) 9월 2주차 뷰티 런칭',
-                                helperText: '본인에게만 보이는 메모용 제목입니다. 외부에 노출되지 않습니다.',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(12),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-
-                        FormSectionContainer(
-                          title: '대표 썸네일',
-                          children: [
-                            ImagePickerSection(provider: provider),
-                          ],
-                        ),
-
-                        FormSectionContainer(
-                          title: '공고 유형',
-                          children: [
-                            CampaignTypeSelector(provider: provider),
-                          ],
-                        ),
-
-                        // 선택된 유형에 따라 다른 폼 섹션을 보여줌
-                        if (provider.campaignType == 'product')
-                          FormSectionContainer(
-                            title: '상품 공고',
-                            children: [
-                              ProductFormSection(provider: provider),
-                            ],
-                          ),
-
-                        if (provider.campaignType == 'recruit')
-                          FormSectionContainer(
-                            title: '쇼호스트 모집 상세',
-                            children: [
-                              RecruitFormSection(provider: provider),
-                            ],
-                          ),
-
-                        _buildActions(provider),
+                      )
+                    ],
+                  ),
+            
+                  FormSectionContainer(
+                    title: '대표 썸네일',
+                    children: [
+                      ImagePickerSection(provider: provider),
+                    ],
+                  ),
+            
+                  FormSectionContainer(
+                    title: '공고 유형',
+                    children: [
+                      CampaignTypeSelector(provider: provider),
+                    ],
+                  ),
+            
+                  // 선택된 유형에 따라 다른 폼 섹션을 보여줌
+                  if (provider.campaignType == 'product')
+                    FormSectionContainer(
+                      title: '상품 공고',
+                      children: [
+                        ProductFormSection(provider: provider),
                       ],
                     ),
-                  ),
-                ),
-              ],
+            
+                  if (provider.campaignType == 'recruit')
+                    FormSectionContainer(
+                      title: '쇼호스트 모집 상세',
+                      children: [
+                        RecruitFormSection(provider: provider),
+                      ],
+                    ),
+            
+                  _buildActions(provider),
+                ],
+              ),
             ),
           );
         },
       ),
-      bottomNavigationBar: const CommonBottomNavBar(),
     );
   }
 
