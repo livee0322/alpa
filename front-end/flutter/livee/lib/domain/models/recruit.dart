@@ -4,6 +4,7 @@ class Recruit {
   final String? requirements;
   final String? preferred;
   final List<String>? questions;
+  final num? durationInHours; // 촬영 시간을 시간 단위
 
   Recruit({
     this.recruitType,
@@ -11,6 +12,7 @@ class Recruit {
     this.requirements,
     this.preferred,
     this.questions,
+    this.durationInHours,
   });
 
   factory Recruit.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Recruit {
       requirements: json['requirements'] as String?,
       preferred: json['preferred'] as String?,
       questions: json['questions'] != null ? List<String>.from(json['questions']) : null,
+      durationInHours: json['durationInHours'] as num?,
     );
   }
 }
