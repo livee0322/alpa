@@ -18,7 +18,6 @@ import 'package:livee/domain/usecases/news_use_case.dart';
 import 'package:livee/domain/usecases/proposal_use_case.dart';
 import 'package:livee/domain/usecases/studio_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/providers/campaign_form_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/providers/showhost_list_provider.dart';
 
@@ -54,7 +53,6 @@ void setupLocator() {
   // PROVIDERS
   // Provider는 상태를 가지므로, 매번 새로운 인스턴스를 생성하는 factory로 등록
   locator.registerFactory(() => AuthProvider());
-  locator.registerFactory(() => CampaignFormProvider());
   locator.registerFactory(() => RecruitListProvider());
   locator.registerFactory(() => ShowhostListProvider());
 }

@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
+import 'package:livee/presentation/screens/campaign/campaigns_form_screen.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
 import 'package:livee/presentation/screens/model/model_detail_screen.dart';
@@ -15,7 +16,6 @@ import 'package:livee/presentation/screens/proposal/received_proposals_screen.da
 import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
 import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
-import 'package:livee/presentation/screens/campaign/form/campaign_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
@@ -139,7 +139,7 @@ GoRouter createRouter(AuthProvider authProvider) {
               ),
               GoRoute(
                 path: '/campaign-form',
-                builder: (context, state) => CampaignFormScreen(campaignId: state.extra as String?),
+                builder: (context, state) => CampaignsFormScreen(campaignId: state.extra as String?),
               ),
               GoRoute(
                 path: '/campaign/:campaignId',

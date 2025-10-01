@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // 커스텀 텍스트 입력 필드 위젯
 class CustomTextFormField extends StatelessWidget {
@@ -12,6 +13,9 @@ class CustomTextFormField extends StatelessWidget {
   final Function(String)? onSubmitted;
   final bool obscureText;
   final FormFieldValidator<String>? validator;
+  final bool readOnly;
+  final bool? enabled;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextFormField({
     super.key,
@@ -25,6 +29,9 @@ class CustomTextFormField extends StatelessWidget {
     this.onSubmitted,
     this.obscureText = false,
     this.validator,
+    this.readOnly = false,
+    this.enabled,
+    this.inputFormatters,
   });
 
   @override
@@ -57,6 +64,9 @@ class CustomTextFormField extends StatelessWidget {
         TextFormField(
           controller: controller,
           obscureText: obscureText,
+          readOnly: readOnly,
+          enabled: enabled,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey[500]),
@@ -73,6 +83,10 @@ class CustomTextFormField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1.5),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             alignLabelWithHint: maxLines > 1,

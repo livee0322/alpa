@@ -11,6 +11,7 @@ class CustomDropdown extends StatefulWidget {
   final EdgeInsetsGeometry padding;
   final FontWeight? fontWeight;
   final BorderRadius? borderRadius;
+  final bool isRequired;
 
   const CustomDropdown({
     super.key,
@@ -23,6 +24,7 @@ class CustomDropdown extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     this.fontWeight = FontWeight.normal,
     this.borderRadius,
+    this.isRequired = false,
   });
 
   @override
@@ -145,9 +147,24 @@ class _CustomDropdownState extends State<CustomDropdown> {
         if (widget.label != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              widget.label!,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+            // Text.rich를 사용하여 isRequired 값에 따라 별표(*)를 동적으로 추가
+            child: Text.rich(
+              TextSpan(
+                text: widget.label!,
+                children: widget.isRequired
+                    ? [
+                        const TextSpan(
+                            text: ' *',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))
+                      ]
+                    : [],
+              ),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
             ),
           ),
         CompositedTransformTarget(
