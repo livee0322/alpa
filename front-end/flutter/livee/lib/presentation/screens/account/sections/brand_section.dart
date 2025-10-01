@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/account/widgets/mypage_menu_item.dart';
 import 'package:livee/presentation/screens/account/widgets/section_header.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 
 /// 브랜드 역할의 사용자를 위한 마이페이지 메뉴 섹션
@@ -16,11 +15,6 @@ class BrandSection extends StatelessWidget {
       children: [
         SectionHeader(
           title: '내가 등록한 공고',
-          actionWidget: PrimaryActionButton(
-            text: '공고 등록하기',
-            onPressed: () => GoRouter.of(context).go('/campaign-form'),
-            isFullWidth: false,
-          ),
         ),
         const SizedBox(height: 10),
         MyPageMenuItem(
@@ -39,7 +33,7 @@ class BrandSection extends StatelessWidget {
           icon: CupertinoIcons.paperplane,
           title: '보낸 제안',
           subtitle: '쇼호스트에게 보낸 제안 목록',
-           onTap: () => GoRouter.of(context).go('/sent-proposals'),
+          onTap: () => GoRouter.of(context).go('/sent-proposals'),
         ),
       ],
     );
