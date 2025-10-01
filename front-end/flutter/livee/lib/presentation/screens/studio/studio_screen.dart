@@ -9,6 +9,7 @@ import 'package:livee/presentation/screens/studio/widgets/booking_bottom_sheet.d
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
+import 'package:livee/presentation/widgets/custom_table_calendar.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
@@ -207,6 +208,7 @@ class StudioScreen extends StatelessWidget {
 
   // 스케줄 캘린더 카드
   Widget _buildScheduleCard(BuildContext context, Studio studio) {
+    final viewModel = context.watch<StudioViewModel>();
     return StandardContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -214,89 +216,42 @@ class StudioScreen extends StatelessWidget {
           const Text('스케줄',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          TableCalendar(
-            locale: 'ko_KR',
-            focusedDay: DateTime.now(),
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            headerStyle: const HeaderStyle(
-                formatButtonVisible: false, titleCentered: true),
-            // 오늘 이전 날짜를 선택할 수 없도록 설정
-            enabledDayPredicate: (day) {
-              return !day.isBefore(DateTime.now().subtract(const Duration(days: 1)));
-            },
-            
-            // 캘린더의 각 날짜 UI를 커스텀
-            calendarBuilders: CalendarBuilders(
-              // 비활성화된 날짜(과거)를 회색으로 표시
-              disabledBuilder: (context, day, focusedDay) {
-                return Center(
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(color: Colors.grey[400]),
-                  ),
-                );
-              },
-              // 기본 날짜를 렌더링할 때 예약 가능 여부를 확인
-              defaultBuilder: (context, day, focusedDay) {
-                final dayOfWeek = DateFormat('E', 'ko_KR').format(day);
-                final scheduleTemplate = studio.weeklySchedule[dayOfWeek];
-
-                // 휴무일이거나 스케줄 정보가 없으면 회색으로 표시
-                if (scheduleTemplate == null || !scheduleTemplate.isOpen) {
-                  return Center(
-                    child: Text(
-                      '${day.day}',
-                      style: TextStyle(color: Colors.grey[400]),
-                    ),
-                  );
-                }
-                
-                // 모든 시간이 예약되었는지 확인 (임시 로직)
-                final startHour = int.parse(scheduleTemplate.startTime.split(':')[0]);
-                final endHour = int.parse(scheduleTemplate.endTime.split(':')[0]);
-                if (startHour >= endHour) {
-                  return Center(child: Text('${day.day}', style: TextStyle(color: Colors.grey[400])));
-                }
-                final allSlots = List.generate(endHour - startHour, (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
-                final bookedTimes = {'10:00', '15:00'}; 
-                final excludedTimes = Set.from(scheduleTemplate.excludedTimes);
-                final availableTimes = allSlots.where((time) => !bookedTimes.contains(time) && !excludedTimes.contains(time)).toList();
-
-                // 예약 가능한 시간이 없으면 회색으로 표시
-                if (availableTimes.isEmpty) {
-                  return Center(
-                    child: Text(
-                      '${day.day}',
-                      style: TextStyle(color: Colors.grey[400]),
-                    ),
-                  );
-                }
-                
-                return null; // 위 조건에 해당하지 않으면 기본 스타일 사용
-              },
-            ),
-            
+          // [수정] 기존의 복잡한 TableCalendar 코드를 CustomTableCalendar 위젯으로 교체합니다.
+          CustomTableCalendar(
+            focusedDay: viewModel.focusedDay,
+            selectedDay: viewModel.selectedDay,
+            weeklySchedule: studio.weeklySchedule,
+            // bookedDates는 아직 ViewModel에 없으므로 임시로 빈 Set을 전달합니다.
+            // TODO: 추후 ViewModel에 bookedDates 상태를 추가하고 연결해야 합니다.
+            bookedDates: const {},
             onDaySelected: (selectedDay, focusedDay) {
+              // 1. ViewModel의 상태를 업데이트합니다.
+              viewModel.onDateSelected(selectedDay, focusedDay);
+
+              // 2. 바텀시트를 띄우는 로직은 StudioScreen에 그대로 둡니다.
               final dayOfWeek = DateFormat('E', 'ko_KR').format(selectedDay);
-              final DaySchedule? scheduleTemplate = studio.weeklySchedule[dayOfWeek];
+              final DaySchedule? scheduleTemplate =
+                  studio.weeklySchedule[dayOfWeek];
 
               if (scheduleTemplate == null || !scheduleTemplate.isOpen) {
                 return;
               }
 
-              final startHour = int.parse(scheduleTemplate.startTime.split(':')[0]);
+              final startHour =
+                  int.parse(scheduleTemplate.startTime.split(':')[0]);
               final endHour = int.parse(scheduleTemplate.endTime.split(':')[0]);
-              final allSlots = List.generate(endHour - startHour, (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
-              
-              final bookedTimes = {'10:00', '15:00'};
+              final allSlots = List.generate(endHour - startHour,
+                  (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
+
+              // [수정] 하드코딩된 예약 데이터를 bookedDates로 대체해야 하지만, 우선 빈 값으로 둡니다.
+              final bookedTimes = <String>{}; // TODO: 실제 예약 데이터와 연동 필요
               final excludedTimes = Set.from(scheduleTemplate.excludedTimes);
-              
+
               final availableTimes = allSlots.where((time) {
-                return !bookedTimes.contains(time) && !excludedTimes.contains(time);
+                return !bookedTimes.contains(time) &&
+                    !excludedTimes.contains(time);
               }).toList();
 
-              // 예약 가능한 시간이 없는 날은 바텀시트를 띄우지 않음
               if (availableTimes.isEmpty) {
                 return;
               }
