@@ -16,7 +16,7 @@ class CompactCampaignCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 마감 여부 계산
-    final dDay = Utility.calculateDday(campaign.closeAt);
+    final dDay = Utility.calculateDday(campaign.closeAt?.toIso8601String());
     final isClosed = dDay == '마감';
 
     // 출연료 텍스트 포맷팅
@@ -66,7 +66,7 @@ class CompactCampaignCard extends StatelessWidget {
                     children: [
                       // 브랜드명
                       Text(
-                        campaign.brand ?? '브랜드 없음',
+                        campaign.brandName ?? '브랜드 없음',
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.textGrey,
@@ -85,10 +85,11 @@ class CompactCampaignCard extends StatelessWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
-                          backgroundColor: AppColors.primary.withOpacity(0.1),
+                          backgroundColor: AppColors.primary.withAlpha(26),
                           side: BorderSide.none,
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           visualDensity:
                               const VisualDensity(horizontal: 0, vertical: -4),
                         ),

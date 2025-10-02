@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 import 'package:livee/presentation/widgets/common_header.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
@@ -71,16 +70,19 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                     itemBuilder: (context, index) {
                       final campaign = campaigns[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
                         child: Card(
                           clipBehavior: Clip.antiAlias,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                           elevation: 2,
                           shadowColor: Colors.black12,
                           child: Column(
                             children: [
                               InkWell(
-                                onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+                                onTap: () => GoRouter.of(context)
+                                    .push('/campaign/${campaign.id}'),
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Row(
@@ -88,7 +90,8 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                       // 썸네일 이미지
                                       campaign.coverImageUrl != null
                                           ? ClipRRect(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               child: Image.network(
                                                 campaign.coverImageUrl!,
                                                 width: 120,
@@ -101,14 +104,16 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                               height: 68,
                                               decoration: BoxDecoration(
                                                 color: Colors.grey[300],
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                             ),
                                       const SizedBox(width: 12),
                                       // 캠페인 제목 및 유형
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               campaign.title ?? '제목 없음',
@@ -118,13 +123,6 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             const SizedBox(height: 6),
-                                            Text(
-                                              '유형: ${campaign.type}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -132,25 +130,35 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                       Column(
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.edit, size: 20),
+                                            icon: const Icon(Icons.edit,
+                                                size: 20),
                                             onPressed: () =>
-                                                GoRouter.of(context).go('/campaign-form', extra: campaign.id),
+                                                GoRouter.of(context).go(
+                                                    '/campaign-form',
+                                                    extra: campaign.id),
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                                            icon: const Icon(Icons.delete,
+                                                size: 20, color: Colors.red),
                                             onPressed: () async {
                                               final confirm = await showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   title: const Text('삭제 확인'),
-                                                  content: const Text('이 공고를 삭제하시겠어요?'),
+                                                  content: const Text(
+                                                      '이 공고를 삭제하시겠어요?'),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () => Navigator.of(context).pop(false),
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(false),
                                                       child: const Text('취소'),
                                                     ),
                                                     TextButton(
-                                                      onPressed: () => Navigator.of(context).pop(true),
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(true),
                                                       child: const Text('삭제'),
                                                     ),
                                                   ],
@@ -159,13 +167,18 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                                               if (confirm == true) {
                                                 try {
                                                   // locator를 사용
-                                                  await locator<CampaignUseCase>().deleteCampaign(campaign.id!);
+                                                  await locator<
+                                                          CampaignUseCase>()
+                                                      .deleteCampaign(
+                                                          campaign.id!);
                                                   setState(() {
                                                     _loadCampaigns();
                                                   });
                                                 } catch (e) {
                                                   ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              '삭제 실패: $e')));
                                                 }
                                               }
                                             },
@@ -181,9 +194,11 @@ class _CampaignsScreenState extends State<CampaignsScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: TextButton(
-                                  onPressed: () => GoRouter.of(context).go('/campaign/${campaign.id}/applicants'),
+                                  onPressed: () => GoRouter.of(context).go(
+                                      '/campaign/${campaign.id}/applicants'),
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(12),

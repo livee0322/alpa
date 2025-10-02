@@ -15,7 +15,7 @@ import 'package:livee/presentation/screens/portfolio/portfolio_detail_screen.dar
 import 'package:livee/presentation/screens/portfolio/portfolio_screen.dart';
 import 'package:livee/presentation/screens/proposal/received_proposals_screen.dart';
 import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
-import 'package:livee/presentation/screens/recruit/bookmarked_recruits_screen.dart';
+import 'package:livee/presentation/screens/campaign/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
@@ -23,11 +23,11 @@ import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dar
 import 'package:livee/presentation/screens/event/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
 import 'package:livee/presentation/screens/home/home_screen.dart';
-import 'package:livee/presentation/screens/recruit/my_applications_screen.dart';
+import 'package:livee/presentation/screens/campaign/my_applications_screen.dart';
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
 import 'package:livee/presentation/screens/news/news_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_edit_screen.dart';
-import 'package:livee/presentation/screens/recruit/recruit_list_screen.dart';
+import 'package:livee/presentation/screens/campaign/recruit_list_screen.dart';
 import 'package:livee/presentation/screens/service/service_screen.dart';
 import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
 import 'package:livee/presentation/screens/clips/short_clips_screen.dart';

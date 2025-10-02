@@ -1,16 +1,13 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:livee/data/core/api_client.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/models/campaign.dart';
-import 'package:livee/domain/models/product.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
 import 'package:livee/service_locator.dart';
 
-// [추가] 어떤 이미지를 선택할지 구분하기 위한 Enum
+// 어떤 이미지를 선택할지 구분하기 위한 Enum
 enum ImageType {
   cover,
   verticalCover,
@@ -19,7 +16,6 @@ enum ImageType {
 
 class CampaignFormViewModel with ChangeNotifier {
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
-  final ApiClient _apiClient = locator<ApiClient>();
   final String? campaignId;
 
   CampaignFormViewModel({this.campaignId}) {
@@ -34,11 +30,9 @@ class CampaignFormViewModel with ChangeNotifier {
   final formKey = GlobalKey<FormState>();
 
   // --- 상태 변수 정의 ---
-  String _campaignType = 'product';
   bool _isLoading = false;
-  String? _editCampaignId;
   Campaign? _editingCampaign;
-  List<String> _tags = [];
+  final List<String> _tags = [];
 
   // 드롭다운 선택 값을 관리할 상태 변수
   String? selectedPrefix;
@@ -49,58 +43,37 @@ class CampaignFormViewModel with ChangeNotifier {
   Uint8List? tempVerticalCoverImageBytes;
   Uint8List? tempProductThumbnailBytes;
 
-  // 공통 필드
+  final TextEditingController titleController = TextEditingController();
   final TextEditingController internalTitleController = TextEditingController();
   final TextEditingController coverImageUrlController = TextEditingController();
-  final TextEditingController prefixController = TextEditingController(); // 말머리
+  final TextEditingController prefixController = TextEditingController();
   final TextEditingController liveVerticalCoverUrlController =
-      TextEditingController(); // 세로 커버 이미지
-  final TextEditingController liveStreamUrlController =
-      TextEditingController(); // 라이브 스트리밍 URL
-
-  // 상품 캠페인 필드
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController productUrlController =
-      TextEditingController(); // 상품 스크래핑용 URL
-  List<Product> _products = [];
-  final TextEditingController salePriceController = TextEditingController();
-  String? saleDuration;
-  final TextEditingController liveDateController =
-      TextEditingController(); // 라이브 날짜 (YYYY-MM-DD)
-  final TextEditingController startTimeController =
-      TextEditingController(); // 시작 시간 (HH:MM)
-  final TextEditingController endTimeController =
-      TextEditingController(); // 종료 시간 (HH:MM)
-  final TextEditingController brandController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-  final TextEditingController descController = TextEditingController();
-  final TextEditingController productThumbnailUrlController =
-      TextEditingController(); // 대표 상품 정보 필드
-  final TextEditingController productNameController = TextEditingController();
-  final TextEditingController campaignProductUrlController =
-      TextEditingController(); // 대표 상품 URL
-
-  // 쇼호스트 모집 필드
-  final TextEditingController titleRecruitController = TextEditingController();
+      TextEditingController();
+  final TextEditingController liveStreamUrlController = TextEditingController();
   final TextEditingController shootDateController = TextEditingController();
   final TextEditingController deadlineController = TextEditingController();
+  final TextEditingController startTimeController = TextEditingController();
+  final TextEditingController endTimeController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
+  final TextEditingController contentController =
+      TextEditingController(); // descController -> contentController
+  final TextEditingController productThumbnailUrlController =
+      TextEditingController();
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController campaignProductUrlController =
+      TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController feeController = TextEditingController();
   bool payNegotiable = false;
-  final TextEditingController categoryRecruitController =
-      TextEditingController();
-  final TextEditingController descRecruitController = TextEditingController();
-  final TextEditingController durationInHoursController =
-      TextEditingController();
+  final TextEditingController durationHoursController = TextEditingController();
 
   // 계산된 값을 위한 상태 변수
   String _payWanPreview = '';
   String _durationText = '촬영시간: -';
 
   // --- Getter ---
-  String get campaignType => _campaignType;
   bool get isLoading => _isLoading;
-  List<Product> get products => _products;
   Campaign? get editingCampaign => _editingCampaign;
   String get payWanPreview => _payWanPreview;
   String get durationText => _durationText;
@@ -121,13 +94,6 @@ class CampaignFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setCampaignType(String type) {
-    if (_campaignType != type) {
-      _campaignType = type;
-      notifyListeners();
-    }
-  }
-
   void setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
@@ -135,11 +101,6 @@ class CampaignFormViewModel with ChangeNotifier {
 
   void setPayNegotiable(bool value) {
     payNegotiable = value;
-    notifyListeners();
-  }
-
-  void setSaleDuration(String? duration) {
-    saleDuration = duration;
     notifyListeners();
   }
 
@@ -160,7 +121,6 @@ class CampaignFormViewModel with ChangeNotifier {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile == null) return;
-
     final bytes = await pickedFile.readAsBytes();
 
     // Enum 타입에 따라 올바른 변수에 이미지 데이터를 저장
@@ -235,8 +195,7 @@ class CampaignFormViewModel with ChangeNotifier {
         final durationMinutes = endMinutes - startMinutes;
         final hours = durationMinutes ~/ 60;
         final minutes = durationMinutes % 60;
-        // [수정] durationInHoursController에도 값을 채워줍니다.
-        durationInHoursController.text =
+        durationHoursController.text =
             (durationMinutes / 60).toStringAsFixed(1);
         _durationText =
             '촬영시간: ${hours > 0 ? '$hours시간 ' : ''}${minutes > 0 ? '$minutes분' : ''}';
@@ -255,48 +214,37 @@ class CampaignFormViewModel with ChangeNotifier {
     try {
       final campaign = await _campaignUseCase.getCampaignById(id);
       _editingCampaign = campaign;
-      setCampaignType(campaign.type ?? 'product');
 
-      // 공통 필드
+      // 공통 필드 및 새로운 필드 채우기
+      titleController.text = campaign.title ?? '';
+      brandController.text = campaign.brandName ?? '';
       internalTitleController.text = campaign.internalTitle ?? '';
       coverImageUrlController.text = campaign.coverImageUrl ?? '';
       prefixController.text = campaign.prefix ?? '';
       liveVerticalCoverUrlController.text = campaign.liveVerticalCoverUrl ?? '';
       liveStreamUrlController.text = campaign.liveStreamUrl ?? '';
+      shootDateController.text = campaign.shootDate != null
+          ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!)
+          : '';
+      deadlineController.text = campaign.closeAt != null
+          ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!)
+          : '';
+      startTimeController.text = campaign.startTime ?? '';
+      endTimeController.text = campaign.endTime ?? '';
+      durationHoursController.text = campaign.durationHours?.toString() ?? '';
+      categoryController.text = campaign.category ?? '';
+      contentController.text =
+          campaign.content ?? ''; // descriptionHTML -> content
+      locationController.text = campaign.location ?? '';
+      feeController.text = campaign.fee?.toString() ?? '';
+      payNegotiable = campaign.feeNegotiable ?? false;
+      productThumbnailUrlController.text = campaign.productThumbnailUrl ?? '';
+      productNameController.text = campaign.productName ?? '';
+      campaignProductUrlController.text = campaign.productUrl ?? '';
 
-      // 드롭다운 상태 변수도 업데이트
       selectedPrefix = campaign.prefix;
       selectedCategory = campaign.category;
 
-      if (campaign.type == 'product') {
-        titleController.text = campaign.title ?? '';
-        _products = campaign.products ?? [];
-        startTimeController.text = campaign.startTime ?? '';
-        endTimeController.text = campaign.endTime ?? '';
-        brandController.text = campaign.brand ?? '';
-        categoryController.text = campaign.category ?? '';
-        descController.text = campaign.descriptionHTML ?? '';
-        productThumbnailUrlController.text = campaign.productThumbnailUrl ?? '';
-        productNameController.text = campaign.productName ?? '';
-        campaignProductUrlController.text = campaign.productUrl ?? '';
-        // salePrice, saleDuration 등은 예시로 생략, 필요시 추가
-      } else if (campaign.type == 'recruit') {
-        titleRecruitController.text = campaign.title ?? '';
-        shootDateController.text = campaign.shootDate != null
-            ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!)
-            : '';
-        deadlineController.text = campaign.closeAt?.substring(0, 10) ?? '';
-        startTimeController.text = campaign.startTime ?? '';
-        endTimeController.text = campaign.endTime ?? '';
-        locationController.text = campaign.location ?? '';
-        feeController.text = campaign.fee?.toString() ?? '';
-        payNegotiable = campaign.feeNegotiable ?? false;
-        categoryRecruitController.text = campaign.category ?? '';
-        descRecruitController.text = campaign.descriptionHTML ?? '';
-        durationInHoursController.text =
-            campaign.recruit?.durationInHours?.toString() ?? '';
-        _tags = campaign.recruit?.questions ?? []; // 임시로 questions를 태그로 사용
-      }
       _updateDuration();
       _updatePayWanPreview();
     } catch (e) {
@@ -306,34 +254,10 @@ class CampaignFormViewModel with ChangeNotifier {
     }
   }
 
-  // 상품 URL로부터 정보를 가져와 목록에 추가
-  Future<void> addProductFromUrl(String url) async {
-    try {
-      final response = await _apiClient
-          .get('/scrape/product?url=${Uri.encodeComponent(url)}');
-      if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes))['data'] ??
-            jsonDecode(utf8.decode(response.bodyBytes));
-        _products.add(Product.fromJson(data));
-        notifyListeners();
-      } else {
-        throw Exception('상품 정보를 가져오지 못했습니다.');
-      }
-    } catch (e) {
-      debugPrint('Error scraping product: $e');
-      rethrow;
-    }
-  }
-
-  void removeProduct(int index) {
-    _products.removeAt(index);
-    notifyListeners();
-  }
-
+  // [수정] API Payload를 새로운 명세에 맞춰 재구성합니다.
   Future<void> submitForm() async {
     setLoading(true);
     try {
-      // --- 1. 저장 직전에 이미지 업로드 실행 ---
       final coverImageUrl = await _uploadImage(tempCoverImageBytes) ??
           coverImageUrlController.text;
       final verticalCoverUrl =
@@ -342,96 +266,48 @@ class CampaignFormViewModel with ChangeNotifier {
       final productThumbUrl = await _uploadImage(tempProductThumbnailBytes) ??
           productThumbnailUrlController.text;
 
-      // --- 2. 업로드된 URL을 포함하여 payload 생성 ---
-      Map<String, dynamic> payload;
-      if (_campaignType == 'product') {
-        payload = {
-          'type': 'product',
-          'internalTitle': internalTitleController.text.isEmpty
-              ? null
-              : internalTitleController.text,
-          'prefix':
-              prefixController.text.isEmpty ? null : prefixController.text,
-          'title': titleController.text,
-          'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
-          'liveVerticalCoverUrl':
-              verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
-          'brand': brandController.text.isEmpty ? null : brandController.text,
-          'category':
-              categoryController.text.isEmpty ? null : categoryController.text,
-          'descriptionHTML':
-              descController.text.isEmpty ? null : descController.text,
-          'liveStreamUrl': liveStreamUrlController.text.isEmpty
-              ? null
-              : liveStreamUrlController.text,
-          'startTime': startTimeController.text.isEmpty
-              ? null
-              : startTimeController.text,
-          'endTime':
-              endTimeController.text.isEmpty ? null : endTimeController.text,
-          'products': _products
-              .map((p) => {
-                    'url': p.url,
-                    'title': p.title,
-                    'price': p.price,
-                    'salePrice': p.salePrice,
-                    'thumbnail': p.thumbnail,
-                  })
-              .toList(),
-          'productThumbnailUrl':
-              productThumbUrl.isEmpty ? null : productThumbUrl,
-          'productName': productNameController.text.isEmpty
-              ? null
-              : productNameController.text,
-          'productUrl': campaignProductUrlController.text.isEmpty
-              ? null
-              : campaignProductUrlController.text,
-        };
-      } else {
-        // 'recruit'
-        payload = {
-          'type': 'recruit',
-          'internalTitle': internalTitleController.text.isEmpty
-              ? null
-              : internalTitleController.text,
-          'prefix':
-              prefixController.text.isEmpty ? null : prefixController.text,
-          'title': titleRecruitController.text,
-          'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
-          'liveVerticalCoverUrl':
-              verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
-          'brand': brandController.text.isEmpty ? null : brandController.text,
-          'category': categoryRecruitController.text.isEmpty
-              ? null
-              : categoryRecruitController.text,
-          'descriptionHTML': descRecruitController.text.isEmpty
-              ? null
-              : descRecruitController.text,
-          'shootDate': shootDateController.text.isEmpty
-              ? null
-              : shootDateController.text,
-          'startTime': startTimeController.text.isEmpty
-              ? null
-              : startTimeController.text,
-          'endTime':
-              endTimeController.text.isEmpty ? null : endTimeController.text,
-          'closeAt':
-              deadlineController.text.isEmpty ? null : deadlineController.text,
-          'location':
-              locationController.text.isEmpty ? null : locationController.text,
-          'fee': int.tryParse(feeController.text),
-          'feeNegotiable': payNegotiable,
-          'recruit': {
-            'durationInHours': double.tryParse(durationInHoursController.text),
-            'location': locationController.text.isEmpty
-                ? null
-                : locationController.text,
-            'questions': _tags,
-          }
-        };
+      // 날짜 문자열을 ISO 8601 형식으로 변환하는 헬퍼 함수
+      String? toIso8601String(String dateStr) {
+        if (dateStr.isEmpty) return null;
+        try {
+          return DateTime.parse(dateStr).toUtc().toIso8601String();
+        } catch (e) {
+          return null; // 파싱 실패 시 null 반환
+        }
       }
 
-      // --- 3. API 호출 ---
+      final Map<String, dynamic> payload = {
+        'brandName': brandController.text,
+        'title': titleController.text,
+        'shootDate': toIso8601String(shootDateController.text),
+        'closeAt': toIso8601String(deadlineController.text),
+        'durationHours': double.tryParse(durationHoursController.text),
+        'startTime': startTimeController.text,
+        'endTime': endTimeController.text,
+        'prefix': prefixController.text.isEmpty ? null : prefixController.text,
+        'content':
+            contentController.text.isEmpty ? null : contentController.text,
+        'category':
+            categoryController.text.isEmpty ? null : categoryController.text,
+        'location':
+            locationController.text.isEmpty ? null : locationController.text,
+        'fee': int.tryParse(feeController.text),
+        'feeNegotiable': payNegotiable,
+        'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
+        'liveVerticalCoverUrl':
+            verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
+        'liveStreamUrl': liveStreamUrlController.text.isEmpty
+            ? null
+            : liveStreamUrlController.text,
+        'productThumbnailUrl': productThumbUrl.isEmpty ? null : productThumbUrl,
+        'productName': productNameController.text.isEmpty
+            ? null
+            : productNameController.text,
+        'productUrl': campaignProductUrlController.text.isEmpty
+            ? null
+            : campaignProductUrlController.text,
+      };
+
       if (campaignId != null) {
         await _campaignUseCase.updateCampaign(campaignId!, payload);
       } else {
@@ -439,17 +315,7 @@ class CampaignFormViewModel with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Form submission failed: $e');
-      try {
-        final errorJson =
-            jsonDecode(e.toString().replaceFirst('Exception: ', ''));
-        if (errorJson['code'] == 'COVER_IMAGE_REQUIRED') {
-          throw Exception('커버 이미지를 등록해주세요.');
-        } else {
-          throw Exception(errorJson['message'] ?? '알 수 없는 서버 오류가 발생했습니다.');
-        }
-      } catch (parseError) {
-        rethrow;
-      }
+      rethrow;
     } finally {
       setLoading(false);
     }
@@ -458,31 +324,25 @@ class CampaignFormViewModel with ChangeNotifier {
   @override
   void dispose() {
     // 모든 컨트롤러를 dispose합니다.
+    titleController.dispose();
     internalTitleController.dispose();
     coverImageUrlController.dispose();
     prefixController.dispose();
     liveVerticalCoverUrlController.dispose();
     liveStreamUrlController.dispose();
-    titleController.dispose();
-    productUrlController.dispose();
-    salePriceController.dispose();
-    liveDateController.dispose();
+    shootDateController.dispose();
+    deadlineController.dispose();
     startTimeController.dispose();
     endTimeController.dispose();
     brandController.dispose();
     categoryController.dispose();
-    descController.dispose();
+    contentController.dispose();
     productThumbnailUrlController.dispose();
     productNameController.dispose();
     campaignProductUrlController.dispose();
-    titleRecruitController.dispose();
-    shootDateController.dispose();
-    deadlineController.dispose();
     locationController.dispose();
     feeController.dispose();
-    categoryRecruitController.dispose();
-    descRecruitController.dispose();
-    durationInHoursController.dispose();
+    durationHoursController.dispose();
     super.dispose();
   }
 }

@@ -8,6 +8,7 @@ import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_calendar_dialog.dart';
 import 'package:livee/presentation/widgets/custom_dropdown.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,7 @@ class CampaignsFormScreen extends StatelessWidget {
     final viewModel = context.watch<CampaignFormViewModel>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('공고 등록'),
+        title: Text(campaignId == null ? '공고 등록' : '공고 수정'),
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
       ),
@@ -65,7 +66,7 @@ class CampaignsFormScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // [수정] hintText 추가
                 CustomTextFormField(
-                    controller: viewModel.descController,
+                    controller: viewModel.contentController,
                     label: '내용',
                     maxLines: 5,
                     hintText: '요구역량/업무/준비물/참고링크 등을 자유롭게 입력'),
@@ -100,7 +101,7 @@ class CampaignsFormScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // [수정] hintText 추가
                 CustomTextFormField(
-                    controller: viewModel.durationInHoursController,
+                    controller: viewModel.durationHoursController,
                     label: '촬영 시간(시간 기준)',
                     isRequired: true,
                     keyboardType: TextInputType.number,
@@ -142,7 +143,7 @@ class CampaignsFormScreen extends StatelessWidget {
                   label: '쇼핑라이브 세로 커버 (2:3)',
                   controller: viewModel.liveVerticalCoverUrlController,
                   imageBytes: viewModel.tempVerticalCoverImageBytes,
-                 imageType: ImageType.verticalCover,
+                  imageType: ImageType.verticalCover,
                   aspectRatio: 2 / 3,
                   hintText: '이미지를 넣어주세요',
                 ),
@@ -303,9 +304,9 @@ class CampaignsFormScreen extends StatelessWidget {
             try {
               await viewModel.pickImage(imageType);
             } catch (e) {
-              if (ScaffoldMessenger.of(context).mounted) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('이미지 선택 실패: $e')));
+              if (context.mounted) {
+                showCustomToast(context, '이미지 선택 실패: $e',
+                    type: ToastType.error);
               }
             }
           },

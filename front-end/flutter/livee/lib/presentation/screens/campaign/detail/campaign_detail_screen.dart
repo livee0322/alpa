@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaign_detail_view_model.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
-import 'widgets/detail_product_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -62,17 +62,17 @@ class CampaignDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildTitleSection(campaign),
             const SizedBox(height: 16),
-            if (campaign.type == 'recruit')
-              _buildRecruitMetaGrid(campaign)
-            else if (campaign.type == 'product')
-              _buildProductMetaGrid(campaign),
+            _buildRecruitMetaGrid(campaign),
             const SizedBox(height: 24),
-            if (campaign.type == 'product') _buildProductList(campaign),
+            if (campaign.productName != null &&
+                campaign.productName!.isNotEmpty)
+              _buildProductSection(campaign),
             _buildDescription(campaign),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(context, campaign, authProvider, viewModel),
+      bottomNavigationBar:
+          _buildBottomBar(context, campaign, authProvider, viewModel),
     );
   }
 
@@ -81,7 +81,8 @@ class CampaignDetailScreen extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Image.network(
-        campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/1280/720',
+        campaign.coverImageUrl ??
+            'https://picsum.photos/seed/${campaign.id}/1280/720',
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
@@ -97,7 +98,7 @@ class CampaignDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          campaign.brand ?? '브랜드 미정',
+          campaign.brandName ?? '브랜드 미정',
           style: const TextStyle(
             fontSize: 14,
             color: Color(0xFF6B7280),
@@ -117,10 +118,6 @@ class CampaignDetailScreen extends StatelessWidget {
 
   // '쇼호스트 모집' 메타 정보를 GridView로 표시
   Widget _buildRecruitMetaGrid(Campaign campaign) {
-    // recruit 객체에서 location 정보만 가져옴
-    final recruit = campaign.recruit;
-
-    // fee를 "30만원" 형태의 문자열로 변환
     String feeText = '협의';
     if (campaign.fee != null && campaign.fee! > 0) {
       feeText = '${(campaign.fee! / 10000).round()}만원';
@@ -129,11 +126,25 @@ class CampaignDetailScreen extends StatelessWidget {
     }
 
     final metaItems = [
-      // liveTime을 촬영일로 사용
-      {'icon': Icons.calendar_today, 'label': '촬영일', 'value': campaign.liveTime?.substring(0, 10) ?? '미정'},
-      // liveTime을 시간으로 사용 (종료 시간이 없으므로 시작 시간만 표시)
-      {'icon': Icons.schedule, 'label': '시간', 'value': campaign.liveTime ?? '미정'},
-      {'icon': Icons.location_on_outlined, 'label': '장소', 'value': recruit?.location ?? '미정'},
+      {
+        'icon': Icons.calendar_today,
+        'label': '촬영일',
+        'value': campaign.shootDate != null
+            ? DateFormat('yyyy.MM.dd').format(campaign.shootDate!)
+            : '미정'
+      },
+      {
+        'icon': Icons.schedule,
+        'label': '시간',
+        'value': campaign.startTime != null
+            ? '${campaign.startTime} ~ ${campaign.endTime}'
+            : '미정'
+      },
+      {
+        'icon': Icons.location_on_outlined,
+        'label': '장소',
+        'value': campaign.location ?? '미정'
+      },
       {'icon': Icons.payment, 'label': '출연료', 'value': feeText},
     ];
 
@@ -158,61 +169,58 @@ class CampaignDetailScreen extends StatelessWidget {
     );
   }
 
-  // '상품 캠페인' 메타 정보를 GridView로 표시
-  Widget _buildProductMetaGrid(Campaign campaign) {
-    final price = campaign.products?.firstOrNull?.salePrice?.toString() ??
-        campaign.products?.firstOrNull?.price?.toString() ??
-        '미정';
-    // [수정] campaign.live 객체 대신 campaign.liveTime 필드를 직접 사용
-    final metaItems = [
-      {'icon': Icons.calendar_today, 'label': '라이브 날짜', 'value': campaign.liveTime?.substring(0, 10) ?? '미정'},
-      {'icon': Icons.schedule, 'label': '라이브 시간', 'value': campaign.liveTime ?? '미정'},
-      {'icon': Icons.sell_outlined, 'label': '판매가', 'value': '$price원'},
-      {'icon': Icons.category_outlined, 'label': '카테고리', 'value': campaign.category ?? '미정'},
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: metaItems.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 3.0,
-      ),
-      itemBuilder: (context, index) {
-        final item = metaItems[index];
-        return DetailMetaCard(
-          icon: item['icon'] as IconData,
-          label: item['label'] as String,
-          value: item['value'] as String,
-        );
-      },
-    );
-  }
-
-  // 상품 목록을 ListView로 표시
-  Widget _buildProductList(Campaign campaign) {
-    final products = campaign.products;
-    if (products == null || products.isEmpty) return const SizedBox.shrink();
-
+  // 단일 상품 정보를 표시하는 새로운 섹션 위젯
+  Widget _buildProductSection(Campaign campaign) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '구성 상품',
+          '대표 상품',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 8),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: products.length,
-          itemBuilder: (context, index) => DetailProductCard(product: products[index]),
+        // Product 모델 대신 Campaign 모델의 필드를 직접 사용합니다.
+        Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    campaign.productThumbnailUrl ??
+                        'https://picsum.photos/seed/${campaign.productName}/128/128',
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 64,
+                      height: 64,
+                      color: Colors.grey[200],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    campaign.productName ?? '상품명 미정',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 24),
       ],
@@ -232,28 +240,19 @@ class CampaignDetailScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        // TODO: HTML 렌더링 패키지(flutter_html) 적용 필요
-        Text(campaign.descriptionHTML ?? '상세 설명이 없습니다.'),
+        // [수정] descriptionHTML -> content로 필드명을 변경합니다.
+        Text(campaign.content ?? '상세 설명이 없습니다.'),
       ],
     );
   }
 
   // 하단 고정 바를 빌드
-  Widget _buildBottomBar(
-      BuildContext context, Campaign campaign, AuthProvider authProvider, CampaignDetailViewModel viewModel) {
-    String priceLabel = '';
-    if (campaign.type == 'recruit') {
-      if (campaign.fee != null && campaign.fee! > 0) {
-        priceLabel = '출연료 ${(campaign.fee! / 10000).round()}만원';
-      } else {
-        priceLabel = '출연료 협의';
-      }
-    } else if (campaign.type == 'product') {
-      final price =
-          campaign.products?.firstOrNull?.salePrice?.toString() ?? campaign.products?.firstOrNull?.price?.toString();
-      if (price != null) {
-        priceLabel = '판매가 $price원';
-      }
+  Widget _buildBottomBar(BuildContext context, Campaign campaign,
+      AuthProvider authProvider, CampaignDetailViewModel viewModel) {
+    // [수정] type과 products 필드 분기 로직을 제거하고, 출연료 정보만 표시하도록 단일화합니다.
+    String priceLabel = '출연료 협의'; // 기본값
+    if (campaign.fee != null && campaign.fee! > 0) {
+      priceLabel = '출연료 ${(campaign.fee! / 10000).round()}만원';
     }
 
     bool isBrand = authProvider.role == 'brand';
@@ -261,8 +260,9 @@ class CampaignDetailScreen extends StatelessWidget {
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
       buttonLabel: isBrand ? '지원자 현황' : '지원하기',
-      onButtonPressed: () =>
-          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : viewModel.handleApply(),
+      onButtonPressed: () => isBrand
+          ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants')
+          : viewModel.handleApply(),
     );
   }
 }

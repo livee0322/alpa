@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
@@ -29,11 +31,13 @@ class NewRecruitCard extends StatelessWidget {
       feeText = '협의';
     }
 
-    // 마감일 포맷팅 (예: "2025-09-18T15:00:00.000Z" -> "2025-09-18")
-    final deadline = campaign.closeAt?.substring(0, 10) ?? '미정';
+    // DateTime? 타입의 closeAt을 'yyyy-MM-dd' 형식의 문자열로 변환
+    final deadline = campaign.closeAt != null
+        ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!)
+        : '미정';
 
     return Card(
-      color: Colors.white,
+      color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
@@ -53,7 +57,7 @@ class NewRecruitCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 180,
-                    color: Colors.grey[200],
+                    color: AppColors.disabled,
                     child: const Center(child: Icon(Icons.image_not_supported)),
                   ),
                 ),
@@ -65,7 +69,7 @@ class NewRecruitCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
+                        color: AppColors.black.withAlpha(179),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text('AD',
@@ -81,12 +85,16 @@ class NewRecruitCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
+                      color: AppColors.black.withAlpha(179),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text('AD',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'AD',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -101,13 +109,18 @@ class NewRecruitCard extends StatelessWidget {
                   Text(
                     campaign.title ?? '제목 없음',
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   // 브랜드명과 메타 정보
                   Text(
-                    '${campaign.brand ?? '브랜드 미정'} · 출연료 $feeText · 마감 $deadline',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    '${campaign.brandName ?? '브랜드 미정'} · 출연료 $feeText · 마감 $deadline',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textGrey,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   // 바로 지원하기 버튼
@@ -125,9 +138,7 @@ class NewRecruitCard extends StatelessWidget {
                             content: '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
                             confirmText: '로그인',
                           );
-                          if (confirm == true) {
-                            GoRouter.of(context).go('/login');
-                          }
+                          if (confirm == true) context.go('/login');
                           return;
                         }
 
@@ -167,9 +178,8 @@ class NewRecruitCard extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor:
-                            const Color(0xFF007AFF), // 이미지와 유사한 파란색
-                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primary, // 이미지와 유사한 파란색
+                        foregroundColor: AppColors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
