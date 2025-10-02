@@ -23,6 +23,7 @@ class Campaign {
   final String? productUrl; // 대표 상품 판매 페이지 URL
   final DateTime? shootDate; // 촬영일
   final num? durationHours; // 총 촬영 시간
+  final bool? isPublic; // 공개 여부
 
   Campaign({
     this.id,
@@ -49,6 +50,7 @@ class Campaign {
     this.productUrl,
     this.shootDate,
     this.durationHours,
+    this.isPublic,
   });
   factory Campaign.fromJson(Map<String, dynamic> json) {
     // [추가] json의 value를 안전하게 특정 타입으로 변환하는 헬퍼 함수
@@ -104,6 +106,7 @@ class Campaign {
           ? DateTime.tryParse(json['shootDate'].toString())
           : null,
       durationHours: parseNum(json['durationHours']),
+      isPublic: safeCast<bool>(json['isPublic']),
     );
   }
 }
