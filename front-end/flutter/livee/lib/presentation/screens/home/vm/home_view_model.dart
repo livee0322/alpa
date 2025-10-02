@@ -55,13 +55,12 @@ class HomeViewModel with ChangeNotifier {
     try {
       // 여러 API를 동시에 호출하여 성능 향상
       final results = await Future.wait([
-        _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6),
-        _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
+        _campaignUseCase.getAllCampaigns(limit: 6),
+        _campaignUseCase.getAllCampaigns(limit: 10),
         _portfolioRepository.getPublicPortfolios(limit: 2),
         _modelUseCase.getAllModels(limit: 5),
         _newsUseCase.getNewsList(limit: 2),
         _clipUseCase.getClips(),
-        // NewsRepository는 현재 목업 데이터를 사용하므로 동시 호출에서 제외
       ]);
 
       _schedules = (results[0] as PaginatedResponse<Campaign>).items;

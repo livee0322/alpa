@@ -51,32 +51,59 @@ class Campaign {
     this.durationHours,
   });
   factory Campaign.fromJson(Map<String, dynamic> json) {
+    // [추가] json의 value를 안전하게 특정 타입으로 변환하는 헬퍼 함수
+    T? safeCast<T>(dynamic value) {
+      if (value is T) {
+        return value;
+      }
+      if (T == double && value is int) {
+        return value.toDouble() as T?;
+      }
+      if (T == int && value is double) {
+        return value.toInt() as T?;
+      }
+      if (T == String) {
+        return value?.toString() as T?;
+      }
+      return null;
+    }
+
+    // 숫자 타입 필드를 안전하게 파싱하는 함수 (문자열 "50000" 등도 처리)
+    num? parseNum(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value;
+      return num.tryParse(value.toString());
+    }
+
     return Campaign(
-      id: json['id'] as String? ?? json['_id'] as String?,
-      thumbnailUrl: json['thumbnailUrl'] as String?,
-      coverImageUrl: json['coverImageUrl'] as String?,
-      brandName: json['brandName'] as String?,
-      category: json['category'] as String?,
-      fee: json['fee'] as num?,
-      feeNegotiable: json['feeNegotiable'] as bool?,
-      closeAt:
-          json['closeAt'] != null ? DateTime.tryParse(json['closeAt']) : null,
-      content: json['content'] as String?,
-      isApplied: json['isApplied'] as bool?,
-      location: json['location'] as String?,
-      internalTitle: json['internalTitle'] as String?,
-      prefix: json['prefix'] as String?,
-      liveVerticalCoverUrl: json['liveVerticalCoverUrl'] as String?,
-      startTime: json['startTime'] as String?,
-      endTime: json['endTime'] as String?,
-      liveStreamUrl: json['liveStreamUrl'] as String?,
-      productThumbnailUrl: json['productThumbnailUrl'] as String?,
-      productName: json['productName'] as String?,
-      productUrl: json['productUrl'] as String?,
-      shootDate: json['shootDate'] != null
-          ? DateTime.tryParse(json['shootDate'])
+      id: safeCast<String>(json['id']) ?? safeCast<String>(json['_id']),
+      title: safeCast<String>(json['title']),
+      thumbnailUrl: safeCast<String>(json['thumbnailUrl']),
+      coverImageUrl: safeCast<String>(json['coverImageUrl']),
+      brandName: safeCast<String>(json['brandName']),
+      category: safeCast<String>(json['category']),
+      fee: parseNum(json['fee']),
+      feeNegotiable: safeCast<bool>(json['feeNegotiable']),
+      closeAt: json['closeAt'] != null
+          ? DateTime.tryParse(json['closeAt'].toString())
           : null,
-      durationHours: json['durationHours'] as num?,
+      content: safeCast<String>(json['content']),
+      isAd: safeCast<bool>(json['isAd']),
+      isApplied: safeCast<bool>(json['isApplied']),
+      location: safeCast<String>(json['location']),
+      internalTitle: safeCast<String>(json['internalTitle']),
+      prefix: safeCast<String>(json['prefix']),
+      liveVerticalCoverUrl: safeCast<String>(json['liveVerticalCoverUrl']),
+      startTime: safeCast<String>(json['startTime']),
+      endTime: safeCast<String>(json['endTime']),
+      liveStreamUrl: safeCast<String>(json['liveStreamUrl']),
+      productThumbnailUrl: safeCast<String>(json['productThumbnailUrl']),
+      productName: safeCast<String>(json['productName']),
+      productUrl: safeCast<String>(json['productUrl']),
+      shootDate: json['shootDate'] != null
+          ? DateTime.tryParse(json['shootDate'].toString())
+          : null,
+      durationHours: parseNum(json['durationHours']),
     );
   }
 }
