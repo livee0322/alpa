@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/divided_list_view.dart';
-import 'package:livee/presentation/widgets/trending_recruit_card.dart';
+import 'package:livee/presentation/widgets/compact_campaign_card.dart';
 
 /// '지금 뜨는 쇼핑 라이브 공고' 섹션 UI
 class ScheduleSection extends StatelessWidget {
@@ -47,7 +45,7 @@ class ScheduleSection extends StatelessWidget {
         itemBuilder: (context, index) {
           final campaign = schedules[index];
           // [수정] 새로 만든 TrendingRecruitCard 위젯을 사용합니다.
-          return TrendingRecruitCard(campaign: campaign);
+          return CompactCampaignCard(campaign: campaign);
         },
         // [수정] 카드 사이의 간격을 지정합니다.
         separatorBuilder: (context, index) => const SizedBox(width: 12),

@@ -55,7 +55,7 @@ class HomeViewModel with ChangeNotifier {
     try {
       // 여러 API를 동시에 호출하여 성능 향상
       final results = await Future.wait([
-        _campaignUseCase.getAllCampaigns(type: 'product', limit: 6),
+        _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 6),
         _campaignUseCase.getAllCampaigns(type: 'recruit', limit: 10),
         _portfolioRepository.getPublicPortfolios(limit: 2),
         _modelUseCase.getAllModels(limit: 5),
