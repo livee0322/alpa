@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
@@ -22,7 +23,7 @@ class ScheduleSection extends StatelessWidget {
 
     // 카드 리스트 UI
     return SizedBox(
-      height: 480,
+      height: 500,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: schedules.length,
@@ -39,13 +40,6 @@ class ScheduleSection extends StatelessWidget {
   Widget _buildRecruitCard(BuildContext context, Campaign campaign) {
     final dDay = Utility.calculateDday(campaign.closeAt?.toIso8601String());
     final isClosed = dDay == '마감';
-
-    String feeText = '협의';
-    if (campaign.fee != null && campaign.fee! > 0) {
-      feeText = '${(campaign.fee! / 10000).round()}만원';
-    } else if (campaign.feeNegotiable == true) {
-      feeText = '협의';
-    }
 
     // 카드의 폭을 지정하고 공통 카드 컴포넌트를 사용
     return SizedBox(
@@ -89,7 +83,7 @@ class ScheduleSection extends StatelessWidget {
                         Expanded(
                           flex: 3,
                           child: Text(
-                            'ㅈ노스TV',
+                            campaign.brandName ?? '브랜드명',
                             style: TextStyle(
                               fontSize: 12,
                               color: AppColors.textGrey,
@@ -143,7 +137,7 @@ class ScheduleSection extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
 
                     // 제목
                     Text(
@@ -152,24 +146,15 @@ class ScheduleSection extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
 
                     const Spacer(),
 
-                    // 출연료
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        feeText,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textBlack,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    // 상품 이미지 및 가격 위젯
+                    _buildProductInfo(context, campaign),
+
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -178,6 +163,70 @@ class ScheduleSection extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  /// [추가] 상품 이미지, 상품명, 가격을 표시하는 위젯
+  Widget _buildProductInfo(BuildContext context, Campaign campaign) {
+    // [추가] 가격 포맷팅을 위한 헬퍼 함수
+    String formatPrice(num? fee) {
+      if (fee == null || fee == 0) {
+        return campaign.feeNegotiable == true ? '협의' : '가격 미정';
+      }
+      final formatter = NumberFormat('#,###');
+      return '${formatter.format(fee)}원';
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // 1. 정사각형 상품 이미지
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Image.network(
+            // [수정] productThumbnailUrl 필드를 사용합니다.
+            campaign.productThumbnailUrl ??
+                'https://picsum.photos/seed/${campaign.id}/50/50',
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: 50,
+              height: 50,
+              color: AppColors.disabled,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+
+        // 2. 상품명 및 가격
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                // [수정] productName 필드를 사용합니다.
+                campaign.productName ?? '상품명 미정',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textGrey,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                formatPrice(campaign.fee), // 출연료를 가격처럼 표시
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBlack,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
