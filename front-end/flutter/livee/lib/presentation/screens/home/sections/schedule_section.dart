@@ -168,15 +168,6 @@ class ScheduleSection extends StatelessWidget {
 
   /// [추가] 상품 이미지, 상품명, 가격을 표시하는 위젯
   Widget _buildProductInfo(BuildContext context, Campaign campaign) {
-    // [추가] 가격 포맷팅을 위한 헬퍼 함수
-    String formatPrice(num? fee) {
-      if (fee == null || fee == 0) {
-        return campaign.feeNegotiable == true ? '협의' : '가격 미정';
-      }
-      final formatter = NumberFormat('#,###');
-      return '${formatter.format(fee)}원';
-    }
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -213,15 +204,6 @@ class ScheduleSection extends StatelessWidget {
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                formatPrice(campaign.fee), // 출연료를 가격처럼 표시
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
               ),
             ],
           ),
