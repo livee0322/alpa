@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as img; // image 패키지를 img라는 별칭으로 사용
+import 'package:image/image.dart' as img;
+import 'package:livee/presentation/styles/app_colors.dart'; // image 패키지를 img라는 별칭으로 사용
 
 /// 이미지를 자를 수 있는 커스텀 다이얼로그 위젯
 class CustomCropperDialog extends StatefulWidget {
@@ -19,7 +20,8 @@ class CustomCropperDialog extends StatefulWidget {
 }
 
 class _CustomCropperDialogState extends State<CustomCropperDialog> {
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
   late Future<Uint8List> _imageBytes;
 
   // _CustomCropperDialogState 클래스에 _isCropping 변수 추가
@@ -72,84 +74,100 @@ class _CustomCropperDialogState extends State<CustomCropperDialog> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    // 크롭 영역의 크기는 화면 너비의 80%로 고정
     final cropSize = screenSize.width * 0.8;
     final cropHeight = cropSize / widget.aspectRatio;
 
     return Dialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      // [수정] 배경색을 AppColors.white로 설정합니다.
+      backgroundColor: AppColors.white,
+      // [추가] 둥근 모서리를 적용합니다.
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Stack(
         children: [
-          // 이미지 편집 영역
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: screenSize.width,
-              height: screenSize.height * 0.6,
-              child: FutureBuilder<Uint8List>(
-                future: _imageBytes,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return Stack(
-                    children: [
-                      // 1. 확대/축소/이동이 가능한 이미지 뷰어
-                      InteractiveViewer(
-                        transformationController: _transformationController,
-                        maxScale: 5.0,
-                        child: Center(child: Image.memory(snapshot.data!)),
-                      ),
-                      // 2. 이미지 위에 겹쳐서 표시될 반투명 오버레이
-                      IgnorePointer(
-                        child: Center(
-                          child: CustomPaint(
-                            painter: CropperOverlayPainter(
-                              cropSize: Size(cropSize, cropHeight),
-                              isCircle: widget.aspectRatio == 1.0, // 1:1 비율일 때만 원형
-                            ),
-                            child: SizedBox(
-                              width: cropSize,
-                              height: cropHeight,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 이미지 편집 영역
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: screenSize.width,
+                  height: screenSize.height * 0.6,
+                  child: FutureBuilder<Uint8List>(
+                    future: _imageBytes,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return Stack(
+                        children: [
+                          InteractiveViewer(
+                            transformationController: _transformationController,
+                            maxScale: 5.0,
+                            child: Center(child: Image.memory(snapshot.data!)),
+                          ),
+                          IgnorePointer(
+                            child: Center(
+                              child: CustomPaint(
+                                painter: CropperOverlayPainter(
+                                  cropSize: Size(cropSize, cropHeight),
+                                  isCircle: widget.aspectRatio == 1.0,
+                                ),
+                                child: SizedBox(
+                                  width: cropSize,
+                                  height: cropHeight,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          // 하단 버튼 영역
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('취소'),
-                ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: _isCropping,
-                  builder: (context, isCropping, child) => ElevatedButton(
-                    onPressed: isCropping ? null : _cropAndPop, // 로딩 중일 때 비활성화
-                    child: isCropping
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text('자르기'),
+                        ],
+                      );
+                    },
                   ),
                 ),
-              ],
+              ),
+              // 하단 버튼 영역
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('취소'),
+                    ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _isCropping,
+                      builder: (context, isCropping, child) => ElevatedButton(
+                        onPressed: isCropping ? null : _cropAndPop,
+                        child: isCropping
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('자르기'),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          // [추가] 우측 상단에 닫기(X) 버튼을 추가합니다.
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-          )
+          ),
         ],
       ),
     );
