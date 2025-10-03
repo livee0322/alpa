@@ -29,12 +29,13 @@ class StandardContentCard extends StatelessWidget {
         margin: margin ?? const EdgeInsets.only(bottom: 10),
         padding: padding ?? const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           border: Border.all(
             color: AppColors.border,
             width: 1.0, // 테두리 두께
           ),
-          borderRadius: effectiveBorderRadius.resolve(Directionality.of(context)),
+          borderRadius:
+              effectiveBorderRadius.resolve(Directionality.of(context)),
         ),
         child: child,
       ),

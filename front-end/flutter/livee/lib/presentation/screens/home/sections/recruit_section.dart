@@ -31,7 +31,7 @@ class RecruitSection extends StatelessWidget {
 
     // 카드 리스트 UI
     return SizedBox(
-      height: 310,
+      height: 320,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: recruits.length,
@@ -76,7 +76,7 @@ class RecruitSection extends StatelessWidget {
                 aspectRatio: 16 / 9,
                 child: Image.network(
                   campaign.coverImageUrl ??
-                      'https://picsum.photos/seed/recruit${campaign.id}/400/225',
+                      'https://picsum.photos/seed/recruit${campaign.id}',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: AppColors.disabled,
@@ -91,7 +91,7 @@ class RecruitSection extends StatelessWidget {
             // 공고 정보 (텍스트, 버튼)
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
