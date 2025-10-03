@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/cloudinary_uploader.dart';
-import 'package:livee/presentation/widgets/custom_cropper_dialog.dart';
+import 'package:livee/presentation/widgets/dialog/custom_cropper_dialog.dart';
 
 /// 이미지 선택, 크롭, 업로드 등 이미지 관련 기능을 전역으로 제공
 class ImageHandlerProvider  with ChangeNotifier {
