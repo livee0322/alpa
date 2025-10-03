@@ -23,8 +23,9 @@ class CampaignsFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<CampaignFormViewModel, ImageHandlerProvider>(
-      builder: (context, viewModel, imageHandler, child) {
+    return Consumer<CampaignFormViewModel>(
+      builder: (context, viewModel, child) {
+        final imageHandler = context.watch<ImageHandlerProvider>();
         return Scaffold(
           appBar: AppBar(
             title: Text(campaignId == null ? '공고 등록' : '공고 수정'),
@@ -304,14 +305,11 @@ class CampaignsFormScreen extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
         InkWell(
-          // [수정] onTap에서 ViewModel의 pickImage 대신 ImageHandlerProvider의 pickImage를 직접 호출합니다.
           onTap: () async {
             try {
-              // [수정] 크롭 기능을 사용하여 이미지를 선택합니다.
               final bytes = await imageHandler.pickImage(
                   context: context, aspectRatio: aspectRatio);
               if (bytes != null) {
-                // [수정] ViewModel의 상태 변수에 선택된 이미지 바이트 데이터를 저장합니다.
                 switch (imageType) {
                   case ImageType.cover:
                     viewModel.tempCoverImageBytes = bytes;
@@ -326,6 +324,8 @@ class CampaignsFormScreen extends StatelessWidget {
                     viewModel.productThumbnailUrlController.clear();
                     break;
                 }
+                // [추가] ViewModel의 상태 변경을 UI에 즉시 알립니다.
+                viewModel.notifyListeners();
               }
             } catch (e) {
               if (context.mounted) {

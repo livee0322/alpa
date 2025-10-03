@@ -29,8 +29,8 @@ class CustomCropperDialog extends StatelessWidget {
       child: Consumer<CustomCropperViewModel>(
         builder: (context, viewModel, child) {
           final screenSize = MediaQuery.of(context).size;
-          final cropSize = screenSize.width * 0.8;
-          final cropHeight = cropSize / aspectRatio;
+          final cropWidth = screenSize.width * 0.8;
+          final cropHeight = cropWidth / aspectRatio;
 
           return Dialog(
             backgroundColor: AppColors.white,
@@ -46,7 +46,7 @@ class CustomCropperDialog extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: SizedBox(
                         width: screenSize.width,
-                        height: screenSize.height * 0.6,
+                        height: screenSize.height * 0.5,
                         child: FutureBuilder<Uint8List>(
                           future: viewModel.imageBytes, // ViewModel의 데이터 사용
                           builder: (context, snapshot) {
@@ -64,14 +64,11 @@ class CustomCropperDialog extends StatelessWidget {
                                       child: Image.memory(snapshot.data!)),
                                 ),
                                 IgnorePointer(
-                                  child: Center(
-                                    child: CustomPaint(
-                                      painter: CropperOverlayPainter(
-                                        cropSize: Size(cropSize, cropHeight),
-                                        isCircle: aspectRatio == 1.0,
-                                      ),
-                                      child: SizedBox(
-                                          width: cropSize, height: cropHeight),
+                                  child: CustomPaint(
+                                    size: Size.infinite, // Stack의 전체 크기를 차지
+                                    painter: CropperOverlayPainter(
+                                      cropSize: Size(cropWidth, cropHeight),
+                                      isCircle: aspectRatio == 1.0,
                                     ),
                                   ),
                                 ),

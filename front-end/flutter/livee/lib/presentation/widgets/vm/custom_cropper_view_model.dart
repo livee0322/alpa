@@ -31,7 +31,7 @@ class CustomCropperViewModel with ChangeNotifier {
   /// '자르기' 버튼을 눌렀을 때 실행되는 핵심 로직
   void cropAndPop() async {
     _isCropping = true;
-    notifyListeners(); // 로딩 시작을 UI에 알림
+    notifyListeners();
 
     final originalBytes = await _imageBytes;
     final originalImage = img.decodeImage(originalBytes);
@@ -48,33 +48,32 @@ class CustomCropperViewModel with ChangeNotifier {
     final scale = matrix.getMaxScaleOnAxis();
     final position = matrix.getTranslation();
 
-    // 원본 이미지에서 잘라낼 영역의 좌표와 크기를 계산
-    final x = (cropWidth / 2 -
-            position.x +
-            (originalImage.width - cropWidth / scale) / 2 * scale) /
-        scale;
-    final y = (cropHeight / 2 -
-            position.y +
-            (originalImage.height - cropHeight / scale) / 2 * scale) /
-        scale;
-    final size = cropWidth / scale;
+    // 화면상 크롭 영역의 좌상단 좌표
+    final cropLeftOnScreen = (screenSize.width - cropWidth) / 2;
+    final cropTopOnScreen =
+        (screenSize.height * 0.6 - cropHeight) / 2 + 16; // Dialog Padding 고려
+
+    // 이미지 기준 좌표로 변환
+    final x = (cropLeftOnScreen - position.x) / scale;
+    final y = (cropTopOnScreen - position.y) / scale;
+    final width = cropWidth / scale;
+    final height = cropHeight / scale;
 
     final croppedImage = img.copyCrop(
       originalImage,
       x: x.round(),
       y: y.round(),
-      width: size.round(),
-      height: (size / aspectRatio).round(),
+      width: width.round(),
+      height: height.round(),
     );
 
     _finishCropping();
-    // 잘린 이미지를 이전 화면으로 반환하며 다이얼로그 닫기
     Navigator.of(context).pop(Uint8List.fromList(img.encodePng(croppedImage)));
   }
 
   void _finishCropping() {
     _isCropping = false;
-    notifyListeners(); // 로딩 종료를 UI에 알림
+    notifyListeners();
   }
 
   @override
