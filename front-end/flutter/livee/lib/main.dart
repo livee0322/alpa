@@ -5,6 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/providers/showhost_list_provider.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/routes/app_router.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +36,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<AuthProvider>()),
         ChangeNotifierProvider(create: (_) => locator<RecruitListProvider>()),
         ChangeNotifierProvider(create: (_) => locator<ShowhostListProvider>()),
-
-        // Repository나 UseCase는 이제 Provider가 직접 locator에서 가져오므로 여기서 등록할 필요 없음
+        ChangeNotifierProvider(create: (_) => locator<ImageHandlerProvider>()),
       ],
       child: MyApp(router: router),
     ),

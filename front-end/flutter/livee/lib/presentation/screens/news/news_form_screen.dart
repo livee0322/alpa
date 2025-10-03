@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/news/vm/news_form_view_model.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
@@ -13,19 +14,19 @@ class NewsFormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => NewsFormViewModel(context, newsId: newsId),
-      child: Consumer<NewsFormViewModel>(
-        builder: (context, viewModel, child) {
+      child: Consumer2<NewsFormViewModel, ImageHandlerProvider>(
+        builder: (context, viewModel, imageHandler, child) {
           return Scaffold(
+            // [수정] LoadingOverlay가 두 Provider의 로딩 상태를 모두 감지
             body: LoadingOverlay(
-              isLoading: viewModel.isLoading,
+              isLoading: viewModel.isLoading || imageHandler.isLoading,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(
                   key: viewModel.formKey,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 전체 좌측 정렬
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // [추가] 페이지 상단에 제목을 추가합니다.
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24.0),
                         child: Text(
@@ -42,7 +43,7 @@ class NewsFormScreen extends StatelessWidget {
                         isRequired: true,
                       ),
                       const SizedBox(height: 16),
-                      _buildImageUploader(viewModel), // 이미지 업로더 위젯 호출
+                      _buildImageUploader(viewModel),
                       const SizedBox(height: 16),
                       CustomTextFormField(
                         controller: viewModel.contentController,
@@ -51,7 +52,6 @@ class NewsFormScreen extends StatelessWidget {
                         maxLines: 15,
                       ),
                       const SizedBox(height: 24),
-                      // [추가] 저장 버튼을 내용 섹션 아래, 오른쪽 정렬로 배치합니다.
                       Align(
                         alignment: Alignment.centerRight,
                         child: PrimaryActionButton(
@@ -77,10 +77,12 @@ class NewsFormScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('대표 이미지', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const Text('대표 이미지',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
-        // [수정] InkWell로 감싸서 터치 이벤트를 감지하도록 합니다.
         InkWell(
+          // [수정] ViewModel의 pickAndUploadImage 메서드를 호출하는 것은 동일합니다.
+          // 내부 로직이 ImageHandlerProvider를 사용하도록 변경되었을 뿐입니다.
           onTap: viewModel.pickAndUploadImage,
           borderRadius: BorderRadius.circular(12),
           child: Container(
@@ -90,16 +92,18 @@ class NewsFormScreen extends StatelessWidget {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
               image: viewModel.imageUrl != null
-                  ? DecorationImage(image: NetworkImage(viewModel.imageUrl!), fit: BoxFit.cover)
+                  ? DecorationImage(
+                      image: NetworkImage(viewModel.imageUrl!),
+                      fit: BoxFit.cover)
                   : null,
             ),
-            // [수정] 이미지가 없을 때만 안내 텍스트와 아이콘을 표시합니다.
             child: viewModel.imageUrl == null
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.add_photo_alternate_outlined, color: Colors.grey),
+                        Icon(Icons.add_photo_alternate_outlined,
+                            color: Colors.grey),
                         SizedBox(height: 8),
                         Text('박스를 클릭하여 이미지를 등록해주세요.'),
                       ],
@@ -108,7 +112,6 @@ class NewsFormScreen extends StatelessWidget {
                 : null,
           ),
         ),
-        // [삭제] 기존의 '이미지 선택 및 업로드' 버튼은 제거합니다.
       ],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
@@ -20,24 +20,15 @@ import 'package:universal_html/html.dart' as html;
 class StudioEditScreen extends StatelessWidget {
   const StudioEditScreen({super.key});
 
-  // 이미지 선택 로직을 위한 헬퍼 함수
-  Future<void> _pickImage(BuildContext context,
-      {required Function(PortfolioImage) onImageSelected}) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
-    final bytes = await pickedFile.readAsBytes();
-    onImageSelected(PortfolioImage(localBytes: bytes));
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => StudioEditViewModel(context),
       child: Consumer<StudioEditViewModel>(
         builder: (context, viewModel, child) {
+          final imageHandler = context.watch<ImageHandlerProvider>();
           return LoadingOverlay(
-            isLoading: viewModel.isLoading,
+            isLoading: viewModel.isLoading || imageHandler.isLoading,
             child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(
@@ -59,10 +50,23 @@ class StudioEditScreen extends StatelessWidget {
                       backgroundImageSource: viewModel.backgroundImageSource,
                       nicknameController:
                           viewModel.brandNameController, // 브랜드명을 닉네임처럼 표시
-                      onPickMainThumbnail: () => _pickImage(context,
-                          onImageSelected: viewModel.setMainThumbnail),
-                      onPickBackgroundImage: () => _pickImage(context,
-                          onImageSelected: viewModel.setBackgroundImage),
+                      // [수정] onPick 콜백에서 ImageHandlerProvider를 사용합니다.
+                      onPickMainThumbnail: () async {
+                        final bytes = await imageHandler.pickImage(
+                            context: context, aspectRatio: 1.0);
+                        if (bytes != null) {
+                          viewModel.setMainThumbnail(
+                              PortfolioImage(localBytes: bytes));
+                        }
+                      },
+                      onPickBackgroundImage: () async {
+                        final bytes = await imageHandler.pickImage(
+                            context: context, aspectRatio: 16 / 9);
+                        if (bytes != null) {
+                          viewModel.setBackgroundImage(
+                              PortfolioImage(localBytes: bytes));
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
 
@@ -75,10 +79,17 @@ class StudioEditScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           SubThumbnailSection(
                             sources: viewModel.subThumbnailSources,
-                            onAddImage: () => _pickImage(context,
-                                onImageSelected: viewModel.addSubThumbnail),
+                            // [수정] onAddImage 콜백에서 ImageHandlerProvider를 사용합니다.
+                            onAddImage: () async {
+                              final bytes = await imageHandler.pickImage(
+                                  context: context, aspectRatio: 1.0);
+                              if (bytes != null) {
+                                viewModel.addSubThumbnail(
+                                    PortfolioImage(localBytes: bytes));
+                              }
+                            },
                             onRemoveImage: viewModel.removeSubThumbnail,
-                            maxImages: 5, // 최대 5개로 설정 (기본값이지만 명시)
+                            maxImages: 5,
                           ),
                         ],
                       ),
@@ -174,6 +185,8 @@ class StudioEditScreen extends StatelessWidget {
 
   Widget _buildGallerySection(
       BuildContext context, StudioEditViewModel viewModel) {
+    final imageHandler =
+        Provider.of<ImageHandlerProvider>(context, listen: false);
     return StandardContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,10 +195,16 @@ class StudioEditScreen extends StatelessWidget {
           const SizedBox(height: 12),
           SubThumbnailSection(
             sources: viewModel.galleryImageSources,
-            onAddImage: () =>
-                _pickImage(context, onImageSelected: viewModel.addGalleryImage),
+            // [수정] onAddImage 콜백에서 ImageHandlerProvider를 사용합니다.
+            onAddImage: () async {
+              final bytes = await imageHandler.pickImage(
+                  context: context, aspectRatio: 1.0);
+              if (bytes != null) {
+                viewModel.addGalleryImage(PortfolioImage(localBytes: bytes));
+              }
+            },
             onRemoveImage: viewModel.removeGalleryImage,
-            maxImages: 9, // 최대 이미지 개수를 9개로 설정
+            maxImages: 9,
           ),
         ],
       ),

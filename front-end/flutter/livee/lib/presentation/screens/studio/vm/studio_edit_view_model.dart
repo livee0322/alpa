@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
-import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/usecases/studio_use_case.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/studio/models/day_schedule.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
@@ -12,6 +12,8 @@ import 'package:universal_html/html.dart' as html;
 class StudioEditViewModel with ChangeNotifier {
   // UseCase 의존성 주입
   final StudioUseCase _studioUseCase = locator<StudioUseCase>();
+  final ImageHandlerProvider _imageHandlerProvider =
+      locator<ImageHandlerProvider>();
   final BuildContext context;
 
   // ViewModel 생성 시 context를 받도록 수정
@@ -133,12 +135,10 @@ class StudioEditViewModel with ChangeNotifier {
   Future<void> saveStudio() async {
     _setLoading(true);
     try {
-      final uploader = CloudinaryUploader();
-
       // 모든 이미지를 Cloudinary에 업로드하고 URL을 받아오는 로직
       Future<String?> uploadImage(PortfolioImage? source) async {
         if (source?.localBytes != null) {
-          return await uploader.uploadFile(source!.localBytes!);
+          return await _imageHandlerProvider.uploadImage(source!.localBytes!);
         }
         return source?.networkUrl;
       }

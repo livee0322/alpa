@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
+import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/showhost/sections/basic_info_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/link_settings_section.dart';
 import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
@@ -40,113 +42,134 @@ class PortfolioEditScreen extends StatelessWidget {
   }
 
   /// 화면의 본문(Body) UI를 구성하는 헬퍼 위젯
-  Widget _buildBody(BuildContext context, PortfolioEditViewModel viewModel) => Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-            child: Form(
-              key: viewModel.formKey,
-              child: Column(
-                children: [
-                  // PreviewSection과 SubThumbnailSection은 ViewModel 타입에 직접 의존하지 않으므로 수정 없이 사용 가능
-                  PreviewSection(
-                    mainThumbnailSource: viewModel.mainThumbnailSource,
-                    backgroundImageSource: viewModel.backgroundImageSource,
-                    nicknameController: viewModel.nicknameController,
-                    onPickMainThumbnail: () => viewModel.pickImage(
-                      onImageSelected: (source) => viewModel.mainThumbnailSource = source,
-                    ),
-                    onPickBackgroundImage: () => viewModel.pickImage(
-                      onImageSelected: (source) => viewModel.backgroundImageSource = source,
-                    ),
+  Widget _buildBody(BuildContext context, PortfolioEditViewModel viewModel) {
+    final imageHandler =
+        Provider.of<ImageHandlerProvider>(context, listen: false);
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          child: Form(
+            key: viewModel.formKey,
+            child: Column(
+              children: [
+                // PreviewSection과 SubThumbnailSection은 ViewModel 타입에 직접 의존하지 않으므로 수정 없이 사용 가능
+                PreviewSection(
+                  mainThumbnailSource: viewModel.mainThumbnailSource,
+                  backgroundImageSource: viewModel.backgroundImageSource,
+                  nicknameController: viewModel.nicknameController,
+                  onPickMainThumbnail: () async {
+                    final bytes = await imageHandler.pickImage(
+                        context: context, aspectRatio: 1.0);
+                    if (bytes != null) {
+                      viewModel.mainThumbnailSource =
+                          PortfolioImage(localBytes: bytes);
+                    }
+                  },
+                  onPickBackgroundImage: () async {
+                    final bytes = await imageHandler.pickImage(
+                        context: context, aspectRatio: 16 / 9);
+                    if (bytes != null) {
+                      viewModel.backgroundImageSource =
+                          PortfolioImage(localBytes: bytes);
+                    }
+                  },
+                ),
+                const SizedBox(height: 32),
+
+                StandardContentCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: '갤러리 이미지(최대 5개)'),
+                      SubThumbnailSection(
+                        sources: viewModel.subThumbnailSources,
+                        onAddImage: () async {
+                          final bytes = await imageHandler.pickImage(
+                              context: context, aspectRatio: 1.0);
+                          if (bytes != null) {
+                            viewModel.subThumbnailSources
+                                .add(PortfolioImage(localBytes: bytes));
+                          }
+                        },
+                        onRemoveImage: (index) =>
+                            viewModel.removeSubThumbnail(index),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 32),
+                ),
 
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '갤러리 이미지(최대 5개)'),
-                        SubThumbnailSection(
-                          sources: viewModel.subThumbnailSources,
-                          onAddImage: () => viewModel.pickImage(
-                            onImageSelected: (source) => viewModel.subThumbnailSources.add(source),
-                          ),
-                          onRemoveImage: (index) => viewModel.removeSubThumbnail(index),
-                        ),
-                      ],
-                    ),
+                // [수정] 리팩토링된 공통 섹션 위젯들은 이제 viewModel 하나만 깔끔하게 전달받습니다.
+                StandardContentCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: '기본 정보'),
+                      BasicInfoSection(viewModel: viewModel),
+                    ],
                   ),
+                ),
 
-                  // [수정] 리팩토링된 공통 섹션 위젯들은 이제 viewModel 하나만 깔끔하게 전달받습니다.
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '기본 정보'),
-                        BasicInfoSection(viewModel: viewModel),
-                      ],
-                    ),
+                StandardContentCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: '선택 정보'),
+                      SelectionInfoSection(viewModel: viewModel),
+                    ],
                   ),
+                ),
 
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '선택 정보'),
-                        SelectionInfoSection(viewModel: viewModel),
-                      ],
-                    ),
+                // '최근 라이브 링크'는 포트폴리오에만 존재하는 고유한 섹션입니다.
+                StandardContentCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: '최근 라이브 링크'),
+                      RecentLiveSection(
+                        controllers: viewModel.recentLiveControllers,
+                        onAdd: viewModel.addRecentLiveLink,
+                        onRemove: viewModel.removeRecentLiveLink,
+                      ),
+                    ],
                   ),
+                ),
 
-                  // '최근 라이브 링크'는 포트폴리오에만 존재하는 고유한 섹션입니다.
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '최근 라이브 링크'),
-                        RecentLiveSection(
-                          controllers: viewModel.recentLiveControllers,
-                          onAdd: viewModel.addRecentLiveLink,
-                          onRemove: viewModel.removeRecentLiveLink,
-                        ),
-                      ],
-                    ),
+                StandardContentCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: '링크 & 공개 설정'),
+                      LinkSettingsSection(viewModel: viewModel),
+                    ],
                   ),
+                ),
 
-                  StandardContentCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: '링크 & 공개 설정'),
-                        LinkSettingsSection(viewModel: viewModel),
-                      ],
-                    ),
-                  ),
+                const SizedBox(height: 40),
 
-                  const SizedBox(height: 40),
-
-                  _buildActionButtons(viewModel),
-                ],
+                _buildActionButtons(viewModel),
+              ],
+            ),
+          ),
+        ),
+        if (viewModel.isLoading ||
+            context.watch<ImageHandlerProvider>().isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.7),
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
               ),
             ),
           ),
-          if (viewModel.isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.7),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      );
+      ],
+    );
+  }
 
   /// 하단 액션 버튼 (임시저장, 발행)을 만드는 헬퍼 위젯
   Widget _buildActionButtons(PortfolioEditViewModel viewModel) {

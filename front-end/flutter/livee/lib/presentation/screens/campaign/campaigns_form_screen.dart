@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
@@ -22,172 +23,174 @@ class CampaignsFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<CampaignFormViewModel>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(campaignId == null ? '공고 등록' : '공고 수정'),
-        backgroundColor: AppColors.white,
-        surfaceTintColor: AppColors.white,
-      ),
-      body: LoadingOverlay(
-        isLoading: viewModel.isLoading,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: Form(
-            key: viewModel.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // --- 기본 정보 ---
-                _buildSectionTitle('기본 정보'),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.brandController,
-                    label: '브랜드명',
-                    isRequired: true,
-                    hintText: '예) ACME'),
-                const SizedBox(height: 16),
-                CustomDropdown(
-                  menuOffset: Offset(0, 54),
-                  label: '말머리 (선택)',
-                  value: viewModel.prefixController.text.isEmpty
-                      ? '선택 안 함'
-                      : viewModel.prefixController.text,
-                  items: const ['선택 안 함', '쇼호스트모집', '촬영스태프', '모델모집', '기타모집'],
-                  onChanged: viewModel.setPrefix,
+    return Consumer2<CampaignFormViewModel, ImageHandlerProvider>(
+      builder: (context, viewModel, imageHandler, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(campaignId == null ? '공고 등록' : '공고 수정'),
+            backgroundColor: AppColors.white,
+            surfaceTintColor: AppColors.white,
+          ),
+          body: LoadingOverlay(
+            isLoading: viewModel.isLoading || imageHandler.isLoading,
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              child: Form(
+                key: viewModel.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // --- 기본 정보 ---
+                    _buildSectionTitle('기본 정보'),
+                    CustomTextFormField(
+                        controller: viewModel.brandController,
+                        label: '브랜드명',
+                        isRequired: true,
+                        hintText: '예) ACME'),
+                    const SizedBox(height: 16),
+                    CustomDropdown(
+                      menuOffset: Offset(0, 54),
+                      label: '말머리 (선택)',
+                      value: viewModel.prefixController.text.isEmpty
+                          ? '선택 안 함'
+                          : viewModel.prefixController.text,
+                      items: const [
+                        '선택 안 함',
+                        '쇼호스트모집',
+                        '촬영스태프',
+                        '모델모집',
+                        '기타모집'
+                      ],
+                      onChanged: viewModel.setPrefix,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.titleController,
+                        label: '제목',
+                        isRequired: true,
+                        hintText: '예) 9월 신제품 쇼핑라이브 진행'),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.contentController,
+                        label: '내용',
+                        maxLines: 5,
+                        hintText: '요구역량/업무/준비물/참고링크 등을 자유롭게 입력'),
+                    const SizedBox(height: 16),
+                    CustomDropdown(
+                      menuOffset: Offset(0, 54),
+                      label: '카테고리',
+                      isRequired: true,
+                      value: viewModel.categoryController.text.isEmpty
+                          ? '선택'
+                          : viewModel.categoryController.text,
+                      items: const ['선택', '뷰티', '패션', '식품', '가전', '생활/리빙'],
+                      onChanged: viewModel.setCategory,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.locationController,
+                        label: '장소(선택)',
+                        hintText: '예) 서울 성수동 스튜디오'),
+
+                    const SizedBox(height: 32),
+
+                    // --- 일정 및 출연료 ---
+                    _buildSectionTitle('일정 및 출연료'),
+                    _buildDateField(context,
+                        controller: viewModel.shootDateController,
+                        label: '촬영일 *'),
+                    const SizedBox(height: 16),
+                    _buildDateField(context,
+                        controller: viewModel.deadlineController,
+                        label: '공고 마감일 *'),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.durationHoursController,
+                        label: '촬영 시간(시간 기준)',
+                        isRequired: true,
+                        keyboardType: TextInputType.number,
+                        hintText: '예) 3'),
+                    const SizedBox(height: 16),
+                    Row(children: [
+                      Expanded(
+                          child: _buildTimeField(context,
+                              controller: viewModel.startTimeController,
+                              label: '시작 시간 *')),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: _buildTimeField(context,
+                              controller: viewModel.endTimeController,
+                              label: '종료 시간 *')),
+                    ]),
+                    const SizedBox(height: 16),
+                    _buildFeeField(viewModel),
+
+                    const SizedBox(height: 32),
+
+                    // --- 미디어 및 링크 ---
+                    _buildSectionTitle('미디어 및 링크'),
+                    _buildImagePicker(
+                      context: context,
+                      viewModel: viewModel,
+                      label: '대표 이미지 (16:9)',
+                      controller: viewModel.coverImageUrlController,
+                      imageBytes: viewModel.tempCoverImageBytes,
+                      imageType: ImageType.cover,
+                      aspectRatio: 16 / 9,
+                      hintText: '대표 이미지를 넣어주세요',
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildImagePicker(
+                      context: context,
+                      viewModel: viewModel,
+                      label: '쇼핑라이브 세로 커버 (2:3)',
+                      controller: viewModel.liveVerticalCoverUrlController,
+                      imageBytes: viewModel.tempVerticalCoverImageBytes,
+                      imageType: ImageType.verticalCover,
+                      aspectRatio: 2 / 3,
+                      hintText: '이미지를 넣어주세요',
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.liveStreamUrlController,
+                        label: '쇼핑라이브 링크',
+                        hintText: '예) www.naver.com/live/...'),
+                    const SizedBox(height: 16),
+
+                    _buildImagePicker(
+                      context: context,
+                      viewModel: viewModel,
+                      label: '상품 썸네일 (정사각형)',
+                      controller: viewModel.productThumbnailUrlController,
+                      imageBytes: viewModel.tempProductThumbnailBytes,
+                      imageType: ImageType.productThumbnail,
+                      aspectRatio: 1 / 1,
+                      hintText: '이미지를 넣어주세요',
+                    ),
+
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.productNameController,
+                        label: '상품명',
+                        hintText: '예) 신제품 세럼 50ml'),
+                    const SizedBox(height: 16),
+                    CustomTextFormField(
+                        controller: viewModel.campaignProductUrlController,
+                        label: '상품 링크',
+                        hintText: 'www.naver.com/item/...'),
+
+                    const SizedBox(height: 32),
+
+                    _buildActionButtons(context, viewModel),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.titleController,
-                    label: '제목',
-                    isRequired: true,
-                    hintText: '예) 9월 신제품 쇼핑라이브 진행'),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.contentController,
-                    label: '내용',
-                    maxLines: 5,
-                    hintText: '요구역량/업무/준비물/참고링크 등을 자유롭게 입력'),
-                const SizedBox(height: 16),
-                CustomDropdown(
-                  menuOffset: Offset(0, 54),
-                  label: '카테고리',
-                  isRequired: true,
-                  value: viewModel.categoryController.text.isEmpty
-                      ? '선택'
-                      : viewModel.categoryController.text,
-                  items: const ['선택', '뷰티', '패션', '식품', '가전', '생활/리빙'],
-                  onChanged: viewModel.setCategory,
-                ),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.locationController,
-                    label: '장소(선택)',
-                    hintText: '예) 서울 성수동 스튜디오'),
-
-                const SizedBox(height: 32),
-
-                // --- 일정 및 출연료 ---
-                _buildSectionTitle('일정 및 출연료'),
-                _buildDateField(context,
-                    controller: viewModel.shootDateController, label: '촬영일 *'),
-                const SizedBox(height: 16),
-                _buildDateField(context,
-                    controller: viewModel.deadlineController,
-                    label: '공고 마감일 *'),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.durationHoursController,
-                    label: '촬영 시간(시간 기준)',
-                    isRequired: true,
-                    keyboardType: TextInputType.number,
-                    hintText: '예) 3'),
-                const SizedBox(height: 16),
-                Row(children: [
-                  Expanded(
-                      child: _buildTimeField(context,
-                          controller: viewModel.startTimeController,
-                          label: '시작 시간 *')),
-                  const SizedBox(width: 12),
-                  Expanded(
-                      child: _buildTimeField(context,
-                          controller: viewModel.endTimeController,
-                          label: '종료 시간 *')),
-                ]),
-                const SizedBox(height: 16),
-                _buildFeeField(viewModel),
-
-                const SizedBox(height: 32),
-
-                // --- 미디어 및 링크 ---
-                _buildSectionTitle('미디어 및 링크'),
-                _buildImagePicker(
-                  context: context,
-                  viewModel: viewModel,
-                  label: '대표 이미지 (16:9)',
-                  controller: viewModel.coverImageUrlController,
-                  imageBytes: viewModel.tempCoverImageBytes,
-                  imageType: ImageType.cover,
-                  aspectRatio: 16 / 9,
-                  hintText: '대표 이미지를 넣어주세요',
-                ),
-                const SizedBox(height: 16),
-
-                _buildImagePicker(
-                  context: context,
-                  viewModel: viewModel,
-                  label: '쇼핑라이브 세로 커버 (2:3)',
-                  controller: viewModel.liveVerticalCoverUrlController,
-                  imageBytes: viewModel.tempVerticalCoverImageBytes,
-                  imageType: ImageType.verticalCover,
-                  aspectRatio: 2 / 3,
-                  hintText: '이미지를 넣어주세요',
-                ),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.liveStreamUrlController,
-                    label: '쇼핑라이브 링크',
-                    hintText: '예) www.naver.com/live/...'),
-                const SizedBox(height: 16),
-
-                _buildImagePicker(
-                  context: context,
-                  viewModel: viewModel,
-                  label: '상품 썸네일 (정사각형)',
-                  controller: viewModel.productThumbnailUrlController,
-                  imageBytes: viewModel.tempProductThumbnailBytes,
-                  imageType: ImageType.productThumbnail,
-                  aspectRatio: 1 / 1,
-                  hintText: '이미지를 넣어주세요',
-                ),
-
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.productNameController,
-                    label: '상품명',
-                    hintText: '예) 신제품 세럼 50ml'),
-                const SizedBox(height: 16),
-                // [수정] hintText 추가
-                CustomTextFormField(
-                    controller: viewModel.campaignProductUrlController,
-                    label: '상품 링크',
-                    hintText: 'www.naver.com/item/...'),
-
-                const SizedBox(height: 32),
-
-                // --- 하단 액션 버튼 ---
-                _buildActionButtons(context, viewModel),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -291,18 +294,39 @@ class CampaignsFormScreen extends StatelessWidget {
     required double aspectRatio,
     required String hintText,
   }) {
+    final imageHandler =
+        Provider.of<ImageHandlerProvider>(context, listen: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
-        // [수정] 이미지 미리보기 영역 전체를 InkWell로 감싸 클릭 가능하게 만듭니다.
         InkWell(
-          // [수정] onTap에서 ViewModel의 pickImage를 호출하며 imageType을 전달
+          // [수정] onTap에서 ViewModel의 pickImage 대신 ImageHandlerProvider의 pickImage를 직접 호출합니다.
           onTap: () async {
             try {
-              await viewModel.pickImage(imageType);
+              // [수정] 크롭 기능을 사용하여 이미지를 선택합니다.
+              final bytes = await imageHandler.pickImage(
+                  context: context, aspectRatio: aspectRatio);
+              if (bytes != null) {
+                // [수정] ViewModel의 상태 변수에 선택된 이미지 바이트 데이터를 저장합니다.
+                switch (imageType) {
+                  case ImageType.cover:
+                    viewModel.tempCoverImageBytes = bytes;
+                    viewModel.coverImageUrlController.clear();
+                    break;
+                  case ImageType.verticalCover:
+                    viewModel.tempVerticalCoverImageBytes = bytes;
+                    viewModel.liveVerticalCoverUrlController.clear();
+                    break;
+                  case ImageType.productThumbnail:
+                    viewModel.tempProductThumbnailBytes = bytes;
+                    viewModel.productThumbnailUrlController.clear();
+                    break;
+                }
+              }
             } catch (e) {
               if (context.mounted) {
                 showCustomToast(context, '이미지 선택 실패: $e',
@@ -315,13 +339,12 @@ class CampaignsFormScreen extends StatelessWidget {
             aspectRatio: aspectRatio,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.white, // 회색 배경
+                color: AppColors.white,
                 border: Border.all(color: AppColors.border),
                 borderRadius: BorderRadius.circular(12),
               ),
-              // [수정] 이미지가 있을 때 모서리를 자르기 위해 ClipRRect를 추가합니다.
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(11), // 테두리 안쪽으로 살짝- 둥글게
+                borderRadius: BorderRadius.circular(11),
                 child: _buildImagePreview(controller, imageBytes, hintText),
               ),
             ),

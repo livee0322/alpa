@@ -42,7 +42,6 @@ abstract class ProfileEditViewModelBase with ChangeNotifier {
   bool get isLoading;
 
   // --- Methods ---
-  void pickImage({required Function(PortfolioImage) onImageSelected});
   void removeSubThumbnail(int index);
   void setPublicScope(String? value);
   void setIsReceivingOffers(bool? value);

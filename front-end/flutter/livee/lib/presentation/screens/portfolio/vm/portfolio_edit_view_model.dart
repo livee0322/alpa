@@ -2,10 +2,9 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:livee/data/core/api_error_parser.dart';
-import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
 import 'package:livee/presentation/screens/portfolio/vm/profile_edit_view_model_base.dart';
@@ -14,10 +13,14 @@ import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 
 // PortfolioEditScreen의 상태와 비즈니스 로직을 모두 관리하는 ViewModel
-class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModelBase {
+class PortfolioEditViewModel
+    with ChangeNotifier
+    implements ProfileEditViewModelBase {
   // --- 의존성 주입 및 초기화 ---
   final PortfolioRepository _portfolioRepository =
       locator<PortfolioRepository>();
+  final ImageHandlerProvider _imageHandlerProvider =
+      locator<ImageHandlerProvider>();
   final String? portfolioId;
   final BuildContext context;
 
@@ -211,19 +214,6 @@ class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModel
     }
   }
 
-  @override
-  Future<void> pickImage({
-    required Function(PortfolioImage) onImageSelected,
-  }) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
-
-    final bytes = await pickedFile.readAsBytes();
-    onImageSelected(PortfolioImage(localBytes: bytes));
-    notifyListeners();
-  }
-
   /// (수정 모드일 경우) 기존 포트폴리오 데이터를 서버에서 불러와 각 컨트롤러와 상태 변수에 채우기
   Future<void> _loadMyPortfolio() async {
     if (portfolioId == null) {
@@ -305,10 +295,10 @@ class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModel
     _setLoading(true);
 
     try {
-      final uploader = CloudinaryUploader();
       String? finalAttachedFileUrl = attachedFileUrl;
       if (_tempAttachedFileBytes != null) {
-        finalAttachedFileUrl = await uploader.uploadFile(
+        // [수정] 파일 타입('raw')을 명시하여 업로드합니다.
+        finalAttachedFileUrl = await _imageHandlerProvider.uploadImage(
           _tempAttachedFileBytes!,
           fileName: attachedFileName,
           type: 'raw',
@@ -317,21 +307,22 @@ class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModel
 
       String? finalMainThumbUrl = mainThumbnailSource?.networkUrl;
       if (mainThumbnailSource?.localBytes != null) {
-        finalMainThumbUrl =
-            await uploader.uploadFile(mainThumbnailSource!.localBytes!);
+        finalMainThumbUrl = await _imageHandlerProvider
+            .uploadImage(mainThumbnailSource!.localBytes!);
       }
 
       String? finalBackgroundUrl = backgroundImageSource?.networkUrl;
       if (backgroundImageSource?.localBytes != null) {
-        finalBackgroundUrl =
-            await uploader.uploadFile(backgroundImageSource!.localBytes!);
+        finalBackgroundUrl = await _imageHandlerProvider
+            .uploadImage(backgroundImageSource!.localBytes!);
       }
 
       final List<String> finalSubUrls = [];
       for (final source in subThumbnailSources) {
         if (source.localBytes != null) {
-          final newUrl = await uploader.uploadFile(source.localBytes!);
-          finalSubUrls.add(newUrl);
+          final newUrl =
+              await _imageHandlerProvider.uploadImage(source.localBytes!);
+          if (newUrl != null) finalSubUrls.add(newUrl);
         } else if (source.networkUrl != null) {
           finalSubUrls.add(source.networkUrl!);
         }
@@ -384,7 +375,6 @@ class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModel
                 item['url']!.isNotEmpty ||
                 item['date']!.isNotEmpty)
             .toList(),
-
         'attachedFileUrl': finalAttachedFileUrl,
       };
 

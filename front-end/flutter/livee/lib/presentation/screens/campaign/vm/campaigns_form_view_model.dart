@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:livee/data/core/cloudinary_uploader.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/service_locator.dart';
 
 // 어떤 이미지를 선택할지 구분하기 위한 Enum
@@ -16,6 +15,8 @@ enum ImageType {
 
 class CampaignFormViewModel with ChangeNotifier {
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
+  final ImageHandlerProvider _imageHandlerProvider =
+      locator<ImageHandlerProvider>();
   final String? campaignId;
 
   CampaignFormViewModel({this.campaignId}) {
@@ -114,44 +115,6 @@ class CampaignFormViewModel with ChangeNotifier {
   void removeTag(String tag) {
     _tags.remove(tag);
     notifyListeners();
-  }
-
-  /// 이미지를 선택하고, 해당하는 임시 변수에 원본 데이터를 저장합
-  Future<void> pickImage(ImageType imageType) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
-    final bytes = await pickedFile.readAsBytes();
-
-    // Enum 타입에 따라 올바른 변수에 이미지 데이터를 저장
-    switch (imageType) {
-      case ImageType.cover:
-        tempCoverImageBytes = bytes;
-        coverImageUrlController.clear();
-        break;
-      case ImageType.verticalCover:
-        tempVerticalCoverImageBytes = bytes;
-        liveVerticalCoverUrlController.clear();
-        break;
-      case ImageType.productThumbnail:
-        tempProductThumbnailBytes = bytes;
-        productThumbnailUrlController.clear();
-        break;
-    }
-    // 상태 변경 후 UI에 알림
-    notifyListeners();
-  }
-
-  //  이미지 '업로드' 기능만 하는 별도의 메소드
-  /// 이미지 원본 데이터(Bytes)를 Cloudinary에 업로드하고 URL을 반환
-  Future<String?> _uploadImage(Uint8List? imageBytes) async {
-    if (imageBytes == null) return null;
-    try {
-      return await CloudinaryUploader().uploadFile(imageBytes);
-    } catch (e) {
-      debugPrint('Image upload failed: $e');
-      rethrow; // 에러를 다시 던져서 submitForm에서 처리하도록 함
-    }
   }
 
   void _updatePayWanPreview() {
@@ -258,13 +221,15 @@ class CampaignFormViewModel with ChangeNotifier {
   Future<void> submitForm() async {
     setLoading(true);
     try {
-      final coverImageUrl = await _uploadImage(tempCoverImageBytes) ??
-          coverImageUrlController.text;
-      final verticalCoverUrl =
-          await _uploadImage(tempVerticalCoverImageBytes) ??
-              liveVerticalCoverUrlController.text;
-      final productThumbUrl = await _uploadImage(tempProductThumbnailBytes) ??
-          productThumbnailUrlController.text;
+      final coverImageUrl =
+          await _imageHandlerProvider.uploadImage(tempCoverImageBytes!) ??
+              coverImageUrlController.text;
+      final verticalCoverUrl = await _imageHandlerProvider
+              .uploadImage(tempVerticalCoverImageBytes!) ??
+          liveVerticalCoverUrlController.text;
+      final productThumbUrl =
+          await _imageHandlerProvider.uploadImage(tempProductThumbnailBytes!) ??
+              productThumbnailUrlController.text;
 
       // 날짜 문자열을 ISO 8601 형식으로 변환하는 헬퍼 함수
       String? toIso8601String(String dateStr) {
