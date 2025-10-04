@@ -27,42 +27,32 @@ class CampaignsFormScreen extends StatelessWidget {
       builder: (context, viewModel, child) {
         final imageHandler = context.watch<ImageHandlerProvider>();
         return Scaffold(
-          appBar: AppBar(
-            title: Text(campaignId == null ? '공고 등록' : '공고 수정'),
-            backgroundColor: AppColors.white,
-            surfaceTintColor: AppColors.white,
-          ),
           body: LoadingOverlay(
             isLoading: viewModel.isLoading || imageHandler.isLoading,
             child: SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
               child: Form(
                 key: viewModel.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // --- 기본 정보 ---
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Text(
+                        campaignId == null ? '공고 등록' : '공고 수정',
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     _buildSectionTitle('기본 정보'),
                     CustomTextFormField(
-                        controller: viewModel.brandController,
-                        label: '브랜드명',
-                        isRequired: true,
-                        hintText: '예) ACME'),
+                        controller: viewModel.brandController, label: '브랜드명', isRequired: true, hintText: '예) ACME'),
                     const SizedBox(height: 16),
                     CustomDropdown(
                       menuOffset: Offset(0, 54),
                       label: '말머리 (선택)',
-                      value: viewModel.prefixController.text.isEmpty
-                          ? '선택 안 함'
-                          : viewModel.prefixController.text,
-                      items: const [
-                        '선택 안 함',
-                        '쇼호스트모집',
-                        '촬영스태프',
-                        '모델모집',
-                        '기타모집'
-                      ],
+                      value: viewModel.prefixController.text.isEmpty ? '선택 안 함' : viewModel.prefixController.text,
+                      items: const ['선택 안 함', '쇼호스트모집', '촬영스태프', '모델모집', '기타모집'],
                       onChanged: viewModel.setPrefix,
                     ),
                     const SizedBox(height: 16),
@@ -82,29 +72,21 @@ class CampaignsFormScreen extends StatelessWidget {
                       menuOffset: Offset(0, 54),
                       label: '카테고리',
                       isRequired: true,
-                      value: viewModel.categoryController.text.isEmpty
-                          ? '선택'
-                          : viewModel.categoryController.text,
+                      value: viewModel.categoryController.text.isEmpty ? '선택' : viewModel.categoryController.text,
                       items: const ['선택', '뷰티', '패션', '식품', '가전', '생활/리빙'],
                       onChanged: viewModel.setCategory,
                     ),
                     const SizedBox(height: 16),
                     CustomTextFormField(
-                        controller: viewModel.locationController,
-                        label: '장소(선택)',
-                        hintText: '예) 서울 성수동 스튜디오'),
+                        controller: viewModel.locationController, label: '장소(선택)', hintText: '예) 서울 성수동 스튜디오'),
 
                     const SizedBox(height: 32),
 
                     // --- 일정 및 출연료 ---
                     _buildSectionTitle('일정 및 출연료'),
-                    _buildDateField(context,
-                        controller: viewModel.shootDateController,
-                        label: '촬영일 *'),
+                    _buildDateField(context, controller: viewModel.shootDateController, label: '촬영일 *'),
                     const SizedBox(height: 16),
-                    _buildDateField(context,
-                        controller: viewModel.deadlineController,
-                        label: '공고 마감일 *'),
+                    _buildDateField(context, controller: viewModel.deadlineController, label: '공고 마감일 *'),
                     const SizedBox(height: 16),
                     CustomTextFormField(
                         controller: viewModel.durationHoursController,
@@ -115,14 +97,10 @@ class CampaignsFormScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(children: [
                       Expanded(
-                          child: _buildTimeField(context,
-                              controller: viewModel.startTimeController,
-                              label: '시작 시간 *')),
+                          child: _buildTimeField(context, controller: viewModel.startTimeController, label: '시작 시간 *')),
                       const SizedBox(width: 12),
                       Expanded(
-                          child: _buildTimeField(context,
-                              controller: viewModel.endTimeController,
-                              label: '종료 시간 *')),
+                          child: _buildTimeField(context, controller: viewModel.endTimeController, label: '종료 시간 *')),
                     ]),
                     const SizedBox(height: 16),
                     _buildFeeField(viewModel),
@@ -173,9 +151,7 @@ class CampaignsFormScreen extends StatelessWidget {
 
                     const SizedBox(height: 16),
                     CustomTextFormField(
-                        controller: viewModel.productNameController,
-                        label: '상품명',
-                        hintText: '예) 신제품 세럼 50ml'),
+                        controller: viewModel.productNameController, label: '상품명', hintText: '예) 신제품 세럼 50ml'),
                     const SizedBox(height: 16),
                     CustomTextFormField(
                         controller: viewModel.campaignProductUrlController,
@@ -200,13 +176,11 @@ class CampaignsFormScreen extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: Text(title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      child: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
     );
   }
 
-  Widget _buildDateField(BuildContext context,
-      {required TextEditingController controller, required String label}) {
+  Widget _buildDateField(BuildContext context, {required TextEditingController controller, required String label}) {
     return CustomTextFormField(
       controller: controller,
       label: label,
@@ -232,8 +206,7 @@ class CampaignsFormScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeField(BuildContext context,
-      {required TextEditingController controller, required String label}) {
+  Widget _buildTimeField(BuildContext context, {required TextEditingController controller, required String label}) {
     return CustomTextFormField(
       controller: controller,
       label: label,
@@ -273,8 +246,7 @@ class CampaignsFormScreen extends StatelessWidget {
             children: [
               Checkbox(
                 value: viewModel.payNegotiable,
-                onChanged: (value) =>
-                    viewModel.setPayNegotiable(value ?? false),
+                onChanged: (value) => viewModel.setPayNegotiable(value ?? false),
                 activeColor: AppColors.primary,
               ),
               const Text('협의 가능 (체크 시 출연료 입력 비활성화)'),
@@ -295,20 +267,17 @@ class CampaignsFormScreen extends StatelessWidget {
     required double aspectRatio,
     required String hintText,
   }) {
-    final imageHandler =
-        Provider.of<ImageHandlerProvider>(context, listen: false);
+    final imageHandler = Provider.of<ImageHandlerProvider>(context, listen: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
         InkWell(
           onTap: () async {
             try {
-              final bytes = await imageHandler.pickImage(
-                  context: context, aspectRatio: aspectRatio);
+              final bytes = await imageHandler.pickImage(context: context, aspectRatio: aspectRatio);
               if (bytes != null) {
                 switch (imageType) {
                   case ImageType.cover:
@@ -329,8 +298,7 @@ class CampaignsFormScreen extends StatelessWidget {
               }
             } catch (e) {
               if (context.mounted) {
-                showCustomToast(context, '이미지 선택 실패: $e',
-                    type: ToastType.error);
+                showCustomToast(context, '이미지 선택 실패: $e', type: ToastType.error);
               }
             }
           },
@@ -355,17 +323,14 @@ class CampaignsFormScreen extends StatelessWidget {
   }
 
   // 이미지 미리보기 내부 UI를 결정하는 헬퍼 위젯
-  Widget _buildImagePreview(TextEditingController controller,
-      Uint8List? imageBytes, String hintText) {
+  Widget _buildImagePreview(TextEditingController controller, Uint8List? imageBytes, String hintText) {
     // 1. 새로 선택한 임시 이미지가 있으면 보여줌
     if (imageBytes != null) {
       return Image.memory(imageBytes, fit: BoxFit.cover);
     }
     // 2. 기존에 업로드된 네트워크 이미지가 있으면 보여줌 (수정 모드)
     if (controller.text.isNotEmpty) {
-      return Image.network(controller.text,
-          fit: BoxFit.cover,
-          errorBuilder: (c, e, s) => const Icon(Icons.error));
+      return Image.network(controller.text, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error));
     }
     // 3. 아무 이미지도 없으면 힌트 텍스트를 보여줌
     return Center(
@@ -376,8 +341,7 @@ class CampaignsFormScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(
-      BuildContext context, CampaignFormViewModel viewModel) {
+  Widget _buildActionButtons(BuildContext context, CampaignFormViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
