@@ -5,6 +5,7 @@ import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaign_detail_view_model.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
@@ -180,43 +181,41 @@ class CampaignDetailScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        // Product 모델 대신 Campaign 모델의 필드를 직접 사용합니다.
-        Card(
+        StandardContentCard(
           margin: const EdgeInsets.only(bottom: 8),
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    campaign.productThumbnailUrl ?? 'https://picsum.photos/seed/${campaign.productName}/128/128',
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            // [수정] crossAxisAlignment를 CrossAxisAlignment.start로 설정하여 위쪽으로 정렬합니다.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  campaign.productThumbnailUrl ?? 'https://picsum.photos/seed/${campaign.productName}/128/128',
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
                     width: 64,
                     height: 64,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 64,
-                      height: 64,
-                      color: Colors.grey[200],
-                    ),
+                    color: Colors.grey[200],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    campaign.productName ?? '상품명 미정',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  campaign.productName ?? '상품명 미정',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
+                  // [수정] maxLines와 overflow 속성을 추가합니다.
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 24),
