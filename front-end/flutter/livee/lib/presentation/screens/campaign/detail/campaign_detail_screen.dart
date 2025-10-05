@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +8,6 @@ import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'widgets/detail_meta_card.dart';
 import 'widgets/detail_sticky_bottom_bar.dart';
-import 'package:universal_html/html.dart' as html;
 
 class CampaignDetailScreen extends StatelessWidget {
   final String campaignId;
@@ -27,13 +25,6 @@ class CampaignDetailScreen extends StatelessWidget {
           builder: (context, viewModel, child) => LoadingOverlay(
             isLoading: viewModel.isLoading,
             child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  icon: const Icon(CupertinoIcons.back),
-                  onPressed: () => html.window.history.go(-1),
-                ),
-                title: const Text('공고 상세'),
-              ),
               body: _buildBody(context, viewModel),
             ),
           ),
@@ -58,21 +49,37 @@ class CampaignDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildHeader(),
             _buildThumbnail(campaign),
             const SizedBox(height: 16),
             _buildTitleSection(campaign),
             const SizedBox(height: 16),
             _buildRecruitMetaGrid(campaign),
             const SizedBox(height: 24),
-            if (campaign.productName != null &&
-                campaign.productName!.isNotEmpty)
-              _buildProductSection(campaign),
+            if (campaign.productName != null && campaign.productName!.isNotEmpty) _buildProductSection(campaign),
             _buildDescription(campaign),
           ],
         ),
       ),
-      bottomNavigationBar:
-          _buildBottomBar(context, campaign, authProvider, viewModel),
+      bottomNavigationBar: _buildBottomBar(context, campaign, authProvider, viewModel),
+    );
+  }
+
+  // [추가] Column 방식에 맞는 새로운 헤더 위젯입니다.
+  Widget _buildHeader() {
+    return SafeArea(
+      bottom: false, // SafeArea의 아래쪽 패딩은 필요 없으므로 제거
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 8.0),
+        child: Text(
+          '공고 상세',
+          style: TextStyle(
+            color: Colors.black, // [수정] 텍스트 색상을 검은색으로 변경
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
@@ -81,8 +88,7 @@ class CampaignDetailScreen extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Image.network(
-        campaign.coverImageUrl ??
-            'https://picsum.photos/seed/${campaign.id}/1280/720',
+        campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/1280/720',
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
@@ -129,22 +135,14 @@ class CampaignDetailScreen extends StatelessWidget {
       {
         'icon': Icons.calendar_today,
         'label': '촬영일',
-        'value': campaign.shootDate != null
-            ? DateFormat('yyyy.MM.dd').format(campaign.shootDate!)
-            : '미정'
+        'value': campaign.shootDate != null ? DateFormat('yyyy.MM.dd').format(campaign.shootDate!) : '미정'
       },
       {
         'icon': Icons.schedule,
         'label': '시간',
-        'value': campaign.startTime != null
-            ? '${campaign.startTime} ~ ${campaign.endTime}'
-            : '미정'
+        'value': campaign.startTime != null ? '${campaign.startTime} ~ ${campaign.endTime}' : '미정'
       },
-      {
-        'icon': Icons.location_on_outlined,
-        'label': '장소',
-        'value': campaign.location ?? '미정'
-      },
+      {'icon': Icons.location_on_outlined, 'label': '장소', 'value': campaign.location ?? '미정'},
       {'icon': Icons.payment, 'label': '출연료', 'value': feeText},
     ];
 
@@ -196,8 +194,7 @@ class CampaignDetailScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(
-                    campaign.productThumbnailUrl ??
-                        'https://picsum.photos/seed/${campaign.productName}/128/128',
+                    campaign.productThumbnailUrl ?? 'https://picsum.photos/seed/${campaign.productName}/128/128',
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,
@@ -247,8 +244,8 @@ class CampaignDetailScreen extends StatelessWidget {
   }
 
   // 하단 고정 바를 빌드
-  Widget _buildBottomBar(BuildContext context, Campaign campaign,
-      AuthProvider authProvider, CampaignDetailViewModel viewModel) {
+  Widget _buildBottomBar(
+      BuildContext context, Campaign campaign, AuthProvider authProvider, CampaignDetailViewModel viewModel) {
     // [수정] type과 products 필드 분기 로직을 제거하고, 출연료 정보만 표시하도록 단일화합니다.
     String priceLabel = '출연료 협의'; // 기본값
     if (campaign.fee != null && campaign.fee! > 0) {
@@ -260,9 +257,8 @@ class CampaignDetailScreen extends StatelessWidget {
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
       buttonLabel: isBrand ? '지원자 현황' : '지원하기',
-      onButtonPressed: () => isBrand
-          ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants')
-          : viewModel.handleApply(),
+      onButtonPressed: () =>
+          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : viewModel.handleApply(),
     );
   }
 }
