@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
@@ -53,13 +52,11 @@ class ScheduleSection extends StatelessWidget {
           children: [
             // 공고 썸네일 이미지
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(14)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
               child: AspectRatio(
                 aspectRatio: 2 / 3,
                 child: Image.network(
-                  campaign.coverImageUrl ??
-                      'https://picsum.photos/seed/recruit${campaign.id}',
+                  campaign.liveVerticalCoverUrl ?? 'https://picsum.photos/seed/recruit${campaign.id}',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: AppColors.disabled,
@@ -104,10 +101,8 @@ class ScheduleSection extends StatelessWidget {
                             backgroundColor: AppColors.buttonDark.withAlpha(26),
                             side: BorderSide.none,
                             padding: EdgeInsets.zero,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: const VisualDensity(
-                                horizontal: 0, vertical: -4),
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
                           ),
                         ),
                         Expanded(
@@ -127,10 +122,8 @@ class ScheduleSection extends StatelessWidget {
                               backgroundColor: AppColors.primary.withAlpha(26),
                               side: BorderSide.none,
                               padding: EdgeInsets.zero,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              visualDensity: const VisualDensity(
-                                  horizontal: 0, vertical: -4),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
                             ),
                           ),
                         ),
@@ -176,8 +169,7 @@ class ScheduleSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: Image.network(
             // [수정] productThumbnailUrl 필드를 사용합니다.
-            campaign.productThumbnailUrl ??
-                'https://picsum.photos/seed/${campaign.id}/50/50',
+            campaign.productThumbnailUrl ?? 'https://picsum.photos/seed/${campaign.id}/50/50',
             width: 50,
             height: 50,
             fit: BoxFit.cover,
