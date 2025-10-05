@@ -27,8 +27,9 @@ class PortfolioScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: Column(
                 children: [
+                  _buildSearchBar(context, viewModel),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -37,7 +38,6 @@ class PortfolioScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildSearchBar(context, viewModel),
                   Expanded(
                     child: _buildPortfolioList(context, viewModel),
                   ),
