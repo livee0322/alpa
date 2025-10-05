@@ -24,7 +24,7 @@ class ModelEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ModelEditViewModel(context, modelId: modelId),
+      create: (_) => ModelEditViewModel(context: context, modelId: modelId),
       child: Consumer<ModelEditViewModel>(
         builder: (context, viewModel, child) => Scaffold(
           backgroundColor: const Color(0xFFF7F8FA),
@@ -147,7 +147,7 @@ class ModelEditScreen extends StatelessWidget {
             text: '저장',
             isFullWidth: false,
             isLoading: viewModel.isLoading,
-            onPressed: () => viewModel.saveModel(),
+            onPressed: () => viewModel.submit,
           ),
         ),
       ],

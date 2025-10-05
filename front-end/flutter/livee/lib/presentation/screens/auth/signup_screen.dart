@@ -6,6 +6,7 @@ import 'package:livee/presentation/screens/auth/sections/role_selector_section.d
 import 'package:livee/presentation/screens/auth/sections/terms_section.dart';
 import 'package:livee/presentation/screens/auth/vm/signup_view_model.dart';
 import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:provider/provider.dart';
 
 // 회원가입 화면 UI를 구성
@@ -14,9 +15,9 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => SignupViewModel(context),
+        create: (context) => SignupViewModel(context: context),
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           body: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
@@ -56,7 +57,7 @@ class SignupScreen extends StatelessWidget {
                         // 버튼 입력 섹션
                         PrimaryActionButton(
                           text: '가입하기',
-                          onPressed: viewModel.signup,
+                          onPressed: viewModel.submit,
                           isLoading: viewModel.isLoading,
                         ),
                         const SizedBox(height: 24),
@@ -77,15 +78,18 @@ class SignupScreen extends StatelessWidget {
         children: [
           const Text(
             '이미 계정이 있나요? ',
-            style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+            style: TextStyle(
+              color: AppColors.textGrey,
+              fontSize: 14,
+            ),
           ),
           InkWell(
             onTap: () => context.go('/login'),
             child: const Text(
               '로그인',
               style: TextStyle(
-                color: Color(0xFF374151),
-                fontWeight: FontWeight.w800,
+                color: AppColors.textBlack,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

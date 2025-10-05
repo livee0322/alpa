@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/usecases/studio_use_case.dart';
+import 'package:livee/presentation/common/vm/form_view_model_base.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/studio/models/day_schedule.dart';
@@ -9,18 +10,15 @@ import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 
 /// '스튜디오 등록' 페이지의 상태와 로직을 관리하는 ViewModel
-class StudioEditViewModel with ChangeNotifier {
+class StudioEditViewModel extends FormViewModelBase {
   // UseCase 의존성 주입
   final StudioUseCase _studioUseCase = locator<StudioUseCase>();
   final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
-  final BuildContext context;
 
-  // ViewModel 생성 시 context를 받도록 수정
-  StudioEditViewModel(this.context);
+  // 생성자에서 부모 클래스의 생성자를 호출
+  StudioEditViewModel({required super.context});
 
   // --- 상태 변수 ---
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
 
   // --- 이미지 관련 상태 변수 ---
   PortfolioImage? mainThumbnailSource;
@@ -52,11 +50,6 @@ class StudioEditViewModel with ChangeNotifier {
   };
 
   // --- 메소드 ---
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
 
   void setMainThumbnail(PortfolioImage source) {
     mainThumbnailSource = source;
@@ -130,75 +123,73 @@ class StudioEditViewModel with ChangeNotifier {
     }
   }
 
+  // 스튜디오 폼은 수정 기능이 없으므로 loadDataForEdit는 비워두기
+  @override
+  Future<void> loadDataForEdit() async {
+    // 구현할 내용 없음
+  }
+
   // 스튜디오 정보를 서버에 저장하는 핵심 로직
-  Future<void> saveStudio() async {
-    _setLoading(true);
-    try {
-      // 모든 이미지를 Cloudinary에 업로드하고 URL을 받아오는 로직
-      Future<String?> uploadImage(PortfolioImage? source) async {
-        if (source?.localBytes != null) {
-          return await _imageHandlerProvider.uploadImage(source!.localBytes!);
-        }
-        return source?.networkUrl;
+  @override
+  Future<void> onSave() async {
+    // 모든 이미지를 Cloudinary에 업로드하고 URL을 받아오는 로직
+    Future<String?> uploadImage(PortfolioImage? source) async {
+      if (source?.localBytes != null) {
+        return await _imageHandlerProvider.uploadImage(source!.localBytes!);
       }
-
-      Future<List<String>> uploadImageList(List<PortfolioImage> sources) async {
-        final List<String> urls = [];
-        for (final source in sources) {
-          final url = await uploadImage(source);
-          if (url != null) urls.add(url);
-        }
-        return urls;
-      }
-
-      final mainThumbUrl = await uploadImage(mainThumbnailSource);
-      final backgroundUrl = await uploadImage(backgroundImageSource);
-      final subUrls = await uploadImageList(subThumbnailSources);
-      final galleryUrls = await uploadImageList(galleryImageSources);
-
-      // API 스키마에 맞게 Payload(전송 데이터) 구성
-      final Map<String, dynamic> payload = {
-        'brandName': brandNameController.text,
-        'oneLineIntro': oneLineIntroController.text,
-        'detailedIntro': detailedIntroController.text,
-        'usageInfo': usageInfoController.text,
-        'priceInfo': priceInfoController.text,
-        'mainThumbnailUrl': mainThumbUrl,
-        'backgroundImageUrl': backgroundUrl,
-        'subThumbnailUrls': subUrls,
-        'galleryUrls': galleryUrls,
-        'contact': {
-          'phone': phoneController.text,
-          'email': emailController.text,
-          'kakao': kakaoController.text,
-        },
-        'location': {
-          'address': addressController.text,
-          'mapUrl': mapUrlController.text,
-        },
-        'weeklySchedule': weeklySchedule.map(
-          (key, value) => MapEntry(key, {
-            'isOpen': value.isOpen,
-            'startTime': value.startTime,
-            'endTime': value.endTime,
-            'excludedTimes': value.excludedTimes,
-          }),
-        ),
-      };
-
-      // UseCase를 통해 API 호출
-      await _studioUseCase.createStudio(payload);
-
-      showCustomToast(context, '스튜디오가 성공적으로 등록되었습니다.', type: ToastType.success);
-      // 성공 시 이전 페이지로 이동
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        html.window.history.go(-1);
-      });
-    } catch (e) {
-      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
-    } finally {
-      _setLoading(false);
+      return source?.networkUrl;
     }
+
+    Future<List<String>> uploadImageList(List<PortfolioImage> sources) async {
+      final List<String> urls = [];
+      for (final source in sources) {
+        final url = await uploadImage(source);
+        if (url != null) urls.add(url);
+      }
+      return urls;
+    }
+
+    final mainThumbUrl = await uploadImage(mainThumbnailSource);
+    final backgroundUrl = await uploadImage(backgroundImageSource);
+    final subUrls = await uploadImageList(subThumbnailSources);
+    final galleryUrls = await uploadImageList(galleryImageSources);
+
+    // API 스키마에 맞게 Payload(전송 데이터) 구성
+    final Map<String, dynamic> payload = {
+      'brandName': brandNameController.text,
+      'oneLineIntro': oneLineIntroController.text,
+      'detailedIntro': detailedIntroController.text,
+      'usageInfo': usageInfoController.text,
+      'priceInfo': priceInfoController.text,
+      'mainThumbnailUrl': mainThumbUrl,
+      'backgroundImageUrl': backgroundUrl,
+      'subThumbnailUrls': subUrls,
+      'galleryUrls': galleryUrls,
+      'contact': {
+        'phone': phoneController.text,
+        'email': emailController.text,
+        'kakao': kakaoController.text,
+      },
+      'location': {
+        'address': addressController.text,
+        'mapUrl': mapUrlController.text,
+      },
+      'weeklySchedule': weeklySchedule.map(
+        (key, value) => MapEntry(key, {
+          'isOpen': value.isOpen,
+          'startTime': value.startTime,
+          'endTime': value.endTime,
+          'excludedTimes': value.excludedTimes,
+        }),
+      ),
+    };
+
+    // UseCase를 통해 API 호출
+    await _studioUseCase.createStudio(payload);
+
+    showCustomToast(context, '스튜디오가 성공적으로 등록되었습니다.', type: ToastType.success);
+    // 성공 시 이전 페이지로 이동
+    WidgetsBinding.instance.addPostFrameCallback((_) => html.window.history.go(-1));
   }
 
   @override

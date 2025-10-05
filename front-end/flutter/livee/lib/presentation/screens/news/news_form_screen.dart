@@ -13,12 +13,10 @@ class NewsFormScreen extends StatelessWidget {
   const NewsFormScreen({super.key, this.newsId});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NewsFormViewModel(context, newsId: newsId),
-      child: Consumer2<NewsFormViewModel, ImageHandlerProvider>(
-        builder: (context, viewModel, imageHandler, child) {
-          return Scaffold(
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => NewsFormViewModel(context: context, newsId: newsId),
+        child: Consumer2<NewsFormViewModel, ImageHandlerProvider>(
+          builder: (context, viewModel, imageHandler, child) => Scaffold(
             // [수정] LoadingOverlay가 두 Provider의 로딩 상태를 모두 감지
             body: LoadingOverlay(
               isLoading: viewModel.isLoading || imageHandler.isLoading,
@@ -58,7 +56,7 @@ class NewsFormScreen extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: PrimaryActionButton(
                           text: '저장',
-                          onPressed: viewModel.submitNews,
+                          onPressed: viewModel.submit,
                           isFullWidth: false,
                           isLoading: viewModel.isLoading,
                         ),
@@ -68,11 +66,9 @@ class NewsFormScreen extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        ),
+      );
 
   /// 이미지 업로더 UI를 구성하는 위젯
   Widget _buildImageUploader(NewsFormViewModel viewModel) {

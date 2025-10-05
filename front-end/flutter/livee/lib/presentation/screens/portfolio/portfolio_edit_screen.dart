@@ -24,7 +24,7 @@ class PortfolioEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PortfolioEditViewModel(context, portfolioId: portfolioId),
+      create: (_) => PortfolioEditViewModel(context: context, portfolioId: portfolioId),
       child: Consumer<PortfolioEditViewModel>(
         builder: (context, viewModel, child) => Scaffold(
           backgroundColor: const Color(0xFFF7F8FA),
@@ -173,7 +173,7 @@ class PortfolioEditScreen extends StatelessWidget {
             text: '저장',
             isFullWidth: false,
             isLoading: viewModel.isLoading,
-            onPressed: () => viewModel.savePortfolio(),
+            onPressed: () => viewModel.submit,
           ),
         ),
       ],

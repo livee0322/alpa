@@ -23,7 +23,7 @@ class StudioEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => StudioEditViewModel(context),
+      create: (_) => StudioEditViewModel(context: context),
       child: Consumer<StudioEditViewModel>(
         builder: (context, viewModel, child) {
           final imageHandler = context.watch<ImageHandlerProvider>();
@@ -105,7 +105,7 @@ class StudioEditScreen extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: PrimaryActionButton(
                         text: '저장',
-                        onPressed: viewModel.saveStudio,
+                        onPressed: viewModel.submit,
                         isFullWidth: false,
                       ),
                     ),

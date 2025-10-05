@@ -156,7 +156,7 @@ GoRouter createRouter(AuthProvider authProvider) {
                 builder: (context, state) {
                   final campaignId = state.extra as String?;
                   return ChangeNotifierProvider(
-                    create: (_) => CampaignFormViewModel(campaignId: campaignId),
+                    create: (context) => CampaignFormViewModel(context: context, campaignId: campaignId),
                     child: CampaignsFormScreen(campaignId: campaignId),
                   );
                 },

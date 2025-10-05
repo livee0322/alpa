@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/domain/usecases/campaign_use_case.dart';
+import 'package:livee/presentation/common/vm/form_view_model_base.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/service_locator.dart';
 
@@ -13,24 +14,21 @@ enum ImageType {
   productThumbnail,
 }
 
-class CampaignFormViewModel with ChangeNotifier {
+class CampaignFormViewModel extends FormViewModelBase {
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
   final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
-  final String? campaignId;
 
-  CampaignFormViewModel({this.campaignId}) {
+  // 성자에서 부모 클래스의 생성자를 호출
+  CampaignFormViewModel({
+    required super.context,
+    String? campaignId,
+  }) : super(id: campaignId) {
     feeController.addListener(_updatePayWanPreview);
     startTimeController.addListener(_updateDuration);
     endTimeController.addListener(_updateDuration);
-    // 수정 모드일 경우 데이터 로딩 시작
-    if (campaignId != null) loadCampaignForEdit(campaignId!);
   }
 
-  // FormKey를 ViewModel에서 관리
-  final formKey = GlobalKey<FormState>();
-
   // --- 상태 변수 정의 ---
-  bool _isLoading = false;
   Campaign? _editingCampaign;
   final List<String> _tags = [];
 
@@ -61,15 +59,15 @@ class CampaignFormViewModel with ChangeNotifier {
   final TextEditingController campaignProductUrlController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController feeController = TextEditingController();
-  bool payNegotiable = false;
   final TextEditingController durationHoursController = TextEditingController();
 
   // 계산된 값을 위한 상태 변수
   String _payWanPreview = '';
   String _durationText = '촬영시간: -';
 
+  bool payNegotiable = false;
+
   // --- Getter ---
-  bool get isLoading => _isLoading;
   Campaign? get editingCampaign => _editingCampaign;
   String get payWanPreview => _payWanPreview;
   String get durationText => _durationText;
@@ -106,11 +104,6 @@ class CampaignFormViewModel with ChangeNotifier {
   void setCategory(String? value) {
     selectedCategory = value == '선택' ? null : value;
     categoryController.text = selectedCategory ?? '';
-    notifyListeners();
-  }
-
-  void setLoading(bool loading) {
-    _isLoading = loading;
     notifyListeners();
   }
 
@@ -182,100 +175,86 @@ class CampaignFormViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // [수정] 수정 모드 시, 새로운 스키마에 맞춰 컨트롤러를 채우도록 수정
-  Future<void> loadCampaignForEdit(String id) async {
-    setLoading(true);
-    try {
-      final campaign = await _campaignUseCase.getCampaignById(id);
-      _editingCampaign = campaign;
+  // 수정 모드 시, 새로운 스키마에 맞춰 컨트롤러를 채우도록 수정
+  @override
+  Future<void> loadDataForEdit() async {
+    final campaign = await _campaignUseCase.getCampaignById(id!);
+    _editingCampaign = campaign;
 
-      // 공통 필드 및 새로운 필드 채우기
-      titleController.text = campaign.title ?? '';
-      brandController.text = campaign.brandName ?? '';
-      internalTitleController.text = campaign.internalTitle ?? '';
-      coverImageUrlController.text = campaign.coverImageUrl ?? '';
-      prefixController.text = campaign.prefix ?? '';
-      liveVerticalCoverUrlController.text = campaign.liveVerticalCoverUrl ?? '';
-      liveStreamUrlController.text = campaign.liveStreamUrl ?? '';
-      shootDateController.text = campaign.shootDate != null ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!) : '';
-      deadlineController.text = campaign.closeAt != null ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!) : '';
-      startTimeController.text = campaign.startTime ?? '';
-      endTimeController.text = campaign.endTime ?? '';
-      durationHoursController.text = campaign.durationHours?.toString() ?? '';
-      categoryController.text = campaign.category ?? '';
-      contentController.text = campaign.content ?? ''; // descriptionHTML -> content
-      locationController.text = campaign.location ?? '';
-      feeController.text = campaign.fee?.toString() ?? '';
-      payNegotiable = campaign.feeNegotiable ?? false;
-      productThumbnailUrlController.text = campaign.productThumbnailUrl ?? '';
-      productNameController.text = campaign.productName ?? '';
-      campaignProductUrlController.text = campaign.productUrl ?? '';
+    // 공통 필드 및 새로운 필드 채우기
+    titleController.text = campaign.title ?? '';
+    brandController.text = campaign.brandName ?? '';
+    internalTitleController.text = campaign.internalTitle ?? '';
+    coverImageUrlController.text = campaign.coverImageUrl ?? '';
+    prefixController.text = campaign.prefix ?? '';
+    liveVerticalCoverUrlController.text = campaign.liveVerticalCoverUrl ?? '';
+    liveStreamUrlController.text = campaign.liveStreamUrl ?? '';
+    shootDateController.text = campaign.shootDate != null ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!) : '';
+    deadlineController.text = campaign.closeAt != null ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!) : '';
+    startTimeController.text = campaign.startTime ?? '';
+    endTimeController.text = campaign.endTime ?? '';
+    durationHoursController.text = campaign.durationHours?.toString() ?? '';
+    categoryController.text = campaign.category ?? '';
+    contentController.text = campaign.content ?? ''; // descriptionHTML -> content
+    locationController.text = campaign.location ?? '';
+    feeController.text = campaign.fee?.toString() ?? '';
+    payNegotiable = campaign.feeNegotiable ?? false;
+    productThumbnailUrlController.text = campaign.productThumbnailUrl ?? '';
+    productNameController.text = campaign.productName ?? '';
+    campaignProductUrlController.text = campaign.productUrl ?? '';
 
-      selectedPrefix = campaign.prefix;
-      selectedCategory = campaign.category;
+    selectedPrefix = campaign.prefix;
+    selectedCategory = campaign.category;
 
-      _updateDuration();
-      _updatePayWanPreview();
-    } catch (e) {
-      debugPrint('Error loading campaign for edit: $e');
-    } finally {
-      setLoading(false);
-    }
+    _updateDuration();
+    _updatePayWanPreview();
   }
 
-  // [수정] API Payload를 새로운 명세에 맞춰 재구성합니다.
-  Future<void> submitForm() async {
-    setLoading(true);
-    try {
-      final coverImageUrl =
-          await _imageHandlerProvider.uploadImage(tempCoverImageBytes!) ?? coverImageUrlController.text;
-      final verticalCoverUrl =
-          await _imageHandlerProvider.uploadImage(tempVerticalCoverImageBytes!) ?? liveVerticalCoverUrlController.text;
-      final productThumbUrl =
-          await _imageHandlerProvider.uploadImage(tempProductThumbnailBytes!) ?? productThumbnailUrlController.text;
+  // API Payload를 새로운 명세에 맞춰 재구성
+  @override
+  Future<void> onSave() async {
+    final coverImageUrl = await _imageHandlerProvider.uploadImage(tempCoverImageBytes!) ?? coverImageUrlController.text;
+    final verticalCoverUrl =
+        await _imageHandlerProvider.uploadImage(tempVerticalCoverImageBytes!) ?? liveVerticalCoverUrlController.text;
+    final productThumbUrl =
+        await _imageHandlerProvider.uploadImage(tempProductThumbnailBytes!) ?? productThumbnailUrlController.text;
 
-      // 날짜 문자열을 ISO 8601 형식으로 변환하는 헬퍼 함수
-      String? toIso8601String(String dateStr) {
-        if (dateStr.isEmpty) return null;
-        try {
-          return DateTime.parse(dateStr).toUtc().toIso8601String();
-        } catch (e) {
-          return null; // 파싱 실패 시 null 반환
-        }
+    // 날짜 문자열을 ISO 8601 형식으로 변환하는 헬퍼 함수
+    String? toIso8601String(String dateStr) {
+      if (dateStr.isEmpty) return null;
+      try {
+        return DateTime.parse(dateStr).toUtc().toIso8601String();
+      } catch (e) {
+        return null; // 파싱 실패 시 null 반환
       }
+    }
 
-      final Map<String, dynamic> payload = {
-        'brandName': brandController.text,
-        'title': titleController.text,
-        'shootDate': toIso8601String(shootDateController.text),
-        'closeAt': toIso8601String(deadlineController.text),
-        'durationHours': double.tryParse(durationHoursController.text),
-        'startTime': startTimeController.text,
-        'endTime': endTimeController.text,
-        'prefix': prefixController.text.isEmpty ? null : prefixController.text,
-        'content': contentController.text.isEmpty ? null : contentController.text,
-        'category': categoryController.text.isEmpty ? null : categoryController.text,
-        'location': locationController.text.isEmpty ? null : locationController.text,
-        'fee': int.tryParse(feeController.text),
-        'feeNegotiable': payNegotiable,
-        'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
-        'liveVerticalCoverUrl': verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
-        'liveStreamUrl': liveStreamUrlController.text.isEmpty ? null : liveStreamUrlController.text,
-        'productThumbnailUrl': productThumbUrl.isEmpty ? null : productThumbUrl,
-        'productName': productNameController.text.isEmpty ? null : productNameController.text,
-        'productUrl': campaignProductUrlController.text.isEmpty ? null : campaignProductUrlController.text,
-      };
+    final Map<String, dynamic> payload = {
+      'brandName': brandController.text,
+      'title': titleController.text,
+      'shootDate': toIso8601String(shootDateController.text),
+      'closeAt': toIso8601String(deadlineController.text),
+      'durationHours': double.tryParse(durationHoursController.text),
+      'startTime': startTimeController.text,
+      'endTime': endTimeController.text,
+      'prefix': prefixController.text.isEmpty ? null : prefixController.text,
+      'content': contentController.text.isEmpty ? null : contentController.text,
+      'category': categoryController.text.isEmpty ? null : categoryController.text,
+      'location': locationController.text.isEmpty ? null : locationController.text,
+      'fee': int.tryParse(feeController.text),
+      'feeNegotiable': payNegotiable,
+      'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
+      'liveVerticalCoverUrl': verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
+      'liveStreamUrl': liveStreamUrlController.text.isEmpty ? null : liveStreamUrlController.text,
+      'productThumbnailUrl': productThumbUrl.isEmpty ? null : productThumbUrl,
+      'productName': productNameController.text.isEmpty ? null : productNameController.text,
+      'productUrl': campaignProductUrlController.text.isEmpty ? null : campaignProductUrlController.text,
+    };
 
-      if (campaignId != null) {
-        await _campaignUseCase.updateCampaign(campaignId!, payload);
-      } else {
-        await _campaignUseCase.createCampaign(payload);
-      }
-    } catch (e) {
-      debugPrint('Form submission failed: $e');
-      rethrow;
-    } finally {
-      setLoading(false);
+    if (isEditing) {
+      await _campaignUseCase.updateCampaign(id!, payload);
+    } else {
+      await _campaignUseCase.createCampaign(payload);
     }
   }
 

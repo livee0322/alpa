@@ -324,16 +324,8 @@ class CampaignsFormScreen extends StatelessWidget {
         PrimaryActionButton(
           text: viewModel.editingCampaign == null ? '공고 등록' : '수정 완료',
           isFullWidth: false,
-          onPressed: () async {
-            if (viewModel.formKey.currentState!.validate()) {
-              try {
-                await viewModel.submitForm();
-                if (context.mounted) context.go('/campaigns');
-              } catch (e) {
-                // 에러 처리는 ViewModel 내부에서 토스트 등으로 처리하는 것이 더 좋습니다.
-              }
-            }
-          },
+          // formKey 유효성 검사는 submit() 내부에서 자동으로 처리
+          onPressed: () async => await viewModel.submit(),
         )
       ],
     );
