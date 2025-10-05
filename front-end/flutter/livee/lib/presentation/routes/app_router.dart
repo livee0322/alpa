@@ -4,6 +4,7 @@ import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
+import 'package:livee/presentation/screens/campaign/vm/my_campaigns_view_model.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
 import 'package:livee/presentation/screens/model/model_detail_screen.dart';
@@ -17,7 +18,7 @@ import 'package:livee/presentation/screens/proposal/received_proposals_screen.da
 import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
 import 'package:livee/presentation/screens/campaign/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
-import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
+import 'package:livee/presentation/screens/campaign/my_campaigns_screen.dart';
 import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
 import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
 import 'package:livee/presentation/screens/event/event_screen.dart';
@@ -136,9 +137,13 @@ GoRouter createRouter(AuthProvider authProvider) {
 
               // 상세 페이지들도 모두 RootShellRoute의 자식으로 두기
               GoRoute(
-                path: '/campaigns',
-                builder: (context, state) => const CampaignsScreen(),
+                path: '/my-campaigns',
+                builder: (context, state) => ChangeNotifierProvider(
+                  create: (_) => MyCampaignsViewModel(),
+                  child: const MyCampaignsScreen(),
+                ),
               ),
+
               GoRoute(
                 path: '/campaign-form',
                 // [수정] builder에서 ChangeNotifierProvider를 사용하여 ViewModel을 생성하고 주입합니다.

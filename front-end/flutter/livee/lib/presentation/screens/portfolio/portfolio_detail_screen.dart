@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/screens/portfolio/vm/portfolio_detail_view_model.dart';
-import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
 import 'package:provider/provider.dart';
@@ -79,8 +78,7 @@ class PortfolioDetailScreen extends StatelessWidget {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                portfolio.backgroundImageUrl ??
-                    'https://picsum.photos/seed/${portfolio.id}/800/600',
+                portfolio.backgroundImageUrl ?? 'https://picsum.photos/seed/${portfolio.id}/800/600',
               ),
               fit: BoxFit.cover,
             ),
@@ -111,21 +109,18 @@ class PortfolioDetailScreen extends StatelessWidget {
                 children: [
                   // 뒤로가기 버튼
                   IconButton(
-                    icon: const Icon(CupertinoIcons.arrow_left,
-                        color: Colors.white, size: 28),
+                    icon: const Icon(CupertinoIcons.arrow_left, color: Colors.white, size: 28),
                     onPressed: () => html.window.history.go(-1),
                   ),
                   // 공유 & 북마크 버튼
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(CupertinoIcons.share,
-                            color: Colors.white, size: 24),
+                        icon: const Icon(CupertinoIcons.share, color: Colors.white, size: 24),
                         onPressed: () {/* 기능 구현 X */},
                       ),
                       IconButton(
-                        icon: const Icon(CupertinoIcons.bookmark,
-                            color: Colors.white, size: 24),
+                        icon: const Icon(CupertinoIcons.bookmark, color: Colors.white, size: 24),
                         onPressed: () {/* 기능 구현 X */},
                       ),
                     ],
@@ -150,9 +145,8 @@ class PortfolioDetailScreen extends StatelessWidget {
                 backgroundColor: Colors.white,
                 child: CircleAvatar(
                   radius: 40,
-                  backgroundImage: portfolio.mainThumbnailUrl != null
-                      ? NetworkImage(portfolio.mainThumbnailUrl!)
-                      : null,
+                  backgroundImage:
+                      portfolio.mainThumbnailUrl != null ? NetworkImage(portfolio.mainThumbnailUrl!) : null,
                 ),
               ),
               const SizedBox(width: 16),
@@ -164,32 +158,24 @@ class PortfolioDetailScreen extends StatelessWidget {
                   children: [
                     Text(
                       portfolio.nickname ?? '이름 없음',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       portfolio.oneLineIntro ?? '',
-                      style:
-                          const TextStyle(color: Colors.white70, fontSize: 14),
+                      style: const TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                     const SizedBox(height: 8),
                     if (portfolio.age != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
                           '만 ${portfolio.age}세',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
                   ],
@@ -213,22 +199,12 @@ class PortfolioDetailScreen extends StatelessWidget {
           spacing: 8.0,
           runSpacing: 8.0,
           children: [
-            if (portfolio.instagramUrl != null &&
-                portfolio.instagramUrl!.isNotEmpty)
-              _buildChipButton(
-                  icon: Icons.camera_alt_outlined,
-                  label: 'Instagram',
-                  onPressed: () {}),
-            if (portfolio.youtubeUrl != null &&
-                portfolio.youtubeUrl!.isNotEmpty)
-              _buildChipButton(
-                  icon: Icons.video_collection_outlined,
-                  label: 'YouTube',
-                  onPressed: () {}),
-            if (portfolio.websiteUrl != null &&
-                portfolio.websiteUrl!.isNotEmpty)
-              _buildChipButton(
-                  icon: Icons.link, label: 'Website', onPressed: () {}),
+            if (portfolio.instagramUrl != null && portfolio.instagramUrl!.isNotEmpty)
+              _buildChipButton(icon: Icons.camera_alt_outlined, label: 'Instagram', onPressed: () {}),
+            if (portfolio.youtubeUrl != null && portfolio.youtubeUrl!.isNotEmpty)
+              _buildChipButton(icon: Icons.video_collection_outlined, label: 'YouTube', onPressed: () {}),
+            if (portfolio.websiteUrl != null && portfolio.websiteUrl!.isNotEmpty)
+              _buildChipButton(icon: Icons.link, label: 'Website', onPressed: () {}),
           ],
         )
       ],
@@ -242,8 +218,7 @@ class PortfolioDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('소개',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text('소개', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(portfolio.detailedIntro ?? '자유로운 소개 형식입니다.'),
         ],
@@ -261,8 +236,7 @@ class PortfolioDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('최근 라이브 이력',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text('최근 라이브 이력', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...lives
               .map((live) => Padding(
@@ -270,12 +244,8 @@ class PortfolioDetailScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(live.title,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w600)),
-                        Text('${live.date} / ${live.url}',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 13)),
+                        Text(live.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text('${live.date} / ${live.url}', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
                       ],
                     ),
                   ))
@@ -307,9 +277,9 @@ class PortfolioDetailScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(), // 부모 스크롤과 충돌 방지
             itemCount: images.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,      // [핵심] 한 줄에 3개의 이미지를 표시하여 3xN 그리드를 만듭니다.
-              crossAxisSpacing: 8,  // 이미지 좌우 간격
-              mainAxisSpacing: 8,   // 이미지 상하 간격
+              crossAxisCount: 3, // [핵심] 한 줄에 3개의 이미지를 표시하여 3xN 그리드를 만듭니다.
+              crossAxisSpacing: 8, // 이미지 좌우 간격
+              mainAxisSpacing: 8, // 이미지 상하 간격
             ),
             itemBuilder: (context, index) {
               // 각 이미지를 둥근 모서리로 표시합니다.
@@ -325,10 +295,7 @@ class PortfolioDetailScreen extends StatelessWidget {
   }
 
   /// 소셜 링크에 사용되는 칩(Chip) 형태의 버튼
-  Widget _buildChipButton(
-      {required IconData icon,
-      required String label,
-      required VoidCallback onPressed}) {
+  Widget _buildChipButton({required IconData icon, required String label, required VoidCallback onPressed}) {
     return ElevatedButton.icon(
       icon: Icon(icon, size: 18),
       label: Text(label),

@@ -21,7 +21,7 @@ class BrandSection extends StatelessWidget {
           icon: CupertinoIcons.list_bullet,
           title: '등록한 공고 목록',
           subtitle: '진행중/마감 구분',
-          onTap: () => GoRouter.of(context).go('/campaigns'),
+          onTap: () => GoRouter.of(context).go('/my-campaigns'),
         ),
         MyPageMenuItem(
           icon: CupertinoIcons.person_2,
