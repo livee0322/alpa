@@ -4,7 +4,7 @@ import 'package:livee/domain/models/campaign.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
-import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
+import 'package:livee/presentation/screens/apply/apply_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
@@ -32,9 +32,7 @@ class NewRecruitCard extends StatelessWidget {
     }
 
     // DateTime? 타입의 closeAt을 'yyyy-MM-dd' 형식의 문자열로 변환
-    final deadline = campaign.closeAt != null
-        ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!)
-        : '미정';
+    final deadline = campaign.closeAt != null ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!) : '미정';
 
     return Card(
       color: AppColors.white,
@@ -50,8 +48,7 @@ class NewRecruitCard extends StatelessWidget {
             Stack(
               children: [
                 Image.network(
-                  campaign.coverImageUrl ??
-                      'https://picsum.photos/seed/${campaign.id}/400/200',
+                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/400/200',
                   width: double.infinity,
                   height: 180,
                   fit: BoxFit.cover,
@@ -66,24 +63,19 @@ class NewRecruitCard extends StatelessWidget {
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.black.withAlpha(179),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text('AD',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                      child: const Text('AD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 Positioned(
                   top: 12,
                   right: 12,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.black.withAlpha(179),
                       borderRadius: BorderRadius.circular(4),
@@ -148,27 +140,21 @@ class NewRecruitCard extends StatelessWidget {
                             // 쇼호스트인 경우, 이미 지원했는지 먼저 확인
                             if (campaign.isApplied == true) {
                               // 이미 지원했다면 토스트 메시지 표시
-                              showCustomToast(context, '이미 지원한 공고입니다.',
-                                  type: ToastType.info);
+                              showCustomToast(context, '이미 지원한 공고입니다.', type: ToastType.info);
                             } else {
                               // [수정] 바텀시트의 반환 값을 확인하여 목록을 새로고침합니다.
-                              final result =
-                                  await showApplyBottomSheet(context, campaign);
-                              print(
-                                  "✅ (B) 바텀 시트가 닫혔고, 반환된 값은 [ $result ] 입니다.");
+                              final result = await showApplyBottomSheet(context, campaign);
+                              print("✅ (B) 바텀 시트가 닫혔고, 반환된 값은 [ $result ] 입니다.");
                               if (result == true) {
                                 print("✅ (B-1) 반환값이 true이므로, 데이터 새로고침을 요청합니다!");
                                 // 지원에 성공했으면 RecruitListProvider의 데이터를 새로고침
-                                context
-                                    .read<RecruitListProvider>()
-                                    .fetchRecruits();
+                                context.read<RecruitListProvider>().fetchRecruits();
                               }
                             }
                             break;
                           case 'brand':
                             // 브랜드인 경우: 지원 현황 페이지로 이동
-                            GoRouter.of(context)
-                                .go('/campaign/${campaign.id}/applicants');
+                            GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
                             break;
                           default:
                             // 기타 역할 (예: 일반 사용자)도 지원 바텀 시트 표시

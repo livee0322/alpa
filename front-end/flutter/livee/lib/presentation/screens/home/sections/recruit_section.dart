@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/home/vm/home_view_model.dart';
-import 'package:livee/presentation/screens/main/widgets/apply_bottom_sheet.dart';
+import 'package:livee/presentation/screens/apply/apply_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
 import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
@@ -70,13 +70,11 @@ class RecruitSection extends StatelessWidget {
           children: [
             // 공고 썸네일 이미지
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(14)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
               child: AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Image.network(
-                  campaign.coverImageUrl ??
-                      'https://picsum.photos/seed/recruit${campaign.id}',
+                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/recruit${campaign.id}',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: AppColors.disabled,
@@ -121,10 +119,8 @@ class RecruitSection extends StatelessWidget {
                             backgroundColor: AppColors.primary.withAlpha(26),
                             side: BorderSide.none,
                             padding: const EdgeInsets.symmetric(horizontal: 4),
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: const VisualDensity(
-                                horizontal: 0, vertical: -4),
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
                           ),
                         ),
                       ],
@@ -178,8 +174,7 @@ class RecruitSection extends StatelessWidget {
                             final confirm = await showCommonPromptDialog(
                               context: context,
                               title: '로그인이 필요합니다',
-                              content:
-                                  '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
+                              content: '공고에 지원하려면 로그인이 필요해요.\n로그인 페이지로 이동하시겠습니까?',
                               confirmText: '로그인',
                             );
                             if (confirm == true && context.mounted) {
@@ -190,11 +185,9 @@ class RecruitSection extends StatelessWidget {
                           switch (authProvider.role) {
                             case 'showhost':
                               if (campaign.isApplied == true) {
-                                showCustomToast(context, '이미 지원한 공고입니다.',
-                                    type: ToastType.info);
+                                showCustomToast(context, '이미 지원한 공고입니다.', type: ToastType.info);
                               } else {
-                                final result = await showApplyBottomSheet(
-                                    context, campaign);
+                                final result = await showApplyBottomSheet(context, campaign);
                                 if (result == true) mainViewModel.loadData();
                               }
                               break;
@@ -202,8 +195,7 @@ class RecruitSection extends StatelessWidget {
                               context.go('/campaign/${campaign.id}/applicants');
                               break;
                             default:
-                              final result =
-                                  await showApplyBottomSheet(context, campaign);
+                              final result = await showApplyBottomSheet(context, campaign);
                               if (result == true) mainViewModel.loadData();
                               break;
                           }
@@ -211,8 +203,7 @@ class RecruitSection extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.buttonDark,
                           foregroundColor: AppColors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                       ),
