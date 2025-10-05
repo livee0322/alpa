@@ -7,9 +7,9 @@ import 'package:livee/presentation/screens/home/vm/home_view_model.dart';
 import 'package:livee/presentation/screens/apply/apply_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
-import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/common_prompt_dialog.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
 

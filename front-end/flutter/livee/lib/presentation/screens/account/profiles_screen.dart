@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/account/vm/profiles_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
 /// '프로필 설정' 화면

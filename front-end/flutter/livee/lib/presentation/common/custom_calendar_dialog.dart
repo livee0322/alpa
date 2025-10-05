@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/custom_table_calendar.dart';
+import 'package:livee/presentation/common/custom_table_calendar.dart';
 
 /// CustomTableCalendar를 사용하여 날짜를 선택하는 공통 다이얼로그
 class CustomCalendarDialog extends StatefulWidget {
@@ -56,8 +56,7 @@ class _CustomCalendarDialogState extends State<CustomCalendarDialog> {
                   child: const Text('취소'),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.of(context)
-                      .pop(_selectedDay), // 선택된 날짜를 반환하며 닫기
+                  onPressed: () => Navigator.of(context).pop(_selectedDay), // 선택된 날짜를 반환하며 닫기
                   child: const Text(
                     '확인',
                     style: TextStyle(color: AppColors.primary), // 퍼스트 컬러 적용

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 

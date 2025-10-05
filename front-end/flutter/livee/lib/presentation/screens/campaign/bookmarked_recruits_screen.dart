@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
 
 // 쇼호스트가 찜한 공고 목록을 보여주는 화면
 class BookmarkedRecruitsScreen extends StatelessWidget {

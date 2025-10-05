@@ -12,8 +12,8 @@ import 'package:livee/presentation/screens/home/sections/recruit_section.dart';
 import 'package:livee/presentation/screens/home/vm/home_view_model.dart';
 import 'package:livee/presentation/screens/main/widgets/section_container.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/colored_title.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/common/colored_title.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 /// 메인 화면
@@ -36,8 +36,7 @@ class HomeScreen extends StatelessWidget {
   /// 화면 본문을 빌드하는 헬퍼 메소드
   Widget _buildBody(BuildContext context, HomeViewModel viewModel) {
     if (viewModel.errorMessage != null) {
-      return Center(
-          child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
+      return Center(child: Text("데이터를 불러오는 데 실패했습니다: ${viewModel.errorMessage}"));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,8 +87,7 @@ class HomeScreen extends StatelessWidget {
                   purpleFirst: true,
                 ),
                 // onMorePressed: () => GoRouter.of(context).go('/showhosts'),
-                child: FeaturedShowhostListSection(
-                    models: viewModel.featuredShowhosts),
+                child: FeaturedShowhostListSection(models: viewModel.featuredShowhosts),
               ),
 
               // "컨셉에 맞는 모델 찾기" 섹션
@@ -132,8 +130,7 @@ class HomeScreen extends StatelessWidget {
               // [추가] 5:1 비율의 광고 배너를 추가합니다.
               const SizedBox(height: 24), // 상담 섹션과의 간격
               InkWell(
-                onTap: () =>
-                    GoRouter.of(context).go('/studio/68d5496374657fbb21213e7b'),
+                onTap: () => GoRouter.of(context).go('/studio/68d5496374657fbb21213e7b'),
                 borderRadius: BorderRadius.circular(12.0), // 물결 효과를 위해 추가
                 child: AspectRatio(
                   aspectRatio: 5 / 1,

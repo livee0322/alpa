@@ -4,11 +4,11 @@ import 'package:livee/domain/models/proposal.dart';
 import 'package:livee/domain/usecases/proposal_use_case.dart';
 import 'package:livee/presentation/screens/proposal/vm/sent_proposals_view_model.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
-import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/secondary_action_button.dart';
+import 'package:livee/presentation/common/common_prompt_dialog.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:livee/service_locator.dart';
 import 'package:provider/provider.dart';
 

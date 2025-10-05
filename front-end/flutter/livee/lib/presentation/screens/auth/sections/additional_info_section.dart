@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/auth/vm/signup_view_model.dart';
-
 import 'package:livee/presentation/screens/auth/widgets/info_section_card.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
 
 // [클래스] 역할별 추가 정보(쇼호스트/브랜드) 입력 섹션 UI를 담당합니다.
 class AdditionalInfoSection extends StatelessWidget {

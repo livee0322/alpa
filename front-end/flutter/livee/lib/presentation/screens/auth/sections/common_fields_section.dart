@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/auth/vm/signup_view_model.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
 
 // 회원가입 공통 입력 필드 섹션 UI
 class CommonFieldsSection extends StatelessWidget {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/studio/widgets/custom_date_picker_dialog.dart';
-import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_dropdown.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/secondary_action_button.dart';
+import 'package:livee/presentation/common/custom_dropdown.dart';
 
 /// '스튜디오 예약/결제' 정보를 입력받는 바텀시트 위젯
 class BookingBottomSheet extends StatefulWidget {

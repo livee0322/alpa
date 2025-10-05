@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 
 // 캠페인 상세 화면 하단에 고정되는 액션 버튼 바
 class DetailStickyBottomBar extends StatelessWidget {

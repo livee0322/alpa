@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/screens/portfolio/vm/portfolio_detail_view_model.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 

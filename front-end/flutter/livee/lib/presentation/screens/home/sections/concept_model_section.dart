@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/domain/models/model.dart';
-import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 // '컨셉에 맞는 모델 찾기' 섹션
 class ConceptModelSection extends StatelessWidget {

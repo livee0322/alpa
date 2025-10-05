@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/domain/models/clip.dart' as model;
 import 'package:livee/presentation/screens/clips/widgets/clip_player_modal.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 /// 메인 화면의 'HOT clip' 섹션을 표시하는 위젯
 class HotClipSection extends StatelessWidget {

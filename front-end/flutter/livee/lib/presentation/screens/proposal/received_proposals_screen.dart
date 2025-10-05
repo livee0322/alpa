@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/proposal/vm/received_proposals_view_model.dart';
 import 'package:livee/presentation/screens/proposal/widgets/proposal_card.dart';
-import 'package:livee/presentation/widgets/custom_dropdown.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/common/custom_dropdown.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 class ReceivedProposalsScreen extends StatelessWidget {

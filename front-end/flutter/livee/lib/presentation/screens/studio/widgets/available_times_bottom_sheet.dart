@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 
 /// 특정 날짜의 예약 가능한 시간 목록을 보여주는 바텀 시트
 class AvailableTimesBottomSheet extends StatelessWidget {
@@ -49,11 +49,9 @@ class AvailableTimesBottomSheet extends StatelessWidget {
                       onPressed: null, // 클릭 비활성화
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.disabled,
-                        disabledBackgroundColor:
-                            AppColors.disabled, // 비활성화 시 배경색
+                        disabledBackgroundColor: AppColors.disabled, // 비활성화 시 배경색
                         disabledForegroundColor: Colors.black54, // 비활성화 시 글자색
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         elevation: 0,
                       ),

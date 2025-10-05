@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/domain/usecases/proposal_use_case.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 
 /// '제안 보내기' 바텀시트의 상태와 비즈니스 로직을 관리

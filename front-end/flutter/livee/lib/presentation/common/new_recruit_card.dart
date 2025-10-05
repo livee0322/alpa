@@ -6,8 +6,8 @@ import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/screens/apply/apply_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/common_prompt_dialog.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 /// 모집 공고 목록에서 사용될 카드 위젯

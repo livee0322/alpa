@@ -5,8 +5,7 @@ import 'package:livee/presentation/screens/auth/sections/common_fields_section.d
 import 'package:livee/presentation/screens/auth/sections/role_selector_section.dart';
 import 'package:livee/presentation/screens/auth/sections/terms_section.dart';
 import 'package:livee/presentation/screens/auth/vm/signup_view_model.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 import 'package:provider/provider.dart';
 
 // 회원가입 화면 UI를 구성

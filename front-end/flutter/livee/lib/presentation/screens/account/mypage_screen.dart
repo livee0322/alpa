@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/common_header.dart';
-import 'package:livee/presentation/widgets/common_prompt_dialog.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/common_prompt_dialog.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:livee/presentation/screens/account/widgets/profile_card.dart';
 import 'package:livee/presentation/screens/account/widgets/section_header.dart';
 import 'package:livee/presentation/screens/account/widgets/mypage_menu_item.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 // 회원가입 시 추가 정보 섹션의 공통 UI 레이아웃을 담당하는 위젯
 class InfoSectionCard extends StatelessWidget {

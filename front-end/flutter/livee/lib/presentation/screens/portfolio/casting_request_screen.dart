@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 
 /// 브랜드가 쇼호스트에게 섭외를 요청하는 폼 화면
 class CastingRequestScreen extends StatefulWidget {

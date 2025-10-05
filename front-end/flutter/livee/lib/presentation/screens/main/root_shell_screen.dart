@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
-import 'package:livee/presentation/widgets/common_header.dart';
+import 'package:livee/presentation/common/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/common/common_header.dart';
 import 'package:provider/provider.dart';
 
 /// 앱의 최상위 레이아웃, 하단 네비게이션 바를 항상 표시

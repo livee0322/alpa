@@ -4,7 +4,7 @@ import 'package:livee/domain/usecases/studio_use_case.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/studio/models/day_schedule.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 

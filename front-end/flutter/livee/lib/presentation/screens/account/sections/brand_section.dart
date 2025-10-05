@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/account/widgets/mypage_menu_item.dart';
 import 'package:livee/presentation/screens/account/widgets/section_header.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 
 /// 브랜드 역할의 사용자를 위한 마이페이지 메뉴 섹션
 class BrandSection extends StatelessWidget {

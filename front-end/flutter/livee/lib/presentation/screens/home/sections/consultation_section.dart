@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 class ConsultationSection extends StatelessWidget {
   const ConsultationSection({super.key});

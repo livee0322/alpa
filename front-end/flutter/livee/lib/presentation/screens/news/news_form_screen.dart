@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/news/vm/news_form_view_model.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 class NewsFormScreen extends StatelessWidget {
@@ -77,8 +77,7 @@ class NewsFormScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('대표 이미지',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const Text('대표 이미지', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
         InkWell(
           // [수정] ViewModel의 pickAndUploadImage 메서드를 호출하는 것은 동일합니다.
@@ -92,9 +91,7 @@ class NewsFormScreen extends StatelessWidget {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
               image: viewModel.imageUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(viewModel.imageUrl!),
-                      fit: BoxFit.cover)
+                  ? DecorationImage(image: NetworkImage(viewModel.imageUrl!), fit: BoxFit.cover)
                   : null,
             ),
             child: viewModel.imageUrl == null
@@ -102,8 +99,7 @@ class NewsFormScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.add_photo_alternate_outlined,
-                            color: Colors.grey),
+                        Icon(Icons.add_photo_alternate_outlined, color: Colors.grey),
                         SizedBox(height: 8),
                         Text('박스를 클릭하여 이미지를 등록해주세요.'),
                       ],

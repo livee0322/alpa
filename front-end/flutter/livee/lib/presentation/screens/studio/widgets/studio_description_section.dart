@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
 
 /// 스튜디오의 소개, 이용안내, 금액 등 상세 정보를 입력받는 섹션 위젯입니다.
 class StudioDescriptionSection extends StatelessWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/screens/campaign/vm/my_campaigns_view_model.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
 /// 내 공고 목록' 화면

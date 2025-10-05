@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/news.dart';
 import 'package:livee/presentation/utils/utility.dart';
-import 'package:livee/presentation/widgets/divided_list_view.dart';
+import 'package:livee/presentation/common/divided_list_view.dart';
 
 // 메인 화면의 '라이비 뉴스' 섹션 UI
 class NewsSection extends StatelessWidget {

@@ -8,9 +8,9 @@ import 'package:livee/presentation/screens/portfolio/sections/recent_live_sectio
 import 'package:livee/presentation/screens/portfolio/sections/selection_info_section.dart';
 import 'package:livee/presentation/screens/portfolio/sections/sub_thumbnail_section.dart';
 import 'package:livee/presentation/screens/portfolio/vm/portfolio_edit_view_model.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/section_title.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/section_title.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
 class PortfolioEditScreen extends StatelessWidget {

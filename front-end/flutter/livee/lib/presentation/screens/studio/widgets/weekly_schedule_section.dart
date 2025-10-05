@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart';
 import 'package:livee/presentation/screens/studio/widgets/exclude_time_modal.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/custom_dropdown.dart';
+import 'package:livee/presentation/common/custom_dropdown.dart';
 
 /// 요일별로 시간 단위를 직접 선택하여 예약 스케줄을 관리하는 위젯
 class WeeklyScheduleSection extends StatelessWidget {
@@ -11,8 +11,7 @@ class WeeklyScheduleSection extends StatelessWidget {
   const WeeklyScheduleSection({super.key, required this.viewModel});
 
   // 00:00 부터 23:00 까지 1시간 단위의 시간 목록을 생성하는 헬퍼 함수
-  List<String> get _timeOptions =>
-      List.generate(24, (i) => '${i.toString().padLeft(2, '0')}:00');
+  List<String> get _timeOptions => List.generate(24, (i) => '${i.toString().padLeft(2, '0')}:00');
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +26,7 @@ class WeeklyScheduleSection extends StatelessWidget {
   }
 
   /// 각 요일별 UI를 구성하는 위젯
-  Widget _buildDayScheduleRow(
-      BuildContext context, String day, dynamic schedule) {
+  Widget _buildDayScheduleRow(BuildContext context, String day, dynamic schedule) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -38,9 +36,7 @@ class WeeklyScheduleSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(day,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(day, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   const Text('영업', style: TextStyle(fontSize: 14)),
@@ -59,8 +55,7 @@ class WeeklyScheduleSection extends StatelessWidget {
                     trackColor: WidgetStateProperty.resolveWith<Color?>(
                       (Set<WidgetState> states) {
                         if (states.contains(WidgetState.selected)) {
-                          return AppColors.primary
-                              .withAlpha(128); // 스위치가 켜졌을 때의 배경 트랙 색상
+                          return AppColors.primary.withAlpha(128); // 스위치가 켜졌을 때의 배경 트랙 색상
                         }
                         return null; // 기본값 사용
                       },
@@ -145,8 +140,7 @@ class WeeklyScheduleSection extends StatelessWidget {
                         color: schedule.isOpen ? Colors.black87 : Colors.grey,
                       ),
                     ),
-                    backgroundColor:
-                        schedule.isOpen ? Colors.grey[200] : Colors.grey[100],
+                    backgroundColor: schedule.isOpen ? Colors.grey[200] : Colors.grey[100],
                     deleteIcon: Icon(
                       Icons.close,
                       size: 14,
@@ -154,9 +148,7 @@ class WeeklyScheduleSection extends StatelessWidget {
                     ),
                     onDeleted: schedule.isOpen
                         ? () {
-                            final updatedList =
-                                List<String>.from(schedule.excludedTimes)
-                                  ..remove(time);
+                            final updatedList = List<String>.from(schedule.excludedTimes)..remove(time);
                             viewModel.setExcludedTimes(day, updatedList);
                           }
                         : null, // 영업 토글이 꺼지면 삭제 기능도 비활성화

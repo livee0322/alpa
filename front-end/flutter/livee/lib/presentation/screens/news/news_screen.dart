@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/screens/news/vm/news_list_view_model.dart';
 import 'package:livee/presentation/screens/news/widgets/news_list_item.dart';
-import 'package:livee/presentation/widgets/buttons/common_floating_action_button.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
+import 'package:livee/presentation/common/buttons/common_floating_action_button.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 class NewsScreen extends StatelessWidget {

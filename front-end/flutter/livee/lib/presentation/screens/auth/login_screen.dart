@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/auth/vm/login_view_model.dart';
-import 'package:livee/presentation/widgets/bouncing_speech_bubble.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/common_bottom_nav_bar.dart';
+import 'package:livee/presentation/common/bouncing_speech_bubble.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {

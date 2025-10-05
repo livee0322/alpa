@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/screens/clips/vm/add_clip_view_model.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 // 숏클립 추가 바텀시트를 화면에 표시

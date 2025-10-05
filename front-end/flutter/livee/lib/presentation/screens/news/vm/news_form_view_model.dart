@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/usecases/news_use_case.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/widgets/custom_toast.dart';
+import 'package:livee/presentation/common/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 

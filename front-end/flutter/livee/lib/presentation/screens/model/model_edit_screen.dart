@@ -7,9 +7,9 @@ import 'package:livee/presentation/screens/portfolio/sections/link_settings_sect
 import 'package:livee/presentation/screens/portfolio/sections/preview_section.dart';
 import 'package:livee/presentation/screens/portfolio/sections/selection_info_section.dart';
 import 'package:livee/presentation/screens/portfolio/sections/sub_thumbnail_section.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/section_title.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/section_title.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
 /// '모델 등록' 또는 '수정'을 위한 UI

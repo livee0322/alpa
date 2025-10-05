@@ -7,14 +7,13 @@ import 'package:livee/presentation/screens/studio/vm/studio_view_model.dart';
 import 'package:livee/presentation/screens/studio/widgets/available_times_bottom_sheet.dart';
 import 'package:livee/presentation/screens/studio/widgets/booking_bottom_sheet.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_table_calendar.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/secondary_action_button.dart';
+import 'package:livee/presentation/common/custom_table_calendar.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'package:remixicon/remixicon.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:universal_html/html.dart' as html;
 
 /// '스튜디오 상세' 및 '예약'
@@ -103,16 +102,14 @@ class StudioScreen extends StatelessWidget {
   // 이미지 갤러리 UI
   Widget _buildImageGallery(Studio studio) {
     // TODO: _selectedMainImage 상태 관리 로직 추가 필요
-    final mainImage = studio.mainThumbnailUrl ??
-        'https://picsum.photos/seed/studio_main/800/600';
+    final mainImage = studio.mainThumbnailUrl ?? 'https://picsum.photos/seed/studio_main/800/600';
     final galleryImages = studio.galleryUrls;
 
     return Column(
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(mainImage,
-              fit: BoxFit.cover, height: 250, width: double.infinity),
+          child: Image.network(mainImage, fit: BoxFit.cover, height: 250, width: double.infinity),
         ),
         const SizedBox(height: 8),
         if (galleryImages.isNotEmpty)
@@ -133,8 +130,7 @@ class StudioScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.transparent, width: 2),
-                      image: DecorationImage(
-                          image: NetworkImage(imageUrl), fit: BoxFit.cover),
+                      image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover),
                     ),
                   ),
                 );
@@ -151,8 +147,7 @@ class StudioScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('스튜디오 정보',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('스튜디오 정보', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _buildInfoRow('브랜드명', studio.brandName),
           _buildInfoRow('한 줄 소개', studio.oneLineIntro),
@@ -175,8 +170,7 @@ class StudioScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('안내',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('안내', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _buildInfoRow('이용 안내', studio.usageInfo, maxLines: 5),
           const Divider(height: 24),
@@ -198,9 +192,7 @@ class StudioScreen extends StatelessWidget {
             child: Text(title, style: TextStyle(color: Colors.grey[600])),
           ),
           const SizedBox(width: 16),
-          Expanded(
-              child: Text(content?.isNotEmpty == true ? content! : '-',
-                  maxLines: maxLines)),
+          Expanded(child: Text(content?.isNotEmpty == true ? content! : '-', maxLines: maxLines)),
         ],
       ),
     );
@@ -213,8 +205,7 @@ class StudioScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('스케줄',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('스케줄', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           // [수정] 기존의 복잡한 TableCalendar 코드를 CustomTableCalendar 위젯으로 교체합니다.
           CustomTableCalendar(
@@ -230,26 +221,23 @@ class StudioScreen extends StatelessWidget {
 
               // 2. 바텀시트를 띄우는 로직은 StudioScreen에 그대로 둡니다.
               final dayOfWeek = DateFormat('E', 'ko_KR').format(selectedDay);
-              final DaySchedule? scheduleTemplate =
-                  studio.weeklySchedule[dayOfWeek];
+              final DaySchedule? scheduleTemplate = studio.weeklySchedule[dayOfWeek];
 
               if (scheduleTemplate == null || !scheduleTemplate.isOpen) {
                 return;
               }
 
-              final startHour =
-                  int.parse(scheduleTemplate.startTime.split(':')[0]);
+              final startHour = int.parse(scheduleTemplate.startTime.split(':')[0]);
               final endHour = int.parse(scheduleTemplate.endTime.split(':')[0]);
-              final allSlots = List.generate(endHour - startHour,
-                  (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
+              final allSlots =
+                  List.generate(endHour - startHour, (i) => '${(startHour + i).toString().padLeft(2, '0')}:00');
 
               // [수정] 하드코딩된 예약 데이터를 bookedDates로 대체해야 하지만, 우선 빈 값으로 둡니다.
               final bookedTimes = <String>{}; // TODO: 실제 예약 데이터와 연동 필요
               final excludedTimes = Set.from(scheduleTemplate.excludedTimes);
 
               final availableTimes = allSlots.where((time) {
-                return !bookedTimes.contains(time) &&
-                    !excludedTimes.contains(time);
+                return !bookedTimes.contains(time) && !excludedTimes.contains(time);
               }).toList();
 
               if (availableTimes.isEmpty) {
@@ -274,24 +262,14 @@ class StudioScreen extends StatelessWidget {
   // 하단 고정 액션 바
   Widget _buildBottomActionBar(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, -2))
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, -2))],
       ),
       child: Row(
         children: [
-          Expanded(
-              child: SecondaryActionButton(
-                  text: '문의하기',
-                  icon: RemixIcons.chat_3_line,
-                  onPressed: () {})),
+          Expanded(child: SecondaryActionButton(text: '문의하기', icon: RemixIcons.chat_3_line, onPressed: () {})),
           const SizedBox(width: 8),
           Expanded(
             child: PrimaryActionButton(

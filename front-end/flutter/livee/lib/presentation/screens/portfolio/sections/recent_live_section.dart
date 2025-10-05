@@ -1,8 +1,6 @@
-// [파일경로/파일명] lib/presentation/screens/showhost/sections/recent_live_section.dart의 RecentLiveSection이 수정되었습니다.
-
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/screens/portfolio/recent_live_controller.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
 
 class RecentLiveSection extends StatelessWidget {
   final List<RecentLiveControllers> controllers;

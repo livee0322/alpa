@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:livee/domain/models/portfolio.dart';
 import 'package:livee/presentation/screens/proposal/vm/proposal_view_model.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/buttons/secondary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/secondary_action_button.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 
 /// '제안 보내기' 전체 UI를 표시하는 함수

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 
 /// 영업 시간 내에서 특정 시간 블록을 제외하기 위한 모달
 class ExcludeTimeModal extends StatefulWidget {

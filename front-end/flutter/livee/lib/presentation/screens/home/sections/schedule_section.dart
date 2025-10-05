@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/campaign.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 /// '지금 뜨는 쇼핑 라이브 공고' 섹션 UI
 class ScheduleSection extends StatelessWidget {

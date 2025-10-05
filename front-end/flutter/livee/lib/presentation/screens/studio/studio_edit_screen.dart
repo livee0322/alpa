@@ -8,11 +8,11 @@ import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart
 import 'package:livee/presentation/screens/studio/widgets/studio_description_section.dart';
 import 'package:livee/presentation/screens/studio/widgets/weekly_schedule_section.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
-import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
-import 'package:livee/presentation/widgets/custom_text_form_field.dart';
-import 'package:livee/presentation/widgets/loading_overlay.dart';
-import 'package:livee/presentation/widgets/section_title.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/buttons/primary_action_button.dart';
+import 'package:livee/presentation/common/custom_text_form_field.dart';
+import 'package:livee/presentation/common/loading_overlay.dart';
+import 'package:livee/presentation/common/section_title.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 

@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/news.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/utils/utility.dart';
-import 'package:livee/presentation/widgets/standard_content_card.dart';
+import 'package:livee/presentation/common/standard_content_card.dart';
 
 class NewsListItem extends StatelessWidget {
   final News news;
@@ -30,7 +30,7 @@ class NewsListItem extends StatelessWidget {
                       labelStyle: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
                       backgroundColor: AppColors.primary.withAlpha(50), // 20% 투명도
                       shape: const StadiumBorder(),
-                      side:  BorderSide(
+                      side: BorderSide(
                         color: AppColors.disabled.withAlpha(50), // 테두리 색상
                         width: 1.0, // 테두리 두께
                       ),
