@@ -15,8 +15,7 @@ enum ImageType {
 
 class CampaignFormViewModel with ChangeNotifier {
   final CampaignUseCase _campaignUseCase = locator<CampaignUseCase>();
-  final ImageHandlerProvider _imageHandlerProvider =
-      locator<ImageHandlerProvider>();
+  final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
   final String? campaignId;
 
   CampaignFormViewModel({this.campaignId}) {
@@ -48,8 +47,7 @@ class CampaignFormViewModel with ChangeNotifier {
   final TextEditingController internalTitleController = TextEditingController();
   final TextEditingController coverImageUrlController = TextEditingController();
   final TextEditingController prefixController = TextEditingController();
-  final TextEditingController liveVerticalCoverUrlController =
-      TextEditingController();
+  final TextEditingController liveVerticalCoverUrlController = TextEditingController();
   final TextEditingController liveStreamUrlController = TextEditingController();
   final TextEditingController shootDateController = TextEditingController();
   final TextEditingController deadlineController = TextEditingController();
@@ -57,13 +55,10 @@ class CampaignFormViewModel with ChangeNotifier {
   final TextEditingController endTimeController = TextEditingController();
   final TextEditingController brandController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
-  final TextEditingController contentController =
-      TextEditingController(); // descController -> contentController
-  final TextEditingController productThumbnailUrlController =
-      TextEditingController();
+  final TextEditingController contentController = TextEditingController(); // descController -> contentController
+  final TextEditingController productThumbnailUrlController = TextEditingController();
   final TextEditingController productNameController = TextEditingController();
-  final TextEditingController campaignProductUrlController =
-      TextEditingController();
+  final TextEditingController campaignProductUrlController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController feeController = TextEditingController();
   bool payNegotiable = false;
@@ -81,6 +76,25 @@ class CampaignFormViewModel with ChangeNotifier {
   List<String> get tags => _tags;
 
   // --- 상태 변경 메소드 ---
+
+  // [추가] 이미지 데이터를 설정하고 UI를 갱신하는 공개 메소드들을 추가합니다.
+  void setCoverImageBytes(Uint8List bytes) {
+    tempCoverImageBytes = bytes;
+    coverImageUrlController.clear();
+    notifyListeners();
+  }
+
+  void setVerticalCoverImageBytes(Uint8List bytes) {
+    tempVerticalCoverImageBytes = bytes;
+    liveVerticalCoverUrlController.clear();
+    notifyListeners();
+  }
+
+  void setProductThumbnailBytes(Uint8List bytes) {
+    tempProductThumbnailBytes = bytes;
+    productThumbnailUrlController.clear();
+    notifyListeners();
+  }
 
   // 드롭다운 값 변경 메소드
   void setPrefix(String? value) {
@@ -138,8 +152,7 @@ class CampaignFormViewModel with ChangeNotifier {
         try {
           final parts = timeText.split(':');
           if (parts.length == 2) {
-            return TimeOfDay(
-                hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+            return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
           }
         } catch (e) {
           return null;
@@ -158,10 +171,8 @@ class CampaignFormViewModel with ChangeNotifier {
         final durationMinutes = endMinutes - startMinutes;
         final hours = durationMinutes ~/ 60;
         final minutes = durationMinutes % 60;
-        durationHoursController.text =
-            (durationMinutes / 60).toStringAsFixed(1);
-        _durationText =
-            '촬영시간: ${hours > 0 ? '$hours시간 ' : ''}${minutes > 0 ? '$minutes분' : ''}';
+        durationHoursController.text = (durationMinutes / 60).toStringAsFixed(1);
+        _durationText = '촬영시간: ${hours > 0 ? '$hours시간 ' : ''}${minutes > 0 ? '$minutes분' : ''}';
       } else {
         _durationText = '촬영시간: 종료시간은 시작시간 이후여야 합니다.';
       }
@@ -186,18 +197,13 @@ class CampaignFormViewModel with ChangeNotifier {
       prefixController.text = campaign.prefix ?? '';
       liveVerticalCoverUrlController.text = campaign.liveVerticalCoverUrl ?? '';
       liveStreamUrlController.text = campaign.liveStreamUrl ?? '';
-      shootDateController.text = campaign.shootDate != null
-          ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!)
-          : '';
-      deadlineController.text = campaign.closeAt != null
-          ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!)
-          : '';
+      shootDateController.text = campaign.shootDate != null ? DateFormat('yyyy-MM-dd').format(campaign.shootDate!) : '';
+      deadlineController.text = campaign.closeAt != null ? DateFormat('yyyy-MM-dd').format(campaign.closeAt!) : '';
       startTimeController.text = campaign.startTime ?? '';
       endTimeController.text = campaign.endTime ?? '';
       durationHoursController.text = campaign.durationHours?.toString() ?? '';
       categoryController.text = campaign.category ?? '';
-      contentController.text =
-          campaign.content ?? ''; // descriptionHTML -> content
+      contentController.text = campaign.content ?? ''; // descriptionHTML -> content
       locationController.text = campaign.location ?? '';
       feeController.text = campaign.fee?.toString() ?? '';
       payNegotiable = campaign.feeNegotiable ?? false;
@@ -222,14 +228,11 @@ class CampaignFormViewModel with ChangeNotifier {
     setLoading(true);
     try {
       final coverImageUrl =
-          await _imageHandlerProvider.uploadImage(tempCoverImageBytes!) ??
-              coverImageUrlController.text;
-      final verticalCoverUrl = await _imageHandlerProvider
-              .uploadImage(tempVerticalCoverImageBytes!) ??
-          liveVerticalCoverUrlController.text;
+          await _imageHandlerProvider.uploadImage(tempCoverImageBytes!) ?? coverImageUrlController.text;
+      final verticalCoverUrl =
+          await _imageHandlerProvider.uploadImage(tempVerticalCoverImageBytes!) ?? liveVerticalCoverUrlController.text;
       final productThumbUrl =
-          await _imageHandlerProvider.uploadImage(tempProductThumbnailBytes!) ??
-              productThumbnailUrlController.text;
+          await _imageHandlerProvider.uploadImage(tempProductThumbnailBytes!) ?? productThumbnailUrlController.text;
 
       // 날짜 문자열을 ISO 8601 형식으로 변환하는 헬퍼 함수
       String? toIso8601String(String dateStr) {
@@ -250,27 +253,17 @@ class CampaignFormViewModel with ChangeNotifier {
         'startTime': startTimeController.text,
         'endTime': endTimeController.text,
         'prefix': prefixController.text.isEmpty ? null : prefixController.text,
-        'content':
-            contentController.text.isEmpty ? null : contentController.text,
-        'category':
-            categoryController.text.isEmpty ? null : categoryController.text,
-        'location':
-            locationController.text.isEmpty ? null : locationController.text,
+        'content': contentController.text.isEmpty ? null : contentController.text,
+        'category': categoryController.text.isEmpty ? null : categoryController.text,
+        'location': locationController.text.isEmpty ? null : locationController.text,
         'fee': int.tryParse(feeController.text),
         'feeNegotiable': payNegotiable,
         'coverImageUrl': coverImageUrl.isEmpty ? null : coverImageUrl,
-        'liveVerticalCoverUrl':
-            verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
-        'liveStreamUrl': liveStreamUrlController.text.isEmpty
-            ? null
-            : liveStreamUrlController.text,
+        'liveVerticalCoverUrl': verticalCoverUrl.isEmpty ? null : verticalCoverUrl,
+        'liveStreamUrl': liveStreamUrlController.text.isEmpty ? null : liveStreamUrlController.text,
         'productThumbnailUrl': productThumbUrl.isEmpty ? null : productThumbUrl,
-        'productName': productNameController.text.isEmpty
-            ? null
-            : productNameController.text,
-        'productUrl': campaignProductUrlController.text.isEmpty
-            ? null
-            : campaignProductUrlController.text,
+        'productName': productNameController.text.isEmpty ? null : productNameController.text,
+        'productUrl': campaignProductUrlController.text.isEmpty ? null : campaignProductUrlController.text,
       };
 
       if (campaignId != null) {

@@ -277,24 +277,19 @@ class CampaignsFormScreen extends StatelessWidget {
         InkWell(
           onTap: () async {
             try {
-              final bytes = await imageHandler.pickImage(context: context, aspectRatio: aspectRatio);
+              final bytes = await imageHandler.pickImage();
               if (bytes != null) {
                 switch (imageType) {
                   case ImageType.cover:
-                    viewModel.tempCoverImageBytes = bytes;
-                    viewModel.coverImageUrlController.clear();
+                    viewModel.setCoverImageBytes(bytes);
                     break;
                   case ImageType.verticalCover:
-                    viewModel.tempVerticalCoverImageBytes = bytes;
-                    viewModel.liveVerticalCoverUrlController.clear();
+                    viewModel.setVerticalCoverImageBytes(bytes);
                     break;
                   case ImageType.productThumbnail:
-                    viewModel.tempProductThumbnailBytes = bytes;
-                    viewModel.productThumbnailUrlController.clear();
+                    viewModel.setProductThumbnailBytes(bytes);
                     break;
                 }
-                // [추가] ViewModel의 상태 변경을 UI에 즉시 알립니다.
-                viewModel.notifyListeners();
               }
             } catch (e) {
               if (context.mounted) {

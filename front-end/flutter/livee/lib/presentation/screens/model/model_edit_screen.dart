@@ -57,13 +57,13 @@ class ModelEditScreen extends StatelessWidget {
                   backgroundImageSource: viewModel.backgroundImageSource,
                   nicknameController: viewModel.nicknameController,
                   onPickMainThumbnail: () async {
-                    final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
+                    final bytes = await imageHandler.pickImage();
                     if (bytes != null) {
                       viewModel.mainThumbnailSource = PortfolioImage(localBytes: bytes);
                     }
                   },
                   onPickBackgroundImage: () async {
-                    final bytes = await imageHandler.pickImage(context: context, aspectRatio: 16 / 9);
+                    final bytes = await imageHandler.pickImage();
                     if (bytes != null) {
                       viewModel.backgroundImageSource = PortfolioImage(localBytes: bytes);
                     }
@@ -79,7 +79,7 @@ class ModelEditScreen extends StatelessWidget {
                       SubThumbnailSection(
                         sources: viewModel.subThumbnailSources,
                         onAddImage: () async {
-                          final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
+                          final bytes = await imageHandler.pickImage();
                           if (bytes != null) {
                             viewModel.subThumbnailSources.add(PortfolioImage(localBytes: bytes));
                           }

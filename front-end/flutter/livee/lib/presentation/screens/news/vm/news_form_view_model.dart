@@ -9,8 +9,7 @@ import 'package:universal_html/html.dart' as html;
 /// '뉴스 등록/수정' 폼의 상태와 로직을 관리
 class NewsFormViewModel with ChangeNotifier {
   final NewsUseCase _newsUseCase = locator<NewsUseCase>();
-  final ImageHandlerProvider _imageHandlerProvider =
-      locator<ImageHandlerProvider>();
+  final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
   final String? newsId;
   final BuildContext context;
 
@@ -49,7 +48,7 @@ class NewsFormViewModel with ChangeNotifier {
   /// 이미지를 선택하고 Cloudinary에 업로드하는 메소드
   Future<void> pickAndUploadImage() async {
     // 1. ImageHandlerProvider를 통해 이미지 선택
-    final imageBytes = await _imageHandlerProvider.pickImage(context: context);
+    final imageBytes = await _imageHandlerProvider.pickImage();
     if (imageBytes == null) return;
 
     // 2. ImageHandlerProvider를 통해 이미지 업로드
@@ -85,8 +84,7 @@ class NewsFormViewModel with ChangeNotifier {
       showCustomToast(context, '뉴스가 성공적으로 저장되었습니다.', type: ToastType.success);
       html.window.history.go(-1); // 이전 페이지로 이동
     } catch (e) {
-      showCustomToast(context, '저장 실패: ${parseApiError(e)}',
-          type: ToastType.error);
+      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {
       _setLoading(false);
     }

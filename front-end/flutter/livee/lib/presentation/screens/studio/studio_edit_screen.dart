@@ -49,15 +49,14 @@ class StudioEditScreen extends StatelessWidget {
                       mainThumbnailSource: viewModel.mainThumbnailSource,
                       backgroundImageSource: viewModel.backgroundImageSource,
                       nicknameController: viewModel.brandNameController, // 브랜드명을 닉네임처럼 표시
-                      // [수정] onPick 콜백에서 ImageHandlerProvider를 사용합니다.
                       onPickMainThumbnail: () async {
-                        final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
+                        final bytes = await imageHandler.pickImage();
                         if (bytes != null) {
                           viewModel.setMainThumbnail(PortfolioImage(localBytes: bytes));
                         }
                       },
                       onPickBackgroundImage: () async {
-                        final bytes = await imageHandler.pickImage(context: context, aspectRatio: 16 / 9);
+                        final bytes = await imageHandler.pickImage();
                         if (bytes != null) {
                           viewModel.setBackgroundImage(PortfolioImage(localBytes: bytes));
                         }
