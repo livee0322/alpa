@@ -54,7 +54,7 @@ class CommonBottomNavBar extends StatelessWidget {
                       authProvider,
                       RemixIcons.archive_drawer_line,
                       '모집공고',
-                      '/recruits',
+                      '/campaigns',
                       effectivePath,
                     ),
                     _buildNavItem(

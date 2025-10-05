@@ -19,7 +19,6 @@ import 'package:livee/domain/usecases/proposal_use_case.dart';
 import 'package:livee/domain/usecases/studio_use_case.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/providers/recruit_list_provider.dart';
 import 'package:livee/presentation/providers/showhost_list_provider.dart';
 
 // 전역으로 사용할 GetIt 인스턴스 생성
@@ -43,22 +42,17 @@ void setupLocator() {
 
   // USECASES
   locator.registerLazySingleton(() => AuthUseCase(locator<AuthRepository>()));
-  locator.registerLazySingleton(
-      () => CampaignUseCase(locator<CampaignRepository>()));
-  locator.registerLazySingleton(
-      () => ApplicationUseCase(locator<ApplicationRepository>()));
+  locator.registerLazySingleton(() => CampaignUseCase(locator<CampaignRepository>()));
+  locator.registerLazySingleton(() => ApplicationUseCase(locator<ApplicationRepository>()));
   locator.registerLazySingleton(() => ClipUseCase(locator<ClipRepository>()));
   locator.registerLazySingleton(() => ModelUseCase(locator<ModelRepository>()));
-  locator
-      .registerLazySingleton(() => StudioUseCase(locator<StudioRepository>()));
+  locator.registerLazySingleton(() => StudioUseCase(locator<StudioRepository>()));
   locator.registerLazySingleton(() => NewsUseCase(locator<NewsRepository>()));
-  locator.registerLazySingleton(
-      () => ProposalUseCase(locator<ProposalRepository>()));
+  locator.registerLazySingleton(() => ProposalUseCase(locator<ProposalRepository>()));
 
   // PROVIDERS
   // Provider는 상태를 가지므로, 매번 새로운 인스턴스를 생성하는 factory로 등록
   locator.registerFactory(() => AuthProvider());
-  locator.registerFactory(() => RecruitListProvider());
   locator.registerFactory(() => ShowhostListProvider());
   locator.registerFactory(() => ImageHandlerProvider());
 }

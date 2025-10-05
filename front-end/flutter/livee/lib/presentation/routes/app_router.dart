@@ -4,6 +4,7 @@ import 'package:livee/presentation/screens/account/account_edit_screen.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
+import 'package:livee/presentation/screens/campaign/vm/campaigns_view_model.dart';
 import 'package:livee/presentation/screens/campaign/vm/my_campaigns_view_model.dart';
 import 'package:livee/presentation/screens/main/root_shell_screen.dart';
 import 'package:livee/presentation/screens/main/top_bar_shell_screen.dart';
@@ -28,7 +29,7 @@ import 'package:livee/presentation/screens/campaign/my_applications_screen.dart'
 import 'package:livee/presentation/screens/account/mypage_screen.dart';
 import 'package:livee/presentation/screens/news/news_screen.dart';
 import 'package:livee/presentation/screens/portfolio/portfolio_edit_screen.dart';
-import 'package:livee/presentation/screens/campaign/recruit_list_screen.dart';
+import 'package:livee/presentation/screens/campaign/campaigns_screen.dart';
 import 'package:livee/presentation/screens/service/service_screen.dart';
 import 'package:livee/presentation/screens/live/shopping_live_screen.dart';
 import 'package:livee/presentation/screens/clips/short_clips_screen.dart';
@@ -110,9 +111,13 @@ GoRouter createRouter(AuthProvider authProvider) {
                 builder: (context, state) => const ServiceScreen(),
               ),
               GoRoute(
-                path: '/recruits',
-                builder: (context, state) => const RecruitListScreen(),
+                path: '/campaigns',
+                builder: (context, state) => ChangeNotifierProvider(
+                  create: (_) => CampaignsViewModel(),
+                  child: const CampaignsScreen(),
+                ),
               ),
+
               GoRoute(
                 path: '/models',
                 builder: (context, state) => const ModelScreen(),
