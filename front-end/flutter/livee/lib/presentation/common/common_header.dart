@@ -21,7 +21,7 @@ class CommonHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () => GoRouter.of(context).go('/'),
+            onTap: () => context.go('/'),
             child: Image.asset(
               'assets/images/liveelogo.png',
               height: 36,

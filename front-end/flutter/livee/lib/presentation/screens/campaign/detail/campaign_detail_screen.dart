@@ -256,8 +256,7 @@ class CampaignDetailScreen extends StatelessWidget {
     return DetailStickyBottomBar(
       priceLabel: priceLabel,
       buttonLabel: isBrand ? '지원자 현황' : '지원하기',
-      onButtonPressed: () =>
-          isBrand ? GoRouter.of(context).go('/campaign/${campaign.id}/applicants') : viewModel.handleApply(),
+      onButtonPressed: () => isBrand ? context.go('/campaign/${campaign.id}/applicants') : viewModel.handleApply(),
     );
   }
 }

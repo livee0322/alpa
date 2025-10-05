@@ -201,7 +201,7 @@ class ShortClipsScreen extends StatelessWidget {
               title: '로그인이 필요합니다',
               content: '숏클립을 등록하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
               confirmText: '로그인');
-          if (result == true) GoRouter.of(context).go('/login');
+          if (result == true) context.go('/login');
           return;
         }
 

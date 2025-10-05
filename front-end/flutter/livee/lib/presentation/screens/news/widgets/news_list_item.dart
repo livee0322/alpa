@@ -14,7 +14,7 @@ class NewsListItem extends StatelessWidget {
     // 새로 만든 유틸리티 함수를 사용하여 상대 시간을 계산
     final relativeTime = Utility.formatRelativeTime(news.createdAt);
     return StandardContentCard(
-      onTap: () => GoRouter.of(context).go('/news/${news.id}'),
+      onTap: () => context.go('/news/${news.id}'),
       child: Row(
         children: [
           // 텍스트 영역

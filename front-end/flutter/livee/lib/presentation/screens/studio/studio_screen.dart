@@ -61,7 +61,7 @@ class StudioScreen extends StatelessWidget {
       actions: [
         IconButton(
           icon: const Icon(RemixIcons.settings_3_line),
-          onPressed: () => GoRouter.of(context).go('/studio-edit'),
+          onPressed: () => context.go('/studio-edit'),
         ),
       ],
     );

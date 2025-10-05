@@ -110,10 +110,10 @@ Widget _buildNavItem(
             confirmText: '로그인',
           );
           if (result == true && context.mounted) {
-            GoRouter.of(context).go('/login');
+            context.go('/login');
           }
         } else {
-          GoRouter.of(context).replace(itemPath);
+          context.replace(itemPath);
         }
       },
       borderRadius: BorderRadius.circular(8),

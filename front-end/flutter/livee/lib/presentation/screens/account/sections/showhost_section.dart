@@ -17,7 +17,7 @@ class ShowhostSection extends StatelessWidget {
           title: '쇼호스트 메뉴',
           actionWidget: PrimaryActionButton(
             text: '+ 등록',
-            onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
+            onPressed: () => context.go('/portfolio-edit'),
             isFullWidth: false,
           ),
         ),
@@ -26,25 +26,25 @@ class ShowhostSection extends StatelessWidget {
           icon: CupertinoIcons.person_badge_plus,
           title: '내 포트폴리오',
           subtitle: '프로필/경력/미디어 관리',
-          onTap: () => GoRouter.of(context).go('/my-portfolios'),
+          onTap: () => context.go('/my-portfolios'),
         ),
         MyPageMenuItem(
           icon: CupertinoIcons.doc_text,
           title: '내 지원 내역',
           subtitle: '대기/합격/거절/정산',
-          onTap: () => GoRouter.of(context).go('/my-applications'),
+          onTap: () => context.go('/my-applications'),
         ),
         MyPageMenuItem(
           icon: CupertinoIcons.envelope_open,
           title: '받은 제안',
           subtitle: '브랜드가 보낸 제안',
-          onTap: () => GoRouter.of(context).go('/received-offers'),
+          onTap: () => context.go('/received-offers'),
         ),
         MyPageMenuItem(
           icon: CupertinoIcons.heart,
           title: '찜한 공고',
           subtitle: '북마크한 공고 모아보기',
-          onTap: () => GoRouter.of(context).go('/bookmarked-recruits'),
+          onTap: () => context.go('/bookmarked-recruits'),
         ),
       ],
     );

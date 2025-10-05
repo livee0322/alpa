@@ -40,7 +40,7 @@ class NewRecruitCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+        onTap: () => context.push('/campaign/${campaign.id}'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -154,7 +154,7 @@ class NewRecruitCard extends StatelessWidget {
                             break;
                           case 'brand':
                             // 브랜드인 경우: 지원 현황 페이지로 이동
-                            GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
+                            context.go('/campaign/${campaign.id}/applicants');
                             break;
                           default:
                             // 기타 역할 (예: 일반 사용자)도 지원 바텀 시트 표시

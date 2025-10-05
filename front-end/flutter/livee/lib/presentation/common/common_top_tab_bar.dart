@@ -71,7 +71,7 @@ class CommonTopTabBar extends StatelessWidget {
             showCustomToast(context, '준비중인 기능입니다.', type: ToastType.info);
           } else {
             // 그 외의 경우에는 해당 경로로 이동.
-            GoRouter.of(context).go(path);
+            context.go(path);
           }
         },
         style: TextButton.styleFrom(

@@ -25,7 +25,7 @@ class NewsScreen extends StatelessWidget {
             // '쇼호스트' 역할일 때만 글쓰기 버튼 표시
             floatingActionButton: authProvider.role == 'showhost'
                 ? CommonFloatingActionButton(
-                    onPressed: () => GoRouter.of(context).go('/news/form'),
+                    onPressed: () => context.go('/news/form'),
                   )
                 : null,
           );
@@ -35,20 +35,20 @@ class NewsScreen extends StatelessWidget {
   }
 
   Widget _buildNewsList(NewsListViewModel viewModel) {
-    if (viewModel.newsList.isEmpty && !viewModel.isLoading) {
+    if (viewModel.items.isEmpty && !viewModel.isLoading) {
       return const Center(child: Text('등록된 뉴스가 없습니다.'));
     }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: viewModel.newsList.length + (viewModel.hasMore ? 1 : 0),
+      itemCount: viewModel.items.length + (viewModel.hasMore ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index == viewModel.newsList.length) {
+        if (index == viewModel.items.length) {
           // 마지막 아이템이면 '더 보기' 버튼 표시
-          viewModel.fetchNextPage();
+          viewModel.loadMore();
           return const Center(child: CircularProgressIndicator());
         }
-        final news = viewModel.newsList[index];
+        final news = viewModel.items[index];
         return NewsListItem(news: news);
       },
     );

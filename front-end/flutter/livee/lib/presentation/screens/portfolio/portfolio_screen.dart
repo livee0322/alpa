@@ -57,12 +57,10 @@ class PortfolioScreen extends StatelessWidget {
                           content: '포트폴리오를 등록하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
                           confirmText: '로그인',
                         );
-                        if (result == true && context.mounted) {
-                          GoRouter.of(context).replace('/login');
-                        }
+                        if (result == true && context.mounted) context.replace('/login');
                       } else {
                         // 로그인 상태(쇼호스트)이면 등록 페이지로 이동
-                        GoRouter.of(context).go('/portfolio-edit');
+                        context.go('/portfolio-edit');
                       }
                     },
                   )
@@ -140,7 +138,7 @@ class PortfolioScreen extends StatelessWidget {
   // 개별 포트폴리오 정보를 표시하는 카드
   Widget _buildPortfolioCard(BuildContext context, Portfolio portfolio) {
     return StandardContentCard(
-      onTap: () => GoRouter.of(context).go('/portfolios/${portfolio.id}'),
+      onTap: () => context.go('/portfolios/${portfolio.id}'),
       child: Row(
         children: [
           // 프로필 이미지

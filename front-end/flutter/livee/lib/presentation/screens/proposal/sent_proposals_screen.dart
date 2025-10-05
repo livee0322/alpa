@@ -72,21 +72,21 @@ class SentProposalsScreen extends StatelessWidget {
   }
 
   Widget _buildProposalList(BuildContext context, SentProposalsViewModel viewModel) {
-    if (viewModel.proposals.isEmpty && !viewModel.isLoading) {
+    if (viewModel.items.isEmpty && !viewModel.isLoading) {
       return const Center(child: Text('보낸 제안이 없습니다.'));
     }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: viewModel.proposals.length + (viewModel.hasMore ? 1 : 0),
+      itemCount: viewModel.items.length + (viewModel.hasMore ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index == viewModel.proposals.length) {
-          viewModel.fetchNextPage();
+        if (index == viewModel.items.length) {
+          viewModel.loadMore();
           return const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(child: CircularProgressIndicator()),
           );
         }
-        final proposal = viewModel.proposals[index];
+        final proposal = viewModel.items[index];
         return ProposalCard(proposal: proposal, viewType: ProposalViewType.sent);
       },
     );

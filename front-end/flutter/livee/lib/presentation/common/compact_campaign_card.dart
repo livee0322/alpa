@@ -34,7 +34,7 @@ class CompactCampaignCard extends StatelessWidget {
     return SizedBox(
       width: 180, // 카드의 가로 폭을 지정
       child: InkWell(
-        onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+        onTap: () => context.push('/campaign/${campaign.id}'),
         borderRadius: BorderRadius.circular(16),
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -50,11 +50,9 @@ class CompactCampaignCard extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 1, // 1:1 비율
                 child: Image.network(
-                  campaign.coverImageUrl ??
-                      'https://picsum.photos/seed/${campaign.id}/300/300',
+                  campaign.coverImageUrl ?? 'https://picsum.photos/seed/${campaign.id}/300/300',
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(color: AppColors.disabled),
+                  errorBuilder: (context, error, stackTrace) => Container(color: AppColors.disabled),
                 ),
               ),
               // 텍스트 정보
@@ -88,10 +86,8 @@ class CompactCampaignCard extends StatelessWidget {
                           backgroundColor: AppColors.primary.withAlpha(26),
                           side: BorderSide.none,
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity:
-                              const VisualDensity(horizontal: 0, vertical: -4),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
                         ),
                       const Spacer(),
                       // 공고 제목

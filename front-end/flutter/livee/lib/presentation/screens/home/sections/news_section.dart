@@ -24,7 +24,7 @@ class NewsSection extends StatelessWidget {
         // 날짜 데이터를 'O일 전'과 같은 상대 시간으로 변환합니다.
         final relativeTime = Utility.formatRelativeTime(article.createdAt);
         return DividedListItem(
-          onTap: () => GoRouter.of(context).go('/news/${article.id}'),
+          onTap: () => context.go('/news/${article.id}'),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

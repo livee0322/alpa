@@ -69,14 +69,14 @@ class CampaignDetailViewModel with ChangeNotifier {
         confirmText: '로그인',
       );
       if (result == true && context.mounted) {
-        GoRouter.of(context).go('/login');
+        context.go('/login');
       }
     } else if (_authProvider.role == 'showhost') {
       // 쇼호스트일 경우: 성공 토스트 및 홈으로 이동
       // TODO: 실제 지원 API 연동 필요
       showCustomToast(context, '성공적으로 지원되었습니다.', type: ToastType.success);
       // history를 모두 지우고 홈으로 이동
-      GoRouter.of(context).go('/');
+      context.go('/');
     }
   }
 }

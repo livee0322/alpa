@@ -1,3 +1,4 @@
+// [파일경로/파일명] lib/presentation/screens/campaign/campaigns_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ import 'package:livee/presentation/common/loading_overlay.dart';
 import 'package:livee/presentation/common/standard_content_card.dart';
 import 'package:provider/provider.dart';
 
-/// '모집 공고 목록' 화면
+/// 모든 사용자에게 공개된 '모집 공고' 목록을 보여주는 페이지
 class CampaignsScreen extends StatelessWidget {
   const CampaignsScreen({super.key});
 
@@ -23,6 +24,7 @@ class CampaignsScreen extends StatelessWidget {
     return Consumer<CampaignsViewModel>(
       builder: (context, viewModel, child) {
         final authProvider = context.watch<AuthProvider>();
+        // 정렬 옵션 Map은 build 메소드 내 지역 변수로 관리
         final Map<String, String> sortOptions = {
           'latest': '최신 등록순',
           'deadline': '마감 임박순',
@@ -53,7 +55,7 @@ class CampaignsScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('총 ${viewModel.totalCampaigns}건'),
+                          Text('총 ${viewModel.totalItems}건'),
                           SizedBox(
                             width: 140,
                             child: CustomDropdown(
@@ -108,24 +110,23 @@ class CampaignsScreen extends StatelessWidget {
     );
   }
 
-  // 공고 목록
+  /// 공고 목록을 빌드하는 헬퍼 메소드
   Widget _buildCampaignList(BuildContext context, CampaignsViewModel viewModel) {
-    if (viewModel.campaigns.isEmpty && !viewModel.isLoading) {
+    if (viewModel.items.isEmpty && !viewModel.isLoading) {
       return const Center(child: Text('표시할 공고가 없습니다.'));
     }
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: viewModel.campaigns.length,
+      itemCount: viewModel.items.length,
       itemBuilder: (context, index) {
-        final campaign = viewModel.campaigns[index];
-        // NewRecruitCard 대신 새로운 카드 UI 빌더를 호출
+        final campaign = viewModel.items[index];
         return _buildCampaignCard(context, campaign, viewModel);
       },
     );
   }
 
-  // [추가] StandardContentCard를 사용하여 새로운 카드 UI를 구성하는 헬퍼 메소드
+  /// StandardContentCard를 사용하여 새로운 카드 UI를 구성하는 헬퍼 메소드
   Widget _buildCampaignCard(BuildContext context, Campaign campaign, CampaignsViewModel viewModel) {
     final authProvider = context.watch<AuthProvider>();
     String feeText = '미정';
@@ -139,7 +140,7 @@ class CampaignsScreen extends StatelessWidget {
     return StandardContentCard(
       margin: const EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.zero,
-      onTap: () => GoRouter.of(context).push('/campaign/${campaign.id}'),
+      onTap: () => context.push('/campaign/${campaign.id}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -218,12 +219,12 @@ class CampaignsScreen extends StatelessWidget {
                           } else {
                             final result = await showApplyBottomSheet(context, campaign);
                             if (result == true) {
-                              viewModel.fetchCampaigns();
+                              viewModel.refresh();
                             }
                           }
                           break;
                         case 'brand':
-                          GoRouter.of(context).go('/campaign/${campaign.id}/applicants');
+                          context.go('/campaign/${campaign.id}/applicants');
                           break;
                         default:
                           showApplyBottomSheet(context, campaign);
@@ -248,7 +249,7 @@ class CampaignsScreen extends StatelessWidget {
     );
   }
 
-  // [추가] 페이지네이션 컨트롤을 빌드하는 헬퍼 메소드
+  /// 페이지네이션 컨트롤을 빌드하는 헬퍼 메소드
   Widget _buildPaginationControls(CampaignsViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),

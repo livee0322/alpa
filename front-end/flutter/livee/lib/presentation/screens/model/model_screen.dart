@@ -38,10 +38,10 @@ class ModelScreen extends StatelessWidget {
                           confirmText: '로그인',
                         );
                         if (result == true) {
-                          GoRouter.of(context).go('/login');
+                          context.go('/login');
                         }
                       } else {
-                        GoRouter.of(context).go('/model-edit');
+                        context.go('/model-edit');
                       }
                     },
                   )
@@ -54,7 +54,7 @@ class ModelScreen extends StatelessWidget {
 
   // 모델 목록과 '더 보기' 버튼을 포함한 화면의 본문을 구성
   Widget _buildModelList(BuildContext context, ModelListViewModel viewModel) {
-    if (viewModel.models.isEmpty && !viewModel.isLoading) {
+    if (viewModel.items.isEmpty && !viewModel.isLoading) {
       return const Center(child: Text('등록된 모델이 없습니다.'));
     }
     return ListView(
@@ -69,9 +69,9 @@ class ModelScreen extends StatelessWidget {
             mainAxisSpacing: 12, // 카드 상하 간격
             childAspectRatio: 0.65, // 카드의 가로세로 비율
           ),
-          itemCount: viewModel.models.length,
+          itemCount: viewModel.items.length,
           itemBuilder: (context, index) {
-            final model = viewModel.models[index];
+            final model = viewModel.items[index];
             return _buildModelCard(context, model);
           },
         ),
@@ -88,7 +88,7 @@ class ModelScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
       borderRadius: BorderRadius.zero, // 직각 모서리
-      onTap: () => GoRouter.of(context).go('/models/${model.id}'),
+      onTap: () => context.go('/models/${model.id}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,7 +148,7 @@ class ModelScreen extends StatelessWidget {
           : OutlinedButton.icon(
               icon: const Icon(Icons.more_horiz),
               label: const Text('더 보기'),
-              onPressed: viewModel.fetchNextPage, // ViewModel의 다음 페이지 로딩 함수 호출
+              onPressed: viewModel.loadMore, // ViewModel의 다음 페이지 로딩 함수 호출
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.textGrey,
                 side: const BorderSide(color: AppColors.border),

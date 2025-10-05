@@ -49,7 +49,7 @@ class MyPortfoliosScreen extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Icons.add, size: 18),
               label: const Text('등록'),
-              onPressed: () => GoRouter.of(context).go('/portfolio-edit'),
+              onPressed: () => context.go('/portfolio-edit'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6C63FF),
                 foregroundColor: Colors.white,
@@ -166,15 +166,14 @@ class MyPortfoliosScreen extends StatelessWidget {
                     _buildActionButton(
                       icon: Icons.open_in_new,
                       label: '보기',
-                      onPressed: () => GoRouter.of(context).go('/portfolios/${portfolio.id}'),
+                      onPressed: () => context.go('/portfolios/${portfolio.id}'),
                     ),
                     const SizedBox(width: 8),
                     _buildActionButton(
-                        icon: Icons.edit,
-                        label: '수정',
-                        onPressed: () {
-                          GoRouter.of(context).go('/portfolio-edit', extra: portfolio.id);
-                        }),
+                      icon: Icons.edit,
+                      label: '수정',
+                      onPressed: () => context.go('/portfolio-edit', extra: portfolio.id),
+                    ),
                     const SizedBox(width: 8),
                     _buildActionButton(
                       icon: Icons.delete,

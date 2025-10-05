@@ -30,7 +30,7 @@ class MyCampaignsScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
-                        onPressed: () => GoRouter.of(context).go('/campaign-form'),
+                        onPressed: () => context.go('/campaign-form'),
                         icon: const Icon(Icons.add_circle_outline, size: 28),
                       ),
                     ],
@@ -118,7 +118,7 @@ class MyCampaignsScreen extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit, size: 20),
-                      onPressed: () => GoRouter.of(context).go('/campaign-form', extra: campaign.id),
+                      onPressed: () => context.go('/campaign-form', extra: campaign.id),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, size: 20, color: Colors.red),
@@ -159,7 +159,7 @@ class MyCampaignsScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: TextButton(
-              onPressed: () => GoRouter.of(context).go('/campaign/${campaign.id}/applicants'),
+              onPressed: () => context.go('/campaign/${campaign.id}/applicants'),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: const RoundedRectangleBorder(

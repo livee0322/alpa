@@ -80,7 +80,7 @@ class SignupScreen extends StatelessWidget {
             style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
           ),
           InkWell(
-            onTap: () => GoRouter.of(context).go('/login'),
+            onTap: () => context.go('/login'),
             child: const Text(
               '로그인',
               style: TextStyle(

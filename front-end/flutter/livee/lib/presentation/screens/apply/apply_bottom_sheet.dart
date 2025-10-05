@@ -267,9 +267,7 @@ Future<bool?> showApplyBottomSheet(BuildContext context, Campaign campaign) {
       content: '공고에 지원하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
       confirmText: '로그인',
     ).then((confirmed) {
-      if (confirmed == true) {
-        GoRouter.of(context).go('/login');
-      }
+      if (confirmed == true) context.go('/login');
     });
     return Future.value(null); // 비회원일 경우 null을 반환
   }

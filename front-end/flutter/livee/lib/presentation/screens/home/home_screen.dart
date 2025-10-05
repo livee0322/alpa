@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                   purpleText: '지금 뜨는 ',
                   purpleFirst: true,
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/recruits'),
+                onMorePressed: () => context.go('/campaigns'),
                 child: ScheduleSection(schedules: viewModel.schedules),
               ),
 
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                   blackText: '브랜드 ',
                   purpleText: 'PICK',
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/recruits'),
+                onMorePressed: () => context.go('/campaigns'),
                 child: RecruitSection(recruits: viewModel.recruits),
               ),
 
@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                   blackText: '라이비 ',
                   purpleText: '뉴스',
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/news'),
+                onMorePressed: () => context.go('/news'),
                 child: NewsSection(news: viewModel.news),
               ),
 
@@ -86,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                   purpleText: '이런 쇼호스트',
                   purpleFirst: true,
                 ),
-                // onMorePressed: () => GoRouter.of(context).go('/showhosts'),
+                onMorePressed: () => context.go('/portfolios'),
                 child: FeaturedShowhostListSection(models: viewModel.featuredShowhosts),
               ),
 
@@ -96,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                   blackText: '컨셉에 맞는 ',
                   purpleText: '모델 찾기',
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/models'),
+                onMorePressed: () => context.go('/models'),
                 child: ConceptModelSection(models: viewModel.conceptModels),
               ),
 
@@ -120,7 +120,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                onMorePressed: () => GoRouter.of(context).go('/clips'),
+                onMorePressed: () => context.go('/clips'),
                 child: HotClipSection(clips: viewModel.hotClips),
               ),
 
@@ -130,7 +130,7 @@ class HomeScreen extends StatelessWidget {
               // [추가] 5:1 비율의 광고 배너를 추가합니다.
               const SizedBox(height: 24), // 상담 섹션과의 간격
               InkWell(
-                onTap: () => GoRouter.of(context).go('/studio/68d5496374657fbb21213e7b'),
+                onTap: () => context.go('/studio/68d5496374657fbb21213e7b'),
                 borderRadius: BorderRadius.circular(12.0), // 물결 효과를 위해 추가
                 child: AspectRatio(
                   aspectRatio: 5 / 1,

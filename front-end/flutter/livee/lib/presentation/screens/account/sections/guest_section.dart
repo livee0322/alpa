@@ -20,7 +20,7 @@ class GuestSection extends StatelessWidget {
           const Text('로그인하고 모든 기능을 이용해보세요', style: TextStyle(color: Colors.black87, fontSize: 16)),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => GoRouter.of(context).go('/login'),
+            onPressed: () => context.go('/login'),
             child: const Text('로그인 / 회원가입'),
           )
         ],
