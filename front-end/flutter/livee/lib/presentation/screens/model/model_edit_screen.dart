@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/model/vm/model_edit_view_model.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
-import 'package:livee/presentation/screens/showhost/sections/basic_info_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/link_settings_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/selection_info_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/sections/basic_info_section.dart';
+import 'package:livee/presentation/screens/portfolio/sections/link_settings_section.dart';
+import 'package:livee/presentation/screens/portfolio/sections/preview_section.dart';
+import 'package:livee/presentation/screens/portfolio/sections/selection_info_section.dart';
+import 'package:livee/presentation/screens/portfolio/sections/sub_thumbnail_section.dart';
 import 'package:livee/presentation/widgets/buttons/primary_action_button.dart';
 import 'package:livee/presentation/widgets/section_title.dart';
 import 'package:livee/presentation/widgets/standard_content_card.dart';
@@ -43,8 +43,7 @@ class ModelEditScreen extends StatelessWidget {
 
   /// 화면의 본문(Body) UI
   Widget _buildBody(BuildContext context, ModelEditViewModel viewModel) {
-    final imageHandler =
-        Provider.of<ImageHandlerProvider>(context, listen: false);
+    final imageHandler = Provider.of<ImageHandlerProvider>(context, listen: false);
     return Stack(
       children: [
         SingleChildScrollView(
@@ -58,19 +57,15 @@ class ModelEditScreen extends StatelessWidget {
                   backgroundImageSource: viewModel.backgroundImageSource,
                   nicknameController: viewModel.nicknameController,
                   onPickMainThumbnail: () async {
-                    final bytes = await imageHandler.pickImage(
-                        context: context, aspectRatio: 1.0);
+                    final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
                     if (bytes != null) {
-                      viewModel.mainThumbnailSource =
-                          PortfolioImage(localBytes: bytes);
+                      viewModel.mainThumbnailSource = PortfolioImage(localBytes: bytes);
                     }
                   },
                   onPickBackgroundImage: () async {
-                    final bytes = await imageHandler.pickImage(
-                        context: context, aspectRatio: 16 / 9);
+                    final bytes = await imageHandler.pickImage(context: context, aspectRatio: 16 / 9);
                     if (bytes != null) {
-                      viewModel.backgroundImageSource =
-                          PortfolioImage(localBytes: bytes);
+                      viewModel.backgroundImageSource = PortfolioImage(localBytes: bytes);
                     }
                   },
                 ),
@@ -84,15 +79,12 @@ class ModelEditScreen extends StatelessWidget {
                       SubThumbnailSection(
                         sources: viewModel.subThumbnailSources,
                         onAddImage: () async {
-                          final bytes = await imageHandler.pickImage(
-                              context: context, aspectRatio: 1.0);
+                          final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
                           if (bytes != null) {
-                            viewModel.subThumbnailSources
-                                .add(PortfolioImage(localBytes: bytes));
+                            viewModel.subThumbnailSources.add(PortfolioImage(localBytes: bytes));
                           }
                         },
-                        onRemoveImage: (index) =>
-                            viewModel.removeSubThumbnail(index),
+                        onRemoveImage: (index) => viewModel.removeSubThumbnail(index),
                       ),
                     ],
                   ),
@@ -134,8 +126,7 @@ class ModelEditScreen extends StatelessWidget {
             ),
           ),
         ),
-        if (viewModel.isLoading ||
-            context.watch<ImageHandlerProvider>().isLoading)
+        if (viewModel.isLoading || context.watch<ImageHandlerProvider>().isLoading)
           Container(
             color: Colors.black.withOpacity(0.7),
             child: const Center(

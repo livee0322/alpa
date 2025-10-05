@@ -5,22 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
-import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/recent_live_controller.dart';
 import 'package:livee/presentation/screens/portfolio/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 
 // PortfolioEditScreen의 상태와 비즈니스 로직을 모두 관리하는 ViewModel
-class PortfolioEditViewModel
-    with ChangeNotifier
-    implements ProfileEditViewModelBase {
+class PortfolioEditViewModel with ChangeNotifier implements ProfileEditViewModelBase {
   // --- 의존성 주입 및 초기화 ---
-  final PortfolioRepository _portfolioRepository =
-      locator<PortfolioRepository>();
-  final ImageHandlerProvider _imageHandlerProvider =
-      locator<ImageHandlerProvider>();
+  final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
+  final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
   final String? portfolioId;
   final BuildContext context;
 
@@ -222,14 +218,12 @@ class PortfolioEditViewModel
     }
     _setLoading(true);
     try {
-      final portfolio =
-          await _portfolioRepository.getPortfolioById(portfolioId!);
+      final portfolio = await _portfolioRepository.getPortfolioById(portfolioId!);
       // 각 컨트롤러에 데이터 채우기
       nicknameController.text = portfolio.nickname ?? '';
       oneLineIntroController.text = portfolio.oneLineIntro ?? '';
       detailedIntroController.text = portfolio.detailedIntro ?? '';
-      experienceYearsController.text =
-          portfolio.experienceYears?.toString() ?? '';
+      experienceYearsController.text = portfolio.experienceYears?.toString() ?? '';
       ageController.text = portfolio.age?.toString() ?? '';
       _isAgePublic = portfolio.isAgePublic ?? false;
 
@@ -260,16 +254,13 @@ class PortfolioEditViewModel
       }
 
       if (portfolio.mainThumbnailUrl != null) {
-        mainThumbnailSource =
-            PortfolioImage(networkUrl: portfolio.mainThumbnailUrl);
+        mainThumbnailSource = PortfolioImage(networkUrl: portfolio.mainThumbnailUrl);
       }
       if (portfolio.backgroundImageUrl != null) {
-        backgroundImageSource =
-            PortfolioImage(networkUrl: portfolio.backgroundImageUrl);
+        backgroundImageSource = PortfolioImage(networkUrl: portfolio.backgroundImageUrl);
       }
       subThumbnailSources.clear();
-      subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? [])
-          .map((url) => PortfolioImage(networkUrl: url)));
+      subThumbnailSources.addAll((portfolio.subThumbnailUrls ?? []).map((url) => PortfolioImage(networkUrl: url)));
       recentLiveControllers.clear();
       if (portfolio.recentLives != null && portfolio.recentLives!.isNotEmpty) {
         for (var live in portfolio.recentLives!) {
@@ -307,21 +298,18 @@ class PortfolioEditViewModel
 
       String? finalMainThumbUrl = mainThumbnailSource?.networkUrl;
       if (mainThumbnailSource?.localBytes != null) {
-        finalMainThumbUrl = await _imageHandlerProvider
-            .uploadImage(mainThumbnailSource!.localBytes!);
+        finalMainThumbUrl = await _imageHandlerProvider.uploadImage(mainThumbnailSource!.localBytes!);
       }
 
       String? finalBackgroundUrl = backgroundImageSource?.networkUrl;
       if (backgroundImageSource?.localBytes != null) {
-        finalBackgroundUrl = await _imageHandlerProvider
-            .uploadImage(backgroundImageSource!.localBytes!);
+        finalBackgroundUrl = await _imageHandlerProvider.uploadImage(backgroundImageSource!.localBytes!);
       }
 
       final List<String> finalSubUrls = [];
       for (final source in subThumbnailSources) {
         if (source.localBytes != null) {
-          final newUrl =
-              await _imageHandlerProvider.uploadImage(source.localBytes!);
+          final newUrl = await _imageHandlerProvider.uploadImage(source.localBytes!);
           if (newUrl != null) finalSubUrls.add(newUrl);
         } else if (source.networkUrl != null) {
           finalSubUrls.add(source.networkUrl!);
@@ -365,15 +353,8 @@ class PortfolioEditViewModel
         'backgroundImageUrl': finalBackgroundUrl,
         'subThumbnailUrls': finalSubUrls,
         'recentLives': recentLiveControllers
-            .map((c) => {
-                  'title': c.titleController.text,
-                  'url': c.urlController.text,
-                  'date': c.dateController.text
-                })
-            .where((item) =>
-                item['title']!.isNotEmpty ||
-                item['url']!.isNotEmpty ||
-                item['date']!.isNotEmpty)
+            .map((c) => {'title': c.titleController.text, 'url': c.urlController.text, 'date': c.dateController.text})
+            .where((item) => item['title']!.isNotEmpty || item['url']!.isNotEmpty || item['date']!.isNotEmpty)
             .toList(),
         'attachedFileUrl': finalAttachedFileUrl,
       };
@@ -384,14 +365,12 @@ class PortfolioEditViewModel
         await _portfolioRepository.updatePortfolio(portfolioId!, payload);
       }
 
-      showCustomToast(context, '포트폴리오가 성공적으로 저장되었습니다.',
-          type: ToastType.success);
+      showCustomToast(context, '포트폴리오가 성공적으로 저장되었습니다.', type: ToastType.success);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         html.window.history.go(-1);
       });
     } catch (e) {
-      showCustomToast(context, '저장 실패: ${parseApiError(e)}',
-          type: ToastType.error);
+      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {
       _setLoading(false);
     }

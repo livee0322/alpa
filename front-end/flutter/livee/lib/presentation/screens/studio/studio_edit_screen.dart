@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
-import 'package:livee/presentation/screens/showhost/sections/preview_section.dart';
-import 'package:livee/presentation/screens/showhost/sections/sub_thumbnail_section.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/sections/preview_section.dart';
+import 'package:livee/presentation/screens/portfolio/sections/sub_thumbnail_section.dart';
 import 'package:livee/presentation/screens/studio/vm/studio_edit_view_model.dart';
 import 'package:livee/presentation/screens/studio/widgets/studio_description_section.dart';
 import 'package:livee/presentation/screens/studio/widgets/weekly_schedule_section.dart';
@@ -48,23 +48,18 @@ class StudioEditScreen extends StatelessWidget {
                     PreviewSection(
                       mainThumbnailSource: viewModel.mainThumbnailSource,
                       backgroundImageSource: viewModel.backgroundImageSource,
-                      nicknameController:
-                          viewModel.brandNameController, // 브랜드명을 닉네임처럼 표시
+                      nicknameController: viewModel.brandNameController, // 브랜드명을 닉네임처럼 표시
                       // [수정] onPick 콜백에서 ImageHandlerProvider를 사용합니다.
                       onPickMainThumbnail: () async {
-                        final bytes = await imageHandler.pickImage(
-                            context: context, aspectRatio: 1.0);
+                        final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
                         if (bytes != null) {
-                          viewModel.setMainThumbnail(
-                              PortfolioImage(localBytes: bytes));
+                          viewModel.setMainThumbnail(PortfolioImage(localBytes: bytes));
                         }
                       },
                       onPickBackgroundImage: () async {
-                        final bytes = await imageHandler.pickImage(
-                            context: context, aspectRatio: 16 / 9);
+                        final bytes = await imageHandler.pickImage(context: context, aspectRatio: 16 / 9);
                         if (bytes != null) {
-                          viewModel.setBackgroundImage(
-                              PortfolioImage(localBytes: bytes));
+                          viewModel.setBackgroundImage(PortfolioImage(localBytes: bytes));
                         }
                       },
                     ),
@@ -81,11 +76,9 @@ class StudioEditScreen extends StatelessWidget {
                             sources: viewModel.subThumbnailSources,
                             // [수정] onAddImage 콜백에서 ImageHandlerProvider를 사용합니다.
                             onAddImage: () async {
-                              final bytes = await imageHandler.pickImage(
-                                  context: context, aspectRatio: 1.0);
+                              final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
                               if (bytes != null) {
-                                viewModel.addSubThumbnail(
-                                    PortfolioImage(localBytes: bytes));
+                                viewModel.addSubThumbnail(PortfolioImage(localBytes: bytes));
                               }
                             },
                             onRemoveImage: viewModel.removeSubThumbnail,
@@ -134,10 +127,7 @@ class StudioEditScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionTitle(title: '기본 정보'),
-          CustomTextFormField(
-              controller: viewModel.brandNameController,
-              label: '브랜드명 *',
-              hintText: '예) BYHEN'),
+          CustomTextFormField(controller: viewModel.brandNameController, label: '브랜드명 *', hintText: '예) BYHEN'),
           const SizedBox(height: 16),
           StudioDescriptionSection(viewModel: viewModel), // 새로 만든 상세 정보 섹션 위젯
         ],
@@ -183,10 +173,8 @@ class StudioEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGallerySection(
-      BuildContext context, StudioEditViewModel viewModel) {
-    final imageHandler =
-        Provider.of<ImageHandlerProvider>(context, listen: false);
+  Widget _buildGallerySection(BuildContext context, StudioEditViewModel viewModel) {
+    final imageHandler = Provider.of<ImageHandlerProvider>(context, listen: false);
     return StandardContentCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,8 +185,7 @@ class StudioEditScreen extends StatelessWidget {
             sources: viewModel.galleryImageSources,
             // [수정] onAddImage 콜백에서 ImageHandlerProvider를 사용합니다.
             onAddImage: () async {
-              final bytes = await imageHandler.pickImage(
-                  context: context, aspectRatio: 1.0);
+              final bytes = await imageHandler.pickImage(context: context, aspectRatio: 1.0);
               if (bytes != null) {
                 viewModel.addGalleryImage(PortfolioImage(localBytes: bytes));
               }
@@ -227,8 +214,7 @@ class StudioEditScreen extends StatelessWidget {
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text(
-                '안내\n・시간 버튼을 눌러 예약 가능한 시간을 설정하세요.\n・파란색은 예약 가능, 회색은 예약 불가능 상태입니다.'),
+            child: const Text('안내\n・시간 버튼을 눌러 예약 가능한 시간을 설정하세요.\n・파란색은 예약 가능, 회색은 예약 불가능 상태입니다.'),
           ),
         ],
       ),

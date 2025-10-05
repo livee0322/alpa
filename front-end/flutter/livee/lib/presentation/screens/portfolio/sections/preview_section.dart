@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 
 // 포트폴리오의 프로필/배경 이미지 및 닉네임 미리보기 섹션
@@ -46,8 +46,7 @@ class PreviewSection extends StatelessWidget {
                         // localBytes와 networkUrl을 모두 처리
                         image: (backgroundImageSource!.localBytes != null
                             ? MemoryImage(backgroundImageSource!.localBytes!)
-                            : NetworkImage(backgroundImageSource!
-                                .networkUrl!)) as ImageProvider,
+                            : NetworkImage(backgroundImageSource!.networkUrl!)) as ImageProvider,
                         fit: BoxFit.cover,
                       )
                     : null,
@@ -78,8 +77,7 @@ class PreviewSection extends StatelessWidget {
                         backgroundImage: mainThumbnailSource != null
                             ? (mainThumbnailSource!.localBytes != null
                                 ? MemoryImage(mainThumbnailSource!.localBytes!)
-                                : NetworkImage(mainThumbnailSource!
-                                    .networkUrl!)) as ImageProvider
+                                : NetworkImage(mainThumbnailSource!.networkUrl!)) as ImageProvider
                             : null,
                         // [수정] CircleAvatar의 child를 사용하여 아이콘을 내부에 배치합니다.
                         child: Align(
@@ -91,8 +89,7 @@ class PreviewSection extends StatelessWidget {
                               color: Colors.grey[700],
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.add_photo_alternate,
-                                color: Colors.white, size: 16),
+                            child: const Icon(Icons.add_photo_alternate, color: Colors.white, size: 16),
                           ),
                         ),
                       ),
@@ -109,14 +106,12 @@ class PreviewSection extends StatelessWidget {
                         children: [
                           Text(
                             value.text.isNotEmpty ? value.text : '닉네임',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             '한 줄 소개', // 이 부분은 ViewModel의 oneLineIntroController와 연결할 수 있습니다.
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 14),
+                            style: TextStyle(color: Colors.grey[600], fontSize: 14),
                           ),
                         ],
                       );
@@ -132,8 +127,7 @@ class PreviewSection extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 22,
                       backgroundColor: Colors.grey[700],
-                      child: const Icon(Icons.image_outlined,
-                          color: Colors.white, size: 24),
+                      child: const Icon(Icons.image_outlined, color: Colors.white, size: 24),
                     ),
                   ),
 

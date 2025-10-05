@@ -4,7 +4,7 @@ import 'package:livee/domain/repositories/portfolio_repository.dart';
 import 'package:livee/service_locator.dart';
 
 /// '내 포트폴리오' 화면의 상태와 비즈니스 로직을 관리하는 ViewModel
-class MyPortfolioListViewModel with ChangeNotifier {
+class MyPortfoliosViewModel with ChangeNotifier {
   // 의존성 주입
   final PortfolioRepository _portfolioRepository = locator<PortfolioRepository>();
 
@@ -19,7 +19,7 @@ class MyPortfolioListViewModel with ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   // 생성자
-  MyPortfolioListViewModel() {
+  MyPortfoliosViewModel() {
     loadPortfolios(); // ViewModel이 생성될 때 포트폴리오 목록을 불러옴
   }
 

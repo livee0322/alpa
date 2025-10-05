@@ -1,6 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 
 class SubThumbnailSection extends StatelessWidget {
   final List<PortfolioImage> sources;

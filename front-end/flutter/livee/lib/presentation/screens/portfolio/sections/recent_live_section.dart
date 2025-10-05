@@ -1,7 +1,7 @@
 // [파일경로/파일명] lib/presentation/screens/showhost/sections/recent_live_section.dart의 RecentLiveSection이 수정되었습니다.
 
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/recent_live_controller.dart';
+import 'package:livee/presentation/screens/portfolio/recent_live_controller.dart';
 import 'package:livee/presentation/widgets/custom_text_form_field.dart';
 
 class RecentLiveSection extends StatelessWidget {
@@ -39,9 +39,7 @@ class RecentLiveSection extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
-                          controller: controller.titleController,
-                          label: '제목',
-                          hintText: '예: OO몰 뷰티 라이브'),
+                          controller: controller.titleController, label: '제목', hintText: '예: OO몰 뷰티 라이브'),
                     ),
                     if (controllers.length > 1)
                       Padding(
@@ -56,10 +54,7 @@ class RecentLiveSection extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                CustomTextFormField(
-                    controller: controller.urlController,
-                    label: '링크',
-                    hintText: 'https://...'),
+                CustomTextFormField(controller: controller.urlController, label: '링크', hintText: 'https://...'),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: controller.dateController,

@@ -4,19 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/usecases/model_use_case.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/portfolio/vm/profile_edit_view_model_base.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/service_locator.dart';
 import 'package:universal_html/html.dart' as html;
 
 // '모델 등록/수정' 화면의 상태와 로직을 관리하는 ViewModel
-class ModelEditViewModel
-    with ChangeNotifier
-    implements ProfileEditViewModelBase {
+class ModelEditViewModel with ChangeNotifier implements ProfileEditViewModelBase {
   // --- 의존성 주입 및 초기화 ---
-  final ImageHandlerProvider _imageHandlerProvider =
-      locator<ImageHandlerProvider>();
+  final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
   final ModelUseCase _modelUseCase = locator<ModelUseCase>();
   final BuildContext context;
   final String? modelId;
@@ -180,9 +177,8 @@ class ModelEditViewModel
   // --- 기능 함수 ---
   @override
   Future<void> pickFileForCache() async {
-    final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['hwp', 'doc', 'docx', 'ppt', 'pptx', 'pdf']);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['hwp', 'doc', 'docx', 'ppt', 'pptx', 'pdf']);
     if (result != null && result.files.single.bytes != null) {
       _tempAttachedFileBytes = result.files.single.bytes;
       attachedFileName = result.files.single.name;
@@ -207,26 +203,21 @@ class ModelEditViewModel
     try {
       String? finalAttachedFileUrl = attachedFileUrl;
       if (_tempAttachedFileBytes != null) {
-        finalAttachedFileUrl = await _imageHandlerProvider.uploadImage(
-            _tempAttachedFileBytes!,
-            fileName: attachedFileName,
-            type: 'raw');
+        finalAttachedFileUrl =
+            await _imageHandlerProvider.uploadImage(_tempAttachedFileBytes!, fileName: attachedFileName, type: 'raw');
       }
       String? finalMainThumbUrl = mainThumbnailSource?.networkUrl;
       if (mainThumbnailSource?.localBytes != null) {
-        finalMainThumbUrl = await _imageHandlerProvider
-            .uploadImage(mainThumbnailSource!.localBytes!);
+        finalMainThumbUrl = await _imageHandlerProvider.uploadImage(mainThumbnailSource!.localBytes!);
       }
       String? finalBackgroundUrl = backgroundImageSource?.networkUrl;
       if (backgroundImageSource?.localBytes != null) {
-        finalBackgroundUrl = await _imageHandlerProvider
-            .uploadImage(backgroundImageSource!.localBytes!);
+        finalBackgroundUrl = await _imageHandlerProvider.uploadImage(backgroundImageSource!.localBytes!);
       }
       final List<String> finalSubUrls = [];
       for (final source in subThumbnailSources) {
         if (source.localBytes != null) {
-          final newUrl =
-              await _imageHandlerProvider.uploadImage(source.localBytes!);
+          final newUrl = await _imageHandlerProvider.uploadImage(source.localBytes!);
           if (newUrl != null) finalSubUrls.add(newUrl);
         } else if (source.networkUrl != null) {
           finalSubUrls.add(source.networkUrl!);
@@ -278,14 +269,12 @@ class ModelEditViewModel
         // await _modelUseCase.updateModel(modelId!, payload); // TODO: 추후 수정 기능 구현
       }
 
-      showCustomToast(context, '모델 프로필이 성공적으로 저장되었습니다.',
-          type: ToastType.success);
+      showCustomToast(context, '모델 프로필이 성공적으로 저장되었습니다.', type: ToastType.success);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         html.window.history.go(-1);
       });
     } catch (e) {
-      showCustomToast(context, '저장 실패: ${parseApiError(e)}',
-          type: ToastType.error);
+      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {
       _setLoading(false);
     }

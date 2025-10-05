@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 
 /// '모델'과 '포트폴리오' 등록/수정 ViewModel이 따라야 할 공통 설계도(인터페이스)
 abstract class ProfileEditViewModelBase with ChangeNotifier {

@@ -2,19 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livee/domain/models/portfolio.dart';
-import 'package:livee/presentation/screens/showhost/vm/my_portfolio_list_view_model.dart';
+import 'package:livee/presentation/screens/portfolio/vm/my_portfolios_view_model.dart';
 import 'package:livee/presentation/widgets/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as html;
 
-/// 쇼호스트가 등록한 자신의 포트폴리오 목록을 보여주는 화면 위젯 (View)
-class MyPortfolioListScreen extends StatelessWidget {
-  const MyPortfolioListScreen({super.key});
+/// 자신의 포트폴리오 목록을 보여주는 화면
+class MyPortfoliosScreen extends StatelessWidget {
+  const MyPortfoliosScreen({super.key});
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => MyPortfolioListViewModel(),
-        child: Consumer<MyPortfolioListViewModel>(
+        create: (_) => MyPortfoliosViewModel(),
+        child: Consumer<MyPortfoliosViewModel>(
           builder: (context, viewModel, child) => LoadingOverlay(
             isLoading: viewModel.isLoading,
             child: Scaffold(
@@ -33,7 +33,6 @@ class MyPortfolioListScreen extends StatelessWidget {
         ),
       );
 
-  /// AppBar를 구성하는 메소드
   AppBar _buildAppBar(BuildContext context) => AppBar(
         leading: IconButton(
           icon: const Icon(CupertinoIcons.back),
@@ -63,7 +62,6 @@ class MyPortfolioListScreen extends StatelessWidget {
         ],
       );
 
-  /// 섹션 헤더를 구성하는 메소드
   Widget _buildSectionHeader() => Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
         child: Row(
@@ -85,8 +83,7 @@ class MyPortfolioListScreen extends StatelessWidget {
         ),
       );
 
-  /// 화면 본문을 구성하는 메소드
-  Widget _buildBody(BuildContext context, MyPortfolioListViewModel viewModel) {
+  Widget _buildBody(BuildContext context, MyPortfoliosViewModel viewModel) {
     if (viewModel.errorMessage != null) {
       return Center(child: Text('오류: ${viewModel.errorMessage}'));
     }
@@ -103,9 +100,8 @@ class MyPortfolioListScreen extends StatelessWidget {
     );
   }
 
-  /// 개별 포트폴리오 카드 UI를 구성하는 메소드
   Widget _buildPortfolioCard(BuildContext context, Portfolio portfolio) {
-    final viewModel = Provider.of<MyPortfolioListViewModel>(context, listen: false);
+    final viewModel = Provider.of<MyPortfoliosViewModel>(context, listen: false);
 
     return Card(
       color: Colors.white,
@@ -122,7 +118,6 @@ class MyPortfolioListScreen extends StatelessWidget {
             clipBehavior: Clip.none,
             alignment: Alignment.centerLeft,
             children: [
-              // 배경 이미지
               Container(
                 height: 150,
                 width: double.infinity,
@@ -131,7 +126,6 @@ class MyPortfolioListScreen extends StatelessWidget {
                     ? Image.network(portfolio.backgroundImageUrl!, fit: BoxFit.cover)
                     : null,
               ),
-              // 프로필 이미지
               Positioned(
                 left: 10,
                 top: 90,
@@ -217,7 +211,6 @@ class MyPortfolioListScreen extends StatelessWidget {
     );
   }
 
-  /// 카드 내 액션 버튼 UI를 구성하는 메소드
   Widget _buildActionButton({
     required IconData icon,
     required String label,

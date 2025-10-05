@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livee/data/core/api_error_parser.dart';
 import 'package:livee/domain/usecases/studio_use_case.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
-import 'package:livee/presentation/screens/showhost/models/portfolio_image.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/screens/studio/models/day_schedule.dart';
 import 'package:livee/presentation/widgets/custom_toast.dart';
 import 'package:livee/service_locator.dart';
@@ -12,8 +12,7 @@ import 'package:universal_html/html.dart' as html;
 class StudioEditViewModel with ChangeNotifier {
   // UseCase 의존성 주입
   final StudioUseCase _studioUseCase = locator<StudioUseCase>();
-  final ImageHandlerProvider _imageHandlerProvider =
-      locator<ImageHandlerProvider>();
+  final ImageHandlerProvider _imageHandlerProvider = locator<ImageHandlerProvider>();
   final BuildContext context;
 
   // ViewModel 생성 시 context를 받도록 수정
@@ -196,8 +195,7 @@ class StudioEditViewModel with ChangeNotifier {
         html.window.history.go(-1);
       });
     } catch (e) {
-      showCustomToast(context, '저장 실패: ${parseApiError(e)}',
-          type: ToastType.error);
+      showCustomToast(context, '저장 실패: ${parseApiError(e)}', type: ToastType.error);
     } finally {
       _setLoading(false);
     }

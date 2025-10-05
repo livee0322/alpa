@@ -21,8 +21,8 @@ import 'package:livee/presentation/screens/proposal/sent_proposals_screen.dart';
 import 'package:livee/presentation/screens/campaign/bookmarked_recruits_screen.dart';
 import 'package:livee/presentation/screens/campaign/detail/campaign_detail_screen.dart';
 import 'package:livee/presentation/screens/campaign/my_campaigns_screen.dart';
-import 'package:livee/presentation/screens/showhost/casting_request_screen.dart';
-import 'package:livee/presentation/screens/showhost/my_portfolio_list_screen.dart';
+import 'package:livee/presentation/screens/portfolio/casting_request_screen.dart';
+import 'package:livee/presentation/screens/portfolio/my_portfolios_screen.dart';
 import 'package:livee/presentation/screens/event/event_screen.dart';
 import 'package:livee/presentation/screens/auth/login_screen.dart';
 import 'package:livee/presentation/screens/home/home_screen.dart';
@@ -216,7 +216,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           ),
           GoRoute(
             path: '/my-portfolios',
-            builder: (context, state) => const MyPortfolioListScreen(),
+            builder: (context, state) => const MyPortfoliosScreen(),
           ),
           GoRoute(
             path: '/bookmarked-recruits',
