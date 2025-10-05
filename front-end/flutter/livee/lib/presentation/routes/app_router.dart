@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:livee/presentation/providers/auth_provider.dart';
-import 'package:livee/presentation/screens/account/account_edit_screen.dart';
+import 'package:livee/presentation/screens/account/profiles_screen.dart';
+import 'package:livee/presentation/screens/account/vm/profiles_view_model.dart';
 import 'package:livee/presentation/screens/campaign/applicant_list_screen.dart';
 import 'package:livee/presentation/screens/campaign/campaigns_form_screen.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
@@ -226,8 +227,11 @@ GoRouter createRouter(AuthProvider authProvider) {
             builder: (context, state) => const ReceivedProposalsScreen(),
           ),
           GoRoute(
-            path: '/account-edit',
-            builder: (context, state) => const AccountEditScreen(),
+            path: '/profiles',
+            builder: (context, state) => ChangeNotifierProvider(
+              create: (_) => ProfilesViewModel(),
+              child: const ProfilesScreen(),
+            ),
           ),
           GoRoute(
             path: '/model-edit',

@@ -48,13 +48,7 @@ class ProfileCard extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {
-                if (authProvider.isLoggedIn) {
-                  GoRouter.of(context).go('/account-edit');
-                } else {
-                  GoRouter.of(context).go('/login');
-                }
-              },
+              onPressed: () => context.go(authProvider.isLoggedIn ? '/profiles' : '/login'),
               child: Text(authProvider.isLoggedIn ? '프로필 수정' : '로그인'),
             )
           ],
