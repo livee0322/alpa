@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:livee/presentation/common/common_image_picker.dart';
 import 'package:livee/presentation/providers/image_provider.dart';
 import 'package:livee/presentation/screens/campaign/vm/campaigns_form_view_model.dart';
+import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 import 'package:livee/presentation/styles/app_colors.dart';
 import 'package:livee/presentation/common/buttons/primary_action_button.dart';
 import 'package:livee/presentation/common/custom_calendar_dialog.dart';
@@ -274,7 +276,18 @@ class CampaignsFormScreen extends StatelessWidget {
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
-        InkWell(
+        CommonImagePicker(
+          aspectRatio: aspectRatio,
+          imageSource: PortfolioImage(
+            localBytes: imageBytes,
+            networkUrl: controller.text,
+          ),
+          placeholder: Center(
+            child: Text(
+              hintText,
+              style: TextStyle(color: AppColors.textGrey),
+            ),
+          ),
           onTap: () async {
             try {
               final bytes = await imageHandler.pickImage();
@@ -297,42 +310,8 @@ class CampaignsFormScreen extends StatelessWidget {
               }
             }
           },
-          borderRadius: BorderRadius.circular(12),
-          child: AspectRatio(
-            aspectRatio: aspectRatio,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(11),
-                child: _buildImagePreview(controller, imageBytes, hintText),
-              ),
-            ),
-          ),
         ),
       ],
-    );
-  }
-
-  // 이미지 미리보기 내부 UI를 결정하는 헬퍼 위젯
-  Widget _buildImagePreview(TextEditingController controller, Uint8List? imageBytes, String hintText) {
-    // 1. 새로 선택한 임시 이미지가 있으면 보여줌
-    if (imageBytes != null) {
-      return Image.memory(imageBytes, fit: BoxFit.cover);
-    }
-    // 2. 기존에 업로드된 네트워크 이미지가 있으면 보여줌 (수정 모드)
-    if (controller.text.isNotEmpty) {
-      return Image.network(controller.text, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.error));
-    }
-    // 3. 아무 이미지도 없으면 힌트 텍스트를 보여줌
-    return Center(
-      child: Text(
-        hintText,
-        style: TextStyle(color: AppColors.textGrey),
-      ),
     );
   }
 

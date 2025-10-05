@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:livee/presentation/common/common_image_picker.dart';
 import 'package:livee/presentation/screens/portfolio/models/portfolio_image.dart';
 
 class SubThumbnailSection extends StatelessWidget {
@@ -52,10 +53,10 @@ class SubThumbnailSection extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (imageSource.localBytes != null)
-                Image.memory(imageSource.localBytes!, fit: BoxFit.cover)
-              else if (imageSource.networkUrl != null)
-                Image.network(imageSource.networkUrl!, fit: BoxFit.cover),
+              CommonImagePicker(
+                imageSource: imageSource,
+                onTap: () {}, // 각 이미지를 탭했을 때의 동작 (예: 크게 보기)은 여기서 구현 가능
+              ),
               Positioned(
                 top: 4,
                 right: 4,
