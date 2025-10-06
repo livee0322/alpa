@@ -26,11 +26,11 @@ class NewsDetailScreen extends StatelessWidget {
   }
 
   Widget _buildBody(NewsDetailViewModel viewModel) {
-    if (viewModel.news == null) {
+    if (viewModel.item == null) {
       return viewModel.errorMessage != null ? Center(child: Text(viewModel.errorMessage!)) : const SizedBox.shrink();
     }
 
-    final news = viewModel.news!;
+    final news = viewModel.item!;
     final formattedDate = DateFormat('yyyy.MM.dd').format(news.createdAt);
 
     return SingleChildScrollView(

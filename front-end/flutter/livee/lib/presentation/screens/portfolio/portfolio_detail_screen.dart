@@ -35,11 +35,11 @@ class PortfolioDetailScreen extends StatelessWidget {
     if (viewModel.errorMessage != null) {
       return Center(child: Text(viewModel.errorMessage!));
     }
-    if (viewModel.portfolio == null) {
+    if (viewModel.item == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final portfolio = viewModel.portfolio!;
+    final portfolio = viewModel.item!;
     // CustomScrollView를 사용하여 스크롤 가능한 UI를 구성
     return CustomScrollView(
       slivers: [

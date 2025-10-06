@@ -37,11 +37,11 @@ class CampaignDetailScreen extends StatelessWidget {
     if (viewModel.errorMessage != null) {
       return Center(child: Text('에러: ${viewModel.errorMessage}'));
     }
-    if (viewModel.campaign == null) {
+    if (viewModel.item == null) {
       return const Center(child: Text('공고 정보를 찾을 수 없습니다.'));
     }
 
-    final campaign = viewModel.campaign!;
+    final campaign = viewModel.item!;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(

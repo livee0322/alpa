@@ -38,11 +38,11 @@ class ModelDetailScreen extends StatelessWidget {
     if (viewModel.errorMessage != null) {
       return Center(child: Text(viewModel.errorMessage!));
     }
-    if (viewModel.model == null) {
+    if (viewModel.item == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final model = viewModel.model!;
+    final model = viewModel.item!;
     // CustomScrollView를 사용하여 스크롤 가능한 복잡한 레이아웃을 구성합니다.
     return CustomScrollView(
       slivers: [
